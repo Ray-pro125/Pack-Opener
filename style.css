@@ -3,6 +3,7 @@ body {
   background: #111;
   color: white;
   text-align: center;
+  padding-bottom: 50px;
 }
 
 button {
@@ -12,15 +13,18 @@ button {
   margin: 5px;
 }
 
+#controls {
+  margin-bottom: 15px;
+}
+
+#pack-container, #collection-container {
+  margin-top: 20px;
+}
+
 #pack, #collection {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  margin-top: 20px;
-}
-
-#collection {
-  margin-top: 10px;
 }
 
 .card {
