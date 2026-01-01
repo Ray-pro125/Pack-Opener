@@ -3,6 +3,7 @@ let cards = [];
 /* ---------------- STATS ---------------- */
 let stats = JSON.parse(localStorage.getItem("packStats")) || {
   packsOpened: 0,
+  totalCards: 0,
   rarities: {}
 };
 
@@ -24,7 +25,7 @@ function saveStats() {
 
 function updateStatsDisplay() {
   const statsDiv = document.getElementById("stats");
-  let html = `<h3>Packs Opened: ${stats.packsOpened}</h3><ul>`;
+  let html = `<h3>Packs Opened: ${stats.packsOpened}</h3><h3>Total cards: ${stats.totalCards}</h3><ul>`;
 
   // Loop through rarities in fixed order, show 0 if none
   rarityOrder.forEach(rarity => {
@@ -80,13 +81,47 @@ function renderCollection() {
 }
 
 /* ---------------- LOAD SET ---------------- */
-fetch("sets/Z-Genesis_Melemele.json")
-  .then(res => res.json())
-  .then(json => {
-    cards = json.data;
-    document.getElementById("openPack").disabled = false;
-    document.getElementById("loading").style.display = "none";
-  });
+function loadSetFromUrl(set) {
+  fetch(`sets/${set}.json`)
+    .then(res => res.json())
+    .then(json => {
+      cards = json.data;
+      document.getElementById("openPack").disabled = false;
+      document.getElementById("loading").style.display = "none";
+    });
+}
+
+document.getElementById("loadPackFromFile").addEventListener("click", () => {
+  document.getElementById("jsonInput").click();
+});
+
+document.getElementById("jsonInput").addEventListener("change", () => {
+  const file = document.getElementById("jsonInput").files[0];
+  if (!file) return;
+
+  if (!file.name.endsWith(".json")) {
+    alert("Please upload a JSON file.");
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = (e) => {
+    try {
+      const json = JSON.parse(e.target.result);
+
+      // same logic as loadSetFromUrl
+      cards = json.data;
+      document.getElementById("openPack").disabled = false;
+      document.getElementById("loading").style.display = "none";
+    } catch (err) {
+      alert("Invalid JSON file.");
+      console.error(err);
+    }
+  };
+
+  reader.readAsText(file);
+});
 
 /* ---------------- HELPERS ---------------- */
 function randomFrom(array) {
@@ -154,6 +189,7 @@ function openPack() {
 
   // Update stats
   stats.packsOpened++;
+  stats.totalCards += 10;
   pulls.forEach(card => {
     stats.rarities[card.rarity] = (stats.rarities[card.rarity] || 0) + 1;
   });
@@ -195,7 +231,7 @@ document.getElementById("resetData").onclick = () => {
   localStorage.removeItem("packStats");
   localStorage.removeItem("collection");
 
-  stats = { packsOpened: 0, rarities: {} };
+  stats = { packsOpened: 0, totalCards: 0, rarities: {} };
   collection = {};
 
   updateStatsDisplay();
@@ -205,5 +241,6 @@ document.getElementById("resetData").onclick = () => {
 document.getElementById("openPack").onclick = openPack;
 
 /* ---- INITIAL RENDER ---- */
+loadSetFromUrl("Z-Genesis_Melemele");
 updateStatsDisplay();
 renderCollection();
