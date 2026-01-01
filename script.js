@@ -1,5 +1,7 @@
 let cards = [];
 
+/* ---------------- STATS ---------------- */
+
 let stats = JSON.parse(localStorage.getItem("packStats")) || {
   packsOpened: 0,
   rarities: {}
@@ -20,6 +22,8 @@ function updateStatsDisplay() {
   html += "</ul>";
   statsDiv.innerHTML = html;
 }
+
+/* ---------------- COLLECTION ---------------- */
 
 let collection = JSON.parse(localStorage.getItem("collection")) || {};
 
@@ -42,9 +46,13 @@ function renderCollection() {
   });
 }
 
+/* ---------------- LOAD SET ---------------- */
+
 fetch("sets/Z-Genesis_Melemele.json")
   .then(res => res.json())
   .then(json => cards = json.data);
+
+/* ---------------- HELPERS ---------------- */
 
 function randomFrom(array) {
   return array[Math.floor(Math.random() * array.length)];
@@ -64,13 +72,15 @@ function weightedRoll(table) {
   }
 }
 
+/* ---------------- OPEN PACK ---------------- */
+
 function openPack() {
   const pack = document.getElementById("pack");
   pack.innerHTML = "";
 
   const pulls = [];
 
-  // --- Generate pulls ---
+  // Slots 1–7
   for (let i = 0; i < 7; i++) {
     pulls.push(randomFrom(getByRarity(weightedRoll([
       { rarity: "Common", weight: 4 },
@@ -78,6 +88,7 @@ function openPack() {
     ]))));
   }
 
+  // Slot 8
   pulls.push(randomFrom(getByRarity(weightedRoll([
     { rarity: "Common", weight: 33 },
     { rarity: "Uncommon", weight: 133 },
@@ -86,6 +97,7 @@ function openPack() {
     { rarity: "Hyper Rare", weight: 1 }
   ]))));
 
+  // Slot 9
   pulls.push(randomFrom(getByRarity(weightedRoll([
     { rarity: "Common", weight: 85 },
     { rarity: "Uncommon", weight: 232 },
@@ -94,44 +106,40 @@ function openPack() {
     { rarity: "Hyper Rare", weight: 2.2 }
   ]))));
 
+  // Slot 10
   pulls.push(randomFrom(getByRarity(weightedRoll([
     { rarity: "Rare", weight: 11 },
     { rarity: "Double Rare", weight: 3 },
     { rarity: "Ultra Rare", weight: 1 }
   ]))));
 
-  // --- Update stats ---
+  /* ---- STATS (ONCE) ---- */
   stats.packsOpened++;
-
   pulls.forEach(card => {
     stats.rarities[card.rarity] =
       (stats.rarities[card.rarity] || 0) + 1;
   });
-
   saveStats();
   updateStatsDisplay();
 
-  // --- Update collection (ONCE) ---
+  /* ---- COLLECTION (ONCE) ---- */
   const packCounts = {};
-
   pulls.forEach(card => {
     packCounts[card.name] = (packCounts[card.name] || 0) + 1;
   });
 
   for (let name in packCounts) {
     const card = pulls.find(c => c.name === name);
-
     if (!collection[name]) {
       collection[name] = { ...card, count: 0 };
     }
-
     collection[name].count += packCounts[name];
   }
 
   saveCollection();
   renderCollection();
 
-  // --- Render pack with animation ---
+  /* ---- RENDER + ANIMATION ---- */
   pulls.forEach((card, index) => {
     const div = document.createElement("div");
     div.className = "card";
@@ -143,6 +151,9 @@ function openPack() {
     }, index * 350);
   });
 }
+
+/* ---------------- RESET ---------------- */
+
 document.getElementById("resetData").onclick = () => {
   if (!confirm("This will erase all packs opened and your collection. Are you sure?")) return;
 
@@ -155,7 +166,6 @@ document.getElementById("resetData").onclick = () => {
   updateStatsDisplay();
   renderCollection();
 };
-
 
 document.getElementById("openPack").onclick = openPack;
 
