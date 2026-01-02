@@ -154,15 +154,16 @@ function openPack() {
 
   const pulls = [];
 
-// Slots 1–4: Common
-for (let i = 0; i < 4; i++) {
-  pulls.push(randomFrom(getByRarity("Common")));
-  ]))));
+  // Slots 1–4: Common
+  for (let i = 0; i < 4; i++) {
+    pulls.push(randomFrom(getByRarity("Common")));
+  }
 
-// Slots 5–7: Uncommon
-for (let i = 0; i < 3; i++) {
-  pulls.push(randomFrom(getByRarity("Uncommon")));
-  ]))));
+  // Slots 5–7: Uncommon
+  for (let i = 0; i < 3; i++) {
+    pulls.push(randomFrom(getByRarity("Uncommon")));
+  }
+
   
   // Slot 8
   pulls.push(randomFrom(getByRarity(weightedRoll([
