@@ -69,7 +69,7 @@ function renderCollection() {
 
   collectionArray.forEach(card => {
     const div = document.createElement("div");
-    div.className = "card show";
+    div.className = `card rarity-${card.rarity}`;
     div.innerHTML = `
       <img src="${card.image}">
       <div>${card.name} ×${card.count}</div>
@@ -227,7 +227,7 @@ function openPack() {
   /* ----- RENDER PACK ----- */
   pulls.forEach((card, i) => {
     const div = document.createElement("div");
-    div.className = "card";
+    div.className = `card rarity-${card.rarity}`;
     div.innerHTML = `<img src="${card.image}" alt="${card.name}">`;
     pack.appendChild(div);
     setTimeout(() => div.classList.add("show"), i * 350);
