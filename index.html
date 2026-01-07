@@ -10,9 +10,18 @@
 <!-- START SCREEN -->
 <div id="start-screen">
   <h1>Pokémon Pack Simulator</h1>
-  <button id="loadDefault">Load Default Set</button>
-  <button id="importSet">Import Set</button>
-  <input type="file" id="fileInput" accept=".json" hidden>
+
+  <div>
+    <label for="setSelector">Choose a set:</label>
+    <select id="setSelector"></select>
+    <button id="loadSetBtn">Load Set</button>
+  </div>
+
+  <div>
+    <button id="importSet">Import Set</button>
+    <input type="file" id="fileInput" accept=".json" hidden>
+  </div>
+
 </div>
 
 <!-- MAIN APP -->
@@ -28,7 +37,6 @@
 
   <div id="stats"></div>
 
-  <!-- COMPLETION -->
   <div id="completion">
     <div class="bar">
       <span id="regularLabel"></span>
@@ -40,7 +48,6 @@
     </div>
   </div>
 
-  <!-- FILTER -->
   <div id="filters">
     <label>
       Filter:
