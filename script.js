@@ -2,7 +2,7 @@ let cards=[], availableRarities={};
 let stats=JSON.parse(localStorage.getItem("packStats"))||{packsOpened:0,totalCards:0,rarities:{}};
 let collection=JSON.parse(localStorage.getItem("collection"))||{};
 
-/* ---------- DOM ---------- */
+/* DOM */
 const startScreen=document.getElementById("startScreen");
 const app=document.getElementById("app");
 const openPackBtn=document.getElementById("openPack");
@@ -16,18 +16,15 @@ const availableSetsDiv=document.getElementById("availableSets");
 const importSetBtn=document.getElementById("importSet");
 const jsonInput=document.getElementById("jsonInput");
 
-/* ---------- STATS & COLLECTION ---------- */
+/* STATS & COLLECTION */
 function saveStats(){ localStorage.setItem("packStats",JSON.stringify(stats)); }
 function saveCollection(){ localStorage.setItem("collection",JSON.stringify(collection)); }
-
 function updateStatsDisplay(){
   let html=`<h3>Packs Opened: ${stats.packsOpened}</h3><h3>Total cards: ${stats.totalCards}</h3><ul>`;
   ["Common","Uncommon","Rare","Double Rare","Illustration Rare","Ultra Rare","Special Illustration Rare","Hyper Rare"].forEach(r=>html+=`<li>${r}: ${stats.rarities[r]||0}</li>`);
   html+="</ul>";
   statsDiv.innerHTML=html;
 }
-
-/* ---------- COLLECTION ---------- */
 function renderCollection(){
   collectionDiv.innerHTML="";
   const arr=Object.values(collection);
@@ -46,9 +43,8 @@ function renderCollection(){
   });
 }
 
-/* ---------- LOAD SET ---------- */
+/* LOAD SET */
 function buildAvailableRarities(){ availableRarities={}; cards.forEach(c=>{if(!availableRarities[c.rarity]) availableRarities[c.rarity]=[]; availableRarities[c.rarity].push(c);}); }
-
 function loadSet(file){
   loadingDiv.style.display="block";
   fetch(file).then(r=>r.json()).then(j=>{
@@ -57,7 +53,7 @@ function loadSet(file){
   });
 }
 
-/* ---------- HELPERS ---------- */
+/* HELPERS */
 function randomFrom(arr){ if(!arr||!arr.length) return null; return arr[Math.floor(Math.random()*arr.length)]; }
 function getByRarity(r){ return availableRarities[r]||[]; }
 function weightedRoll(table){
@@ -69,7 +65,7 @@ function weightedRoll(table){
 }
 function pullWeighted(table){ const r=weightedRoll(table); return randomFrom(getByRarity(r))||randomFrom(cards); }
 
-/* ---------- OPEN PACK ---------- */
+/* OPEN PACK */
 function openPack(){
   if(!cards.length){ alert("Set not loaded"); return; }
   packDiv.innerHTML="";
@@ -82,12 +78,7 @@ function openPack(){
 
   stats.packsOpened++; stats.totalCards+=pulls.length;
   pulls.forEach(c=>stats.rarities[c.rarity]=(stats.rarities[c.rarity]||0)+1);
-
-  pulls.forEach(c=>{
-    const key=`${c.name}_${c.number}`;
-    if(!collection[key]) collection[key]={...c,count:0};
-    collection[key].count++;
-  });
+  pulls.forEach(c=>{ const key=`${c.name}_${c.number}`; if(!collection[key]) collection[key]={...c,count:0}; collection[key].count++; });
 
   saveCollection(); renderCollection(); saveStats(); updateStatsDisplay();
 
@@ -100,7 +91,6 @@ function openPack(){
     if(i<pulls.length-3) setTimeout(()=>div.classList.add("show"),i*350);
   });
 }
-
 packDiv.addEventListener("click", function revealLastThree(){
   const lastThree=packDiv.querySelectorAll(".last-three-hidden");
   lastThree.forEach(div=>div.classList.add("show"));
@@ -108,7 +98,7 @@ packDiv.addEventListener("click", function revealLastThree(){
   packDiv.removeEventListener("click", revealLastThree);
 });
 
-/* ---------- START SCREEN ---------- */
+/* START SCREEN */
 const setsList=["Z-Genesis_Melemele","XY-Sunshine","ABC-ExampleSet"];
 setsList.forEach(s=>{
   const btn=document.createElement("button");
@@ -116,7 +106,6 @@ setsList.forEach(s=>{
   btn.onclick=()=>loadSet(`sets/${s}.json`);
   availableSetsDiv.appendChild(btn);
 });
-
 importSetBtn.onclick=()=>jsonInput.click();
 jsonInput.onchange=(e)=>{
   const f=jsonInput.files[0];
@@ -126,9 +115,6 @@ jsonInput.onchange=(e)=>{
   reader.readAsText(f);
 };
 
-/* ---------- NAVIGATION ---------- */
+/* NAVIGATION */
 viewCollectionBtn.onclick=()=>collectionDiv.parentElement.classList.remove("hidden");
-backToStartBtn.onclick=()=>{
-  app.classList.add("hidden");
-  startScreen.classList.remove("hidden");
-};
+backToStartBtn.onclick=()=>{ app.classList.add("hidden"); startScreen.classList.remove("hidden"); };
