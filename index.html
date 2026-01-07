@@ -22,47 +22,41 @@
 <!-- ===== MAIN APP ===== -->
 <div id="app" class="hidden">
   <div id="loading" style="display:none;">Loading set...</div>
+  
   <div id="pack-container">
     <button id="openPack" disabled>Open Pack</button>
     <div id="pack"></div>
     <div id="underPackControls" class="hidden">
-      <button id="viewCollection">View Collection</button>
-      <button id="viewStats">View Stats</button>
       <button id="backToStart">Back to Start</button>
       <button id="resetData">Reset All Data</button>
     </div>
   </div>
-</div>
 
-<!-- ===== COLLECTION PAGE ===== -->
-<div id="collectionPage" class="hidden">
-  <h2>Collection</h2>
-  <label>Filter by Rarity: 
-    <select id="rarityFilter"></select>
-  </label>
-  <div id="collection"></div>
-  <button id="backToAppFromCollection">Back</button>
-</div>
+  <!-- ===== COLLECTION + STATS ===== -->
+  <div id="collection-stats-container">
+    <h2>Collection</h2>
+    <label>Filter by Rarity: 
+      <select id="rarityFilter"></select>
+    </label>
+    <div id="collection"></div>
 
-<!-- ===== STATS PAGE ===== -->
-<div id="statsPage" class="hidden">
-  <h2>Stats</h2>
-  <div id="stats"></div>
-  <div id="completion">
-    <div id="regularContainer">
-      <div id="regularLabel"></div>
-      <div style="background:#333;height:12px;border-radius:6px;overflow:hidden">
-        <div id="regularBar" style="background:#3b82f6;height:12px;width:0%"></div>
+    <h2>Stats & Completion</h2>
+    <div id="stats"></div>
+    <div id="completion">
+      <div id="regularContainer">
+        <div id="regularLabel"></div>
+        <div style="background:#333;height:12px;border-radius:6px;overflow:hidden">
+          <div id="regularBar" style="background:#3b82f6;height:12px;width:0%"></div>
+        </div>
       </div>
-    </div>
-    <div id="masterContainer">
-      <div id="masterLabel"></div>
-      <div style="background:#333;height:12px;border-radius:6px;overflow:hidden">
-        <div id="masterBar" style="background:#f59e0b;height:12px;width:0%"></div>
+      <div id="masterContainer">
+        <div id="masterLabel"></div>
+        <div style="background:#333;height:12px;border-radius:6px;overflow:hidden">
+          <div id="masterBar" style="background:#f59e0b;height:12px;width:0%"></div>
+        </div>
       </div>
     </div>
   </div>
-  <button id="backToAppFromStats">Back</button>
 </div>
 
 <script src="script.js"></script>
