@@ -2,38 +2,59 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Custom Pokémon Pack Opener</title>
+  <title>Pokémon Pack Simulator</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <h1>Custom Pokémon Pack Opener</h1>
+<!-- START SCREEN -->
+<div id="start-screen">
+  <h1>Pokémon Pack Simulator</h1>
 
-  <div id="loading">Loading set...</div>
+  <h3>Select a Set</h3>
+  <button onclick="loadPredefinedSet('Z-Genesis_Melemele')">
+    Z-Genesis: Melemele
+  </button>
+
+  <h3>Or Import a Set</h3>
+  <button onclick="document.getElementById('jsonInput').click()">
+    Import JSON
+  </button>
+  <input type="file" id="jsonInput" accept=".json" hidden>
+</div>
+
+<!-- MAIN APP -->
+<div id="app" class="hidden">
 
   <div id="controls">
     <button id="openPack" disabled>Open Pack</button>
-    <button id="resetData">Reset Progress</button>
-    <button id="loadPackFromFile">Load Pack From File</button>
+    <button onclick="goToStart()">Change Set</button>
+    <button id="resetData">Reset Data</button>
   </div>
 
-  <!-- Input for loading from file -->
-  <input type="file" id="jsonInput" accept=".json,application/json" style="display: none;">
+  <div id="loading" class="hidden">Loading set…</div>
 
-  <!-- Pack container first -->
+  <div id="completion"></div>
+
+  <div id="collection-filters">
+    <label>Filter:</label>
+    <select id="rarityFilter">
+      <option value="ALL">All</option>
+    </select>
+  </div>
+
   <div id="pack-container">
-    <h2>Opened Pack</h2>
+    <h2>Pack</h2>
     <div id="pack"></div>
-    <!-- Stats BELOW the pack -->
-    <div id="stats"></div>
   </div>
 
-  <!-- Collection comes after -->
   <div id="collection-container">
-    <h2>Your Collection</h2>
+    <h2>Collection</h2>
     <div id="collection"></div>
   </div>
 
-  <script src="script.js"></script>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
