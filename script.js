@@ -11,7 +11,6 @@ const backToStartBtn=document.getElementById("backToStart");
 const packDiv=document.getElementById("pack");
 const collectionDiv=document.getElementById("collection");
 const statsDiv=document.getElementById("stats");
-const completionDiv=document.getElementById("completion");
 const loadingDiv=document.getElementById("loading");
 const availableSetsDiv=document.getElementById("availableSets");
 const importSetBtn=document.getElementById("importSet");
@@ -111,13 +110,23 @@ packDiv.addEventListener("click", function revealLastThree(){
 });
 
 /* ---------- START SCREEN ---------- */
+const availableSets=["Z-Genesis_Melemele","XY-Sunshine","ABC-ExampleSet"];
+availableSets.forEach(setName=>{
+  const btn=document.createElement("button");
+  btn.textContent=setName;
+  btn.onclick=()=>loadSet(`sets/${setName}.json`);
+  availableSetsDiv.appendChild(btn);
+});
+
 importSetBtn.onclick=()=>jsonInput.click();
 jsonInput.onchange=(e)=>{
   const f=jsonInput.files[0];
   if(!f||!f.name.endsWith(".json")) return alert("Please select a JSON file");
-  const r=new FileReader();
-  r.onload=ev=>{ try{ loadSet(ev.target.result); }catch{alert("Invalid JSON");} };
-  r.readAsText(f);
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{ loadSet(ev.target.result); }catch{alert("Invalid JSON file");}
+  };
+  reader.readAsText(f);
 };
 
 /* ---------- NAVIGATION ---------- */
@@ -126,13 +135,3 @@ backToStartBtn.onclick=()=>{
   app.classList.add("hidden");
   startScreen.classList.remove("hidden");
 };
-
-/* ---------- LOAD AVAILABLE SETS ---------- */
-fetch("sets").then(r=>r.json()).then(list=>{
-  list.forEach(s=>{
-    const btn=document.createElement("button");
-    btn.textContent=s;
-    btn.onclick=()=>loadSet(`sets/${s}`);
-    availableSetsDiv.appendChild(btn);
-  });
-}).catch(()=>{}); // fallback for manual import
