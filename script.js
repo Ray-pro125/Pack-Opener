@@ -3,46 +3,70 @@ let availableRarities = {};
 let collection = JSON.parse(localStorage.getItem("collection")) || {};
 let currentSetName = "";
 
-/* ---------- START ---------- */
+/* ---------- NAV ---------- */
 function goToStart() {
   document.getElementById("app").classList.add("hidden");
   document.getElementById("start-screen").classList.remove("hidden");
 }
 
-function enterApp() {
-  document.getElementById("start-screen").classList.add("hidden");
-  document.getElementById("app").classList.remove("hidden");
-}
-
 /* ---------- LOAD ---------- */
 function loadPredefinedSet(name) {
   currentSetName = name;
+  showLoading(true);
+
   fetch(`sets/${name}.json`)
     .then(r => r.json())
-    .then(j => initSet(j.data));
+    .then(j => initSet(j.data))
+    .catch(() => alert("Failed to load set"));
 }
 
 document.getElementById("jsonInput").addEventListener("change", e => {
   const reader = new FileReader();
-  reader.onload = ev => initSet(JSON.parse(ev.target.result).data);
+  reader.onload = ev => {
+    try {
+      const json = JSON.parse(ev.target.result);
+      currentSetName = json.name || "Custom Set";
+      initSet(json.data);
+    } catch {
+      alert("Invalid JSON");
+    }
+  };
   reader.readAsText(e.target.files[0]);
 });
 
+/* ---------- INIT ---------- */
 function initSet(data) {
+  if (!Array.isArray(data) || data.length === 0) {
+    alert("Set contains no cards");
+    showLoading(false);
+    return;
+  }
+
   cards = data;
   buildRarities();
   buildFilter();
+
   document.getElementById("openPack").disabled = false;
-  enterApp();
+
+  document.getElementById("start-screen").classList.add("hidden");
+  document.getElementById("app").classList.remove("hidden");
+
+  showLoading(false);
   renderCollection();
   updateCompletion();
+}
+
+function showLoading(state) {
+  document.getElementById("loading").classList.toggle("hidden", !state);
 }
 
 /* ---------- HELPERS ---------- */
 function buildRarities() {
   availableRarities = {};
   cards.forEach(c => {
-    if (!availableRarities[c.rarity]) availableRarities[c.rarity] = [];
+    if (!availableRarities[c.rarity]) {
+      availableRarities[c.rarity] = [];
+    }
     availableRarities[c.rarity].push(c);
   });
 }
@@ -51,48 +75,32 @@ function randomFrom(arr) {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-function pullWeighted(table) {
-  const filtered = table.filter(e => availableRarities[e.rarity]);
-  let total = filtered.reduce((s,e) => s + e.weight, 0);
-  let roll = Math.random() * total;
-  for (let e of filtered) {
-    if (roll < e.weight) return randomFrom(availableRarities[e.rarity]);
-    roll -= e.weight;
-  }
-}
-
 /* ---------- GOD PACK ---------- */
 function isGodPack() {
-  return Math.random() < 0.0008; // ~1 in 1250
+  return Math.random() < 0.0008;
 }
 
-/* ---------- OPEN PACK ---------- */
+/* ---------- PACK ---------- */
 function openPack() {
   const pack = document.getElementById("pack");
   pack.innerHTML = "";
 
-  const pulls = [];
   const god = isGodPack();
 
   for (let i = 0; i < 10; i++) {
-    pulls.push(
-      god
-        ? pullWeighted([{ rarity: "Illustration Rare", weight: 1 }])
-        : randomFrom(cards)
-    );
-  }
+    const card = god
+      ? randomFrom(availableRarities["Illustration Rare"] || cards)
+      : randomFrom(cards);
 
-  pulls.forEach((card, i) => {
     const key = `${card.name}_${card.number}`;
     if (!collection[key]) collection[key] = { ...card, count: 0 };
     collection[key].count++;
 
     const rarityClass = card.rarity.replace(/\s+/g, "-");
 
-    const cardDiv = document.createElement("div");
-    cardDiv.className = `card rarity-${rarityClass}`;
-
-    cardDiv.innerHTML = `
+    const div = document.createElement("div");
+    div.className = `card rarity-${rarityClass}`;
+    div.innerHTML = `
       <div class="card-inner">
         <div class="card-face card-back"></div>
         <div class="card-face card-front">
@@ -101,13 +109,13 @@ function openPack() {
       </div>
     `;
 
-    pack.appendChild(cardDiv);
+    pack.appendChild(div);
 
     setTimeout(() => {
-      cardDiv.classList.add("flipped");
-      if (i >= 7) cardDiv.classList.add("reveal-hit");
+      div.classList.add("flipped");
+      if (i >= 7) div.classList.add("reveal-hit");
     }, i * 200);
-  });
+  }
 
   saveCollection();
   renderCollection();
@@ -125,7 +133,7 @@ function renderCollection() {
     .forEach(card => {
       const r = card.rarity.replace(/\s+/g, "-");
       const d = document.createElement("div");
-      d.className = `card show rarity-${r}`;
+      d.className = `card rarity-${r}`;
       d.innerHTML = `<img src="${card.image}"><div>${card.name} ×${card.count}</div>`;
       col.appendChild(d);
     });
@@ -146,14 +154,16 @@ document.getElementById("rarityFilter").onchange = renderCollection;
 
 /* ---------- COMPLETION ---------- */
 function updateCompletion() {
-  const total = cards.length;
   const owned = Object.keys(collection).length;
-  const percent = Math.floor((owned / total) * 100);
+  const total = cards.length;
+  const pct = Math.floor((owned / total) * 100);
 
   document.getElementById("completion").innerHTML = `
     <h3>${currentSetName}</h3>
-    <div class="progress"><div class="progress-bar" style="width:${percent}%"></div></div>
-    <p>${owned}/${total} (${percent}%)</p>
+    <div class="progress">
+      <div class="progress-bar" style="width:${pct}%"></div>
+    </div>
+    <p>${owned}/${total} (${pct}%)</p>
   `;
 }
 
@@ -164,11 +174,9 @@ function saveCollection() {
 
 document.getElementById("openPack").onclick = openPack;
 document.getElementById("resetData").onclick = () => {
-  if (!confirm("Reset all data?")) return;
+  if (!confirm("Reset collection?")) return;
   localStorage.clear();
   collection = {};
   renderCollection();
   updateCompletion();
 };
-
-goToStart();
