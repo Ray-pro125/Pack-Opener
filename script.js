@@ -99,7 +99,7 @@ packDiv.addEventListener("click", function revealLastThree(){
 });
 
 /* START SCREEN */
-const setsList=["Z-Genesis_Melemele","XY-Sunshine","ABC-ExampleSet"];
+const setsList=["Z-Genesis_Melemele","Soaring_Titans"];
 setsList.forEach(s=>{
   const btn=document.createElement("button");
   btn.textContent=s;
@@ -118,3 +118,5 @@ jsonInput.onchange=(e)=>{
 /* NAVIGATION */
 viewCollectionBtn.onclick=()=>collectionDiv.parentElement.classList.remove("hidden");
 backToStartBtn.onclick=()=>{ app.classList.add("hidden"); startScreen.classList.remove("hidden"); };
+openPackBtn.onclick=openPack;
+updateStatsDisplay(); renderCollection();
