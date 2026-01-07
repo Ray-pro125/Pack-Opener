@@ -4,7 +4,6 @@ let stats=JSON.parse(localStorage.getItem("packStats"))||{packsOpened:0,totalCar
 const regularRarities=["Common","Uncommon","Rare","Double Rare"];
 const masterRarities=["Common","Uncommon","Rare","Double Rare","Illustration Rare","Ultra Rare","Special Illustration Rare","Hyper Rare"];
 
-/* DOM Elements */
 const startScreen=document.getElementById("start-screen");
 const openPackPage=document.getElementById("openPackPage");
 const collectionStatsPage=document.getElementById("collectionStatsPage");
@@ -13,24 +12,16 @@ const collectionDiv=document.getElementById("collection");
 const filterSelect=document.getElementById("rarityFilter");
 const loading=document.getElementById("loading");
 
-/* Load sets from sets/index.json (must list all json file names) */
+/* LOAD SETS LIST */
 const setSelector=document.getElementById("setSelector");
 const loadSetBtn=document.getElementById("loadSetBtn");
 
-fetch("sets/index.json")
-.then(r=>r.json())
-.then(data=>{
+fetch("sets/index.json").then(r=>r.json()).then(data=>{
   setSelector.innerHTML="";
-  data.forEach(f=>{
-    const opt=document.createElement("option");
-    opt.value=f; opt.textContent=f.replace(".json","");
-    setSelector.appendChild(opt);
-  });
+  data.forEach(f=>{const opt=document.createElement("option"); opt.value=f; opt.textContent=f.replace(".json",""); setSelector.appendChild(opt);});
 });
 
 loadSetBtn.onclick=()=>loadSet(`sets/${setSelector.value}`);
-
-/* Import user set */
 document.getElementById("importSet").onclick=()=>document.getElementById("fileInput").click();
 document.getElementById("fileInput").addEventListener("change",e=>{
   const reader=new FileReader();
@@ -38,43 +29,30 @@ document.getElementById("fileInput").addEventListener("change",e=>{
   reader.readAsText(e.target.files[0]);
 });
 
-/* Load JSON set */
 function loadSet(path){
   loading.style.display="block";
-  fetch(path)
-    .then(r=>r.json())
-    .then(j=>initSet(j.data))
-    .catch(()=>alert("Failed to load set."));
+  fetch(path).then(r=>r.json()).then(j=>initSet(j.data)).catch(()=>alert("Failed to load set."));
 }
 
 function initSet(data){
   cards=data;
   availableRarities={};
-  cards.forEach(c=>{
-    if(!availableRarities[c.rarity]) availableRarities[c.rarity]=[];
-    availableRarities[c.rarity].push(c);
-  });
-
+  cards.forEach(c=>{if(!availableRarities[c.rarity]) availableRarities[c.rarity]=[]; availableRarities[c.rarity].push(c);});
   buildFilter();
   startScreen.classList.add("hidden");
   openPackPage.classList.remove("hidden");
+  document.getElementById("openPack").disabled=false;
   renderCollection(); updateStats(); updateCompletion();
   loading.style.display="none";
 }
 
-/* ---------- Helpers ---------- */
+/* HELPERS */
 function randomFrom(arr){if(!arr||!arr.length)return null; return arr[Math.floor(Math.random()*arr.length)];}
 function saveCollection(){localStorage.setItem("collection",JSON.stringify(collection));}
 function saveStats(){localStorage.setItem("packStats",JSON.stringify(stats));}
-function pullWeighted(table){
-  const valid=table.filter(e=>availableRarities[e.rarity]?.length);
-  if(!valid.length) return randomFrom(cards);
-  const total=valid.reduce((s,e)=>s+e.weight,0); let roll=Math.random()*total;
-  for(let e of valid){if(roll<e.weight)return randomFrom(availableRarities[e.rarity]); roll-=e.weight;}
-  return randomFrom(cards);
-}
+function pullWeighted(table){const valid=table.filter(e=>availableRarities[e.rarity]?.length); if(!valid.length)return randomFrom(cards); const total=valid.reduce((s,e)=>s+e.weight,0); let roll=Math.random()*total; for(let e of valid){if(roll<e.weight)return randomFrom(availableRarities[e.rarity]); roll-=e.weight;} return randomFrom(cards);}
 
-/* ---------- Open Pack ---------- */
+/* OPEN PACK */
 document.getElementById("openPack").onclick=()=>{
   packDiv.innerHTML="";
   const pulls=[];
@@ -91,10 +69,10 @@ document.getElementById("openPack").onclick=()=>{
   renderPack(pulls); renderCollection(); updateStats(); updateCompletion();
 };
 
-/* ---------- Render Pack ---------- */
+/* RENDER PACK */
 function renderPack(pulls){pulls.forEach((c,i)=>{const cls=c.rarity.replace(/\s+/g,"-"); const div=document.createElement("div"); div.className=`card rarity-${cls}`; div.innerHTML=`<img src="${c.image}">`; packDiv.appendChild(div); setTimeout(()=>div.classList.add("show"),i*250);});}
 
-/* ---------- Collection ---------- */
+/* COLLECTION */
 function renderCollection(){
   const filter=filterSelect.value||"All";
   const arr=Object.values(collection).filter(c=>filter==="All"||c.rarity===filter)
@@ -102,14 +80,14 @@ function renderCollection(){
   collectionDiv.innerHTML=""; arr.forEach(c=>{const cls=c.rarity.replace(/\s+/g,"-"); const div=document.createElement("div"); div.className=`card rarity-${cls} show`; div.innerHTML=`<img src="${c.image}"><div>${c.name} ×${c.count}</div>`; collectionDiv.appendChild(div);});
 }
 
-/* ---------- Filter ---------- */
+/* FILTER */
 function buildFilter(){filterSelect.innerHTML=`<option value="All">All</option>`; Object.keys(availableRarities).forEach(r=>{const opt=document.createElement("option"); opt.value=r; opt.textContent=r; filterSelect.appendChild(opt);});}
 filterSelect.onchange=renderCollection;
 
-/* ---------- Stats ---------- */
-function updateStats(){const s=document.getElementById("stats"); let html=`<h3>Packs Opened: ${stats.packsOpened}</h3><h3>Total Cards: ${stats.totalCards}</h3><ul>`;Object.entries(stats.rarities).forEach(([r,c])=>html+=`<li>${r}: ${c}</li>`); html+="</ul>"; s.innerHTML=html;}
+/* STATS */
+function updateStats(){const s=document.getElementById("stats"); let html=`<h3>Packs Opened: ${stats.packsOpened}</h3><h3>Total Cards: ${stats.totalCards}</h3><ul>`; Object.entries(stats.rarities).forEach(([r,c])=>html+=`<li>${r}: ${c}</li>`); html+="</ul>"; s.innerHTML=html;}
 
-/* ---------- Completion ---------- */
+/* COMPLETION */
 function updateCompletion(){
   const uO=Object.keys(collection);
   const tR=cards.filter(c=>regularRarities.includes(c.rarity)).length;
@@ -123,22 +101,12 @@ function updateCompletion(){
   document.getElementById("masterBar").style.width=mPct+"%";
 }
 
-/* ---------- Navigation ---------- */
-document.getElementById("viewCollectionStats").onclick=()=>{
-  openPackPage.classList.add("hidden");
-  collectionStatsPage.classList.remove("hidden");
-  renderCollection(); updateStats(); updateCompletion();
-};
-document.getElementById("backToOpenPack").onclick=()=>{
-  collectionStatsPage.classList.add("hidden");
-  openPackPage.classList.remove("hidden");
-};
-document.getElementById("backToStart").onclick=()=>{
-  openPackPage.classList.add("hidden");
-  startScreen.classList.remove("hidden");
-};
+/* NAVIGATION */
+document.getElementById("viewCollectionStats").onclick=()=>{openPackPage.classList.add("hidden"); collectionStatsPage.classList.remove("hidden"); renderCollection(); updateStats(); updateCompletion();};
+document.getElementById("backToOpenPack").onclick=()=>{collectionStatsPage.classList.add("hidden"); openPackPage.classList.remove("hidden");};
+document.getElementById("backToStart").onclick=()=>{openPackPage.classList.add("hidden"); startScreen.classList.remove("hidden");};
 
-/* ---------- Reset ---------- */
+/* RESET */
 document.getElementById("resetData").onclick=()=>{
   if(!confirm("Reset all data?")) return;
   localStorage.clear(); stats={packsOpened:0,totalCards:0,rarities:{}}; collection={};
