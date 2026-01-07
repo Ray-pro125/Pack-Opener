@@ -1,78 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Pokémon Pack Simulator</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Card Pack Simulator</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- START SCREEN -->
+<!-- ===== START SCREEN ===== -->
 <div id="start-screen">
-  <h1>Pokémon Pack Simulator</h1>
-
-  <div>
-    <label for="setSelector">Choose a set:</label>
-    <select id="setSelector"></select>
-    <button id="loadSetBtn">Load Set</button>
-  </div>
-
-  <div>
-    <button id="importSet">Import Set</button>
-    <input type="file" id="fileInput" accept=".json" hidden>
-  </div>
-
+  <h2>Choose a Set</h2>
+  <select id="setSelector">
+    <option value="" disabled selected>Loading sets...</option>
+  </select>
+  <button id="loadSetBtn">Load Set</button>
+  <button id="importSet">Import Your Own Set</button>
+  <input type="file" id="fileInput" accept=".json" style="display:none">
 </div>
 
-<!-- MAIN APP -->
+<!-- ===== MAIN APP ===== -->
 <div id="app" class="hidden">
-
-  <div id="controls">
+  <div id="loading" style="display:none;">Loading set...</div>
+  <div id="pack-container">
     <button id="openPack" disabled>Open Pack</button>
-    <button id="backToStart">Change Set</button>
-    <button id="resetData">Reset Data</button>
+    <div id="pack"></div>
+    <div id="underPackControls" class="hidden">
+      <button id="viewCollection">View Collection</button>
+      <button id="viewStats">View Stats</button>
+      <button id="backToStart">Back to Start</button>
+      <button id="resetData">Reset All Data</button>
+    </div>
   </div>
-
-  <div id="loading">Loading set…</div>
-
-  <h2>Pack</h2>
-  <div id="pack"></div>
-
-  <div id="underPackControls" class="hidden">
-    <button id="viewStats">View Stats</button>
-    <button id="viewCollection">View Collection</button>
-  </div>
-
 </div>
 
-<!-- STATS PAGE -->
+<!-- ===== COLLECTION PAGE ===== -->
+<div id="collectionPage" class="hidden">
+  <h2>Collection</h2>
+  <label>Filter by Rarity: 
+    <select id="rarityFilter"></select>
+  </label>
+  <div id="collection"></div>
+  <button id="backToAppFromCollection">Back</button>
+</div>
+
+<!-- ===== STATS PAGE ===== -->
 <div id="statsPage" class="hidden">
-  <button id="backToAppFromStats">Back</button>
+  <h2>Stats</h2>
   <div id="stats"></div>
   <div id="completion">
-    <div class="bar">
-      <span id="regularLabel"></span>
-      <div class="fill" id="regularBar"></div>
+    <div id="regularContainer">
+      <div id="regularLabel"></div>
+      <div style="background:#333;height:12px;border-radius:6px;overflow:hidden">
+        <div id="regularBar" style="background:#3b82f6;height:12px;width:0%"></div>
+      </div>
     </div>
-    <div class="bar" id="masterContainer">
-      <span id="masterLabel"></span>
-      <div class="fill" id="masterBar"></div>
+    <div id="masterContainer">
+      <div id="masterLabel"></div>
+      <div style="background:#333;height:12px;border-radius:6px;overflow:hidden">
+        <div id="masterBar" style="background:#f59e0b;height:12px;width:0%"></div>
+      </div>
     </div>
   </div>
-</div>
-
-<!-- COLLECTION PAGE -->
-<div id="collectionPage" class="hidden">
-  <button id="backToAppFromCollection">Back</button>
-  <div id="filters">
-    <label>
-      Filter:
-      <select id="rarityFilter">
-        <option value="All">All</option>
-      </select>
-    </label>
-  </div>
-  <div id="collection"></div>
+  <button id="backToAppFromStats">Back</button>
 </div>
 
 <script src="script.js"></script>
