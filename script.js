@@ -22,11 +22,27 @@ const loading = document.getElementById("loading");
 const packDiv = document.getElementById("pack");
 const collectionDiv = document.getElementById("collection");
 const filterSelect = document.getElementById("rarityFilter");
+const setSelector = document.getElementById("setSelector");
+const loadSetBtn = document.getElementById("loadSetBtn");
 
-/* ---------- LOAD SET ---------- */
-document.getElementById("loadDefault").onclick = () =>
-  loadSet("sets/Z-Genesis_Melemele.json");
+/* ---------- LOAD AVAILABLE SETS ---------- */
+fetch("sets/index.json")
+  .then(r => r.json())
+  .then(data => {
+    data.forEach(setName => {
+      const opt = document.createElement("option");
+      opt.value = setName;
+      opt.textContent = setName;
+      setSelector.appendChild(opt);
+    });
+  });
 
+loadSetBtn.onclick = () => {
+  const setName = setSelector.value;
+  loadSet(`sets/${setName}.json`);
+};
+
+/* ---------- IMPORT SET ---------- */
 document.getElementById("importSet").onclick = () =>
   document.getElementById("fileInput").click();
 
@@ -36,9 +52,12 @@ document.getElementById("fileInput").addEventListener("change", e => {
   reader.readAsText(e.target.files[0]);
 });
 
+/* ---------- LOAD SET ---------- */
 function loadSet(path) {
   loading.style.display = "block";
-  fetch(path).then(r => r.json()).then(j => initSet(j.data));
+  fetch(path)
+    .then(r => r.json())
+    .then(j => initSet(j.data));
 }
 
 function initSet(data) {
@@ -171,9 +190,7 @@ filterSelect.onchange = renderCollection;
 function updateCompletion() {
   const uniqueOwned = Object.keys(collection);
   const totalRegular = cards.filter(c => regularRarities.includes(c.rarity)).length;
-  const ownedRegular = uniqueOwned.filter(k =>
-    regularRarities.includes(collection[k].rarity)
-  ).length;
+  const ownedRegular = uniqueOwned.filter(k => regularRarities.includes(collection[k].rarity)).length;
 
   const regPct = Math.floor((ownedRegular / totalRegular) * 100);
   document.getElementById("regularLabel").textContent =
