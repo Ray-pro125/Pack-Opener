@@ -3,60 +3,42 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Card Pack Simulator</title>
+<title>Pokémon Pack Opener</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <!-- START SCREEN -->
-<div id="start-screen">
+<div id="startScreen">
   <h2>Choose a Set</h2>
-  <select id="setSelector">
-    <option value="" disabled selected>Loading sets...</option>
-  </select>
-  <button id="loadSetBtn">Load Set</button>
-  <button id="importSet">Import Your Own Set</button>
-  <input type="file" id="fileInput" accept=".json" style="display:none">
+  <div id="availableSets"></div>
+  <button id="importSet">Import JSON Set</button>
+  <input type="file" id="jsonInput" class="hidden">
 </div>
 
-<!-- OPEN PACK PAGE -->
-<div id="openPackPage" class="hidden">
-  <div id="loading" style="display:none;">Loading set...</div>
-  <button id="openPack" disabled>Open Pack</button>
-  <div id="pack"></div>
-  <div>
-    <button id="viewCollectionStats">View Collection & Stats</button>
+<!-- MAIN APP -->
+<div id="app" class="hidden">
+
+  <div id="controls">
+    <button id="openPack">Open Pack</button>
+    <button id="viewCollection">View Collection & Stats</button>
     <button id="backToStart">Back to Start</button>
-    <button id="resetData">Reset All Data</button>
-  </div>
-</div>
-
-<!-- COLLECTION + STATS PAGE -->
-<div id="collectionStatsPage" class="hidden">
-  <h2>Collection</h2>
-  <label>Filter by Rarity: 
-    <select id="rarityFilter"></select>
-  </label>
-  <div id="collection"></div>
-
-  <h2>Stats & Completion</h2>
-  <div id="stats"></div>
-  <div id="completion">
-    <div id="regularContainer">
-      <div id="regularLabel"></div>
-      <div style="background:#333;height:12px;border-radius:6px;overflow:hidden">
-        <div id="regularBar" style="background:#3b82f6;height:12px;width:0%"></div>
-      </div>
-    </div>
-    <div id="masterContainer">
-      <div id="masterLabel"></div>
-      <div style="background:#333;height:12px;border-radius:6px;overflow:hidden">
-        <div id="masterBar" style="background:#f59e0b;height:12px;width:0%"></div>
-      </div>
-    </div>
   </div>
 
-  <button id="backToOpenPack">Back to Open Pack</button>
+  <div id="pack-container">
+    <h2>Pack</h2>
+    <div id="pack"></div>
+  </div>
+
+  <div id="collection-container" class="hidden">
+    <h2>Collection & Stats</h2>
+    <div id="collection"></div>
+    <div id="stats"></div>
+    <div id="completion"></div>
+  </div>
+
+  <div id="loading">Loading set...</div>
+
 </div>
 
 <script src="script.js"></script>
