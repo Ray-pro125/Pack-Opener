@@ -1,46 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pokémon Pack Opener</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <title>Pokémon Card Packs</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<!-- START SCREEN -->
-<div id="startScreen">
-  <h2>Choose a Set</h2>
-  <div id="availableSets"></div>
-  <button id="importSet">Import JSON Set</button>
-  <input type="file" id="jsonInput" class="hidden">
-</div>
-
-<!-- MAIN APP -->
-<div id="app" class="hidden">
-
-  <div id="controls">
-    <button id="openPack">Open Pack</button>
-    <button id="viewCollection">View Collection & Stats</button>
-    <button id="backToStart">Back to Start</button>
+  <!-- START SCREEN -->
+  <div id="startScreen">
+    <h1>Choose a Set</h1>
+    <div id="availableSets"></div>
+    <button id="importSet">Import JSON Set</button>
+    <input type="file" id="jsonInput" accept=".json" style="display:none">
   </div>
 
-  <div id="pack-container">
-    <h2>Pack</h2>
-    <div id="pack"></div>
+  <!-- APP -->
+  <div id="app" class="hidden">
+    <div id="controls">
+      <button id="openPack" disabled>Open Pack</button>
+      <button id="viewCollection">View Collection & Stats</button>
+      <button id="backToStart">Back to Start</button>
+    </div>
+
+    <div id="loading" style="display:none">Loading set...</div>
+
+    <div id="pack-container">
+      <h2>Pack</h2>
+      <div id="pack"></div>
+    </div>
+
+    <div id="collection-container" class="hidden">
+      <h2>Collection & Stats</h2>
+      <div id="collection"></div>
+      <div id="stats"></div>
+    </div>
   </div>
 
-  <div id="collection-container" class="hidden">
-    <h2>Collection & Stats</h2>
-    <div id="collection"></div>
-    <div id="stats"></div>
-    <div id="completion"></div>
-  </div>
-
-  <div id="loading">Loading set...</div>
-
-</div>
-
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
