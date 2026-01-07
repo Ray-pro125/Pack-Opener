@@ -91,22 +91,24 @@ document.getElementById("openPack").onclick = () => {
     { rarity: "Common", weight: 55 },
     { rarity: "Uncommon", weight: 32 },
     { rarity: "Rare", weight: 11 },
-    { rarity: "Illustration Rare", weight: 2 }
+    { rarity: "Illustration Rare", weight: 1.5 },
+    { rarity: "Special Illustration Rare", weight: 0.4 },
+    { rarity: "Hyper Rare", weight: 0.1 }
   ]));
 
   pulls.push(pullWeighted([
     { rarity: "Common", weight: 35 },
     { rarity: "Uncommon", weight: 43 },
     { rarity: "Rare", weight: 18 },
-    { rarity: "Illustration Rare", weight: 12 }
+    { rarity: "Illustration Rare", weight: 12 },
+    { rarity: "Special Illustration Rare", weight: 2.3 },
+    { rarity: "Hyper Rare", weight: 0.7 }
   ]));
 
   pulls.push(pullWeighted([
-    { rarity: "Rare", weight: 72 },
-    { rarity: "Double Rare", weight: 21 },
-    { rarity: "Ultra Rare", weight: 6 },
-    { rarity: "Special Illustration Rare", weight: 1.5 },
-    { rarity: "Hyper Rare", weight: 0.5 }
+    { rarity: "Rare", weight: 11 },
+    { rarity: "Double Rare", weight: 3 },
+    { rarity: "Ultra Rare", weight: 1 }
   ]));
 
   stats.packsOpened++;
