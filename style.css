@@ -1,16 +1,17 @@
-/* ---------- GLOBAL ---------- */
 body {
   font-family: "Segoe UI", Arial, sans-serif;
   background: radial-gradient(circle at top, #1a1a1a, #0b0b0b);
   color: #f2f2f2;
   text-align: center;
-  padding-bottom: 60px;
   margin: 0;
+  padding-bottom: 60px;
 }
 
-/* ---------- CONTROLS ---------- */
-#controls {
-  margin: 20px auto;
+.hidden { display: none; }
+
+/* ---------- START SCREEN ---------- */
+#start-screen {
+  padding-top: 120px;
 }
 
 button {
@@ -23,40 +24,10 @@ button {
   color: white;
   cursor: pointer;
   margin: 6px;
-  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.35);
-  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s;
 }
 
-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
-}
-
-button:active {
-  transform: translateY(0);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-}
-
-button:disabled {
-  background: #444;
-  cursor: not-allowed;
-  box-shadow: none;
-}
-
-/* ---------- SECTIONS ---------- */
-#pack-container,
-#collection-container {
-  margin-top: 30px;
-}
-
-h2, h3 {
-  font-weight: 600;
-  margin-bottom: 10px;
-}
-
-/* ---------- PACK / COLLECTION ---------- */
-#pack,
-#collection {
+/* ---------- LAYOUT ---------- */
+#pack, #collection {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -67,17 +38,11 @@ h2, h3 {
 .card {
   width: 200px;
   padding: 6px;
-  background: linear-gradient(180deg, #1f1f1f, #121212);
+  background: linear-gradient(180deg,#1f1f1f,#121212);
   border-radius: 14px;
-  box-shadow:
-    0 8px 25px rgba(0, 0, 0, 0.6),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.05);
   opacity: 0;
   transform: translateY(30px) scale(0.95);
-  transition:
-    opacity 0.45s ease,
-    transform 0.45s cubic-bezier(.25,.8,.25,1);
-  text-align: center;
+  transition: opacity .4s ease, transform .4s ease;
 }
 
 .card.show {
@@ -88,167 +53,40 @@ h2, h3 {
 .card img {
   width: 100%;
   border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
 }
 
-/* ---------- COLLECTION COUNT ---------- */
-#collection .card div {
-  margin-top: 6px;
-  font-size: 14px;
-  opacity: 0.85;
+/* ---------- REVEAL ANIMATION ---------- */
+.reveal-hit {
+  animation: hitPop 0.45s ease-out, hitPulse 1.2s ease-out;
 }
 
-/* ---------- STATS PANEL ---------- */
-#stats {
-  margin-top: 25px;
-  background: rgba(20, 20, 20, 0.85);
-  padding: 16px 22px;
-  border-radius: 12px;
-  display: inline-block;
-  text-align: left;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+@keyframes hitPop {
+  0% { transform: scale(0.85); }
+  60% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
-#stats h3 {
-  margin: 6px 0;
-  font-size: 16px;
+@keyframes hitPulse {
+  0% { box-shadow: 0 0 0 rgba(255,255,255,0); }
+  50% { box-shadow: 0 0 25px rgba(255,255,255,0.35); }
+  100% { box-shadow: inherit; }
 }
 
-#stats ul {
-  padding-left: 18px;
-  margin: 10px 0 0;
-}
+/* ---------- RARITY GLOWS ---------- */
+.rarity-Common { box-shadow: 0 0 8px rgba(255,255,255,.15); }
+.rarity-Uncommon { box-shadow: 0 0 12px rgba(34,197,94,.5); }
+.rarity-Rare { box-shadow: 0 0 16px rgba(59,130,246,.7); }
+.rarity-Double-Rare { box-shadow: 0 0 20px rgba(147,51,234,.8); }
+.rarity-Illustration-Rare { box-shadow: 0 0 22px gold; }
+.rarity-Ultra-Rare { box-shadow: 0 0 26px hotpink; }
+.rarity-Special-Illustration-Rare { box-shadow: 0 0 30px orange; }
 
-#stats li {
-  margin: 4px 0;
-  font-size: 14px;
-  opacity: 0.9;
-}
-
-/* ---------- LOADING ---------- */
-#loading {
-  margin-bottom: 12px;
-  font-size: 18px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  color: #93c5fd;
-}
-
-/* ---------- SCROLLBAR ---------- */
-::-webkit-scrollbar {
-  width: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: #0f0f0f;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #333;
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-/* ============================= */
-/* Pokémon Rarity Glow Borders  */
-/* ============================= */
-
-.card {
-  position: relative;
-}
-
-/* ---------- COMMON ---------- */
-.rarity-Common {
-  box-shadow:
-    0 0 8px rgba(255,255,255,0.15),
-    0 8px 25px rgba(0,0,0,0.6);
-}
-
-/* ---------- UNCOMMON ---------- */
-.rarity-Uncommon {
-  box-shadow:
-    0 0 10px rgba(34,197,94,0.5),
-    0 0 20px rgba(34,197,94,0.25),
-    0 8px 25px rgba(0,0,0,0.6);
-}
-
-/* ---------- RARE ---------- */
-.rarity-Rare {
-  box-shadow:
-    0 0 12px rgba(59,130,246,0.7),
-    0 0 25px rgba(59,130,246,0.35),
-    0 8px 25px rgba(0,0,0,0.6);
-}
-
-/* ---------- DOUBLE RARE ---------- */
-.rarity-Double-Rare {
-  box-shadow:
-    0 0 14px rgba(147,51,234,0.8),
-    0 0 30px rgba(147,51,234,0.4),
-    0 8px 25px rgba(0,0,0,0.6);
-}
-
-/* ---------- ILLUSTRATION RARE ---------- */
-.rarity-Illustration-Rare {
-  box-shadow:
-    0 0 15px rgba(255,215,0,0.9),
-    0 0 35px rgba(255,215,0,0.6),
-    0 8px 25px rgba(0,0,0,0.6);
-}
-
-/* ---------- ULTRA RARE ---------- */
-.rarity-Ultra-Rare {
-  box-shadow:
-    0 0 16px rgba(236,72,153,0.9),
-    0 0 40px rgba(236,72,153,0.6),
-    0 8px 25px rgba(0,0,0,0.6);
-}
-
-/* ---------- SPECIAL ILLUSTRATION RARE ---------- */
-.rarity-Special-Illustration-Rare {
-  box-shadow:
-    0 0 18px rgba(255,180,50,1),
-    0 0 45px rgba(255,120,0,0.7),
-    0 8px 25px rgba(0,0,0,0.6);
-}
-
-/* ---------- HYPER RARE (RAINBOW GLOW) ---------- */
 .rarity-Hyper-Rare {
   animation: rainbowGlow 3s linear infinite;
 }
 
 @keyframes rainbowGlow {
-  0% {
-    box-shadow:
-      0 0 18px #ff0000,
-      0 0 35px #ff0000,
-      0 8px 25px rgba(0,0,0,0.6);
-  }
-  25% {
-    box-shadow:
-      0 0 18px #00ff00,
-      0 0 35px #00ff00,
-      0 8px 25px rgba(0,0,0,0.6);
-  }
-  50% {
-    box-shadow:
-      0 0 18px #00ffff,
-      0 0 35px #00ffff,
-      0 8px 25px rgba(0,0,0,0.6);
-  }
-  75% {
-    box-shadow:
-      0 0 18px #ff00ff,
-      0 0 35px #ff00ff,
-      0 8px 25px rgba(0,0,0,0.6);
-  }
-  100% {
-    box-shadow:
-      0 0 18px #ff0000,
-      0 0 35px #ff0000,
-      0 8px 25px rgba(0,0,0,0.6);
-  }
+  0% { box-shadow: 0 0 24px red; }
+  50% { box-shadow: 0 0 24px cyan; }
+  100% { box-shadow: 0 0 24px red; }
 }
