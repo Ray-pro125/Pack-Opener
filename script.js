@@ -99,20 +99,13 @@ packDiv.addEventListener("click", function revealLastThree(){
 });
 
 /* START SCREEN */
-const setsList=["Z-Genesis_Melemele","Soaring_Titans"];
-setsList.forEach(s=>{
-  const btn=document.createElement("button");
-  btn.textContent=s;
-  btn.onclick=()=>loadSet(`sets/${s}.json`);
-  availableSetsDiv.appendChild(btn);
-});
 importSetBtn.onclick=()=>jsonInput.click();
 jsonInput.onchange=(e)=>{
   const f=jsonInput.files[0];
   if(!f||!f.name.endsWith(".json")) return alert("Please select a JSON file");
-  const reader=new FileReader();
-  reader.onload=ev=>{ try{ loadSet(ev.target.result); } catch { alert("Invalid JSON file"); } };
-  reader.readAsText(f);
+  const r=new FileReader();
+  r.onload=ev=>{ try{ loadSet(ev.target.result); }catch{alert("Invalid JSON");} };
+  r.readAsText(f);
 };
 
 /* NAVIGATION */
