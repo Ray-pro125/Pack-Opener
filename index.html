@@ -35,8 +35,20 @@
 
   <div id="loading">Loading set…</div>
 
-  <div id="stats"></div>
+  <h2>Pack</h2>
+  <div id="pack"></div>
 
+  <div id="underPackControls" class="hidden">
+    <button id="viewStats">View Stats</button>
+    <button id="viewCollection">View Collection</button>
+  </div>
+
+</div>
+
+<!-- STATS PAGE -->
+<div id="statsPage" class="hidden">
+  <button id="backToAppFromStats">Back</button>
+  <div id="stats"></div>
   <div id="completion">
     <div class="bar">
       <span id="regularLabel"></span>
@@ -47,7 +59,11 @@
       <div class="fill" id="masterBar"></div>
     </div>
   </div>
+</div>
 
+<!-- COLLECTION PAGE -->
+<div id="collectionPage" class="hidden">
+  <button id="backToAppFromCollection">Back</button>
   <div id="filters">
     <label>
       Filter:
@@ -56,13 +72,7 @@
       </select>
     </label>
   </div>
-
-  <h2>Pack</h2>
-  <div id="pack"></div>
-
-  <h2>Collection</h2>
   <div id="collection"></div>
-
 </div>
 
 <script src="script.js"></script>
