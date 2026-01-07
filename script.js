@@ -1,101 +1,142 @@
-let cards=[],availableRarities={},collection=JSON.parse(localStorage.getItem("collection"))||{};
-let stats=JSON.parse(localStorage.getItem("packStats"))||{packsOpened:0,totalCards:0,rarities:{}};
+let cards = [];
+let availableRarities = {};
+let stats = JSON.parse(localStorage.getItem("packStats")) || { packsOpened:0,totalCards:0,rarities:{} };
+let collection = JSON.parse(localStorage.getItem("collection")) || {};
 
-const startScreen=document.getElementById("start-screen");
-const openPackPage=document.getElementById("openPackPage");
-const collectionStatsPage=document.getElementById("collectionStatsPage");
-const packDiv=document.getElementById("pack");
-const collectionDiv=document.getElementById("collection");
-const filterSelect=document.getElementById("rarityFilter");
-const loading=document.getElementById("loading");
+/* ---------- DOM ---------- */
+const startScreen = document.getElementById("startScreen");
+const app = document.getElementById("app");
+const openPackBtn = document.getElementById("openPack");
+const viewCollectionBtn = document.getElementById("viewCollection");
+const backToStartBtn = document.getElementById("backToStart");
+const packDiv = document.getElementById("pack");
+const collectionDiv = document.getElementById("collection");
+const statsDiv = document.getElementById("stats");
+const completionDiv = document.getElementById("completion");
+const loadingDiv = document.getElementById("loading");
+const availableSetsDiv = document.getElementById("availableSets");
+const importSetBtn = document.getElementById("importSet");
+const jsonInput = document.getElementById("jsonInput");
 
-const setSelector=document.getElementById("setSelector");
-const loadSetBtn=document.getElementById("loadSetBtn");
+/* ---------- STATS & COLLECTION ---------- */
+function saveStats(){ localStorage.setItem("packStats",JSON.stringify(stats)); }
+function saveCollection(){ localStorage.setItem("collection",JSON.stringify(collection)); }
 
-fetch("sets/index.json").then(r=>r.json()).then(data=>{
-  setSelector.innerHTML='<option value="" disabled selected>Select a set</option>';
-  data.forEach(f=>{const opt=document.createElement("option"); opt.value=f; opt.textContent=f.replace(".json",""); setSelector.appendChild(opt);});
-}).catch(()=>alert("Failed to load sets list."));
-
-loadSetBtn.onclick=()=>{if(!setSelector.value) return alert("Select a set first."); loadSet(`sets/${setSelector.value}`);}
-document.getElementById("importSet").onclick=()=>document.getElementById("fileInput").click();
-document.getElementById("fileInput").addEventListener("change",e=>{const reader=new FileReader(); reader.onload=ev=>initSet(JSON.parse(ev.target.result).data); reader.readAsText(e.target.files[0]);});
-
-function loadSet(path){
-  loading.style.display="block";
-  fetch(path).then(r=>r.json()).then(j=>initSet(j.data)).catch(()=>alert("Failed to load set."));
+function updateStatsDisplay(){
+  let html = `<h3>Packs Opened: ${stats.packsOpened}</h3>
+              <h3>Total cards: ${stats.totalCards}</h3>
+              <ul>`;
+  ["Common","Uncommon","Rare","Double Rare","Illustration Rare","Ultra Rare","Special Illustration Rare","Hyper Rare"].forEach(r=>{
+    html += `<li>${r}: ${stats.rarities[r]||0}</li>`;
+  });
+  html += "</ul>";
+  statsDiv.innerHTML = html;
 }
 
-function initSet(data){
-  cards=data; availableRarities={};
-  cards.forEach(c=>{if(!availableRarities[c.rarity]) availableRarities[c.rarity]=[]; availableRarities[c.rarity].push(c);});
-  buildFilter();
-  startScreen.classList.add("hidden");
-  openPackPage.classList.remove("hidden");
-  document.getElementById("openPack").disabled=false;
-  renderCollection(); updateStats(); updateCompletion();
-  loading.style.display="none";
+/* ---------- COLLECTION ---------- */
+function renderCollection(){
+  collectionDiv.innerHTML = "";
+  const arr = Object.values(collection);
+  arr.sort((a,b)=>{
+    const ma = a.number.match(/^(\d+)([a-z]?)$/i);
+    const mb = b.number.match(/^(\d+)([a-z]?)$/i);
+    const na = parseInt(ma[1]), nb = parseInt(mb[1]);
+    const la = ma[2]||'', lb = mb[2]||'';
+    if(na!==nb) return na-nb; if(la<lb) return -1; if(la>lb) return 1; return 0;
+  });
+  arr.forEach(c=>{
+    const div = document.createElement("div");
+    div.className = `card rarity-${c.rarity.replace(/\s+/g,'-')}`;
+    div.innerHTML = `<img src="${c.image}"><div>${c.name} ×${c.count}</div>`;
+    collectionDiv.appendChild(div);
+  });
 }
 
-/* HELPERS */
-function randomFrom(arr){if(!arr||!arr.length)return null; return arr[Math.floor(Math.random()*arr.length)];}
-function saveCollection(){localStorage.setItem("collection",JSON.stringify(collection));}
-function saveStats(){localStorage.setItem("packStats",JSON.stringify(stats));}
-function pullWeighted(table){const valid=table.filter(e=>availableRarities[e.rarity]?.length); if(!valid.length) return randomFrom(cards); const total=valid.reduce((s,e)=>s+e.weight,0); let roll=Math.random()*total; for(let e of valid){if(roll<e.weight)return randomFrom(availableRarities[e.rarity]); roll-=e.weight;} return randomFrom(cards);}
+/* ---------- LOAD SET ---------- */
+function buildAvailableRarities(){
+  availableRarities = {};
+  cards.forEach(c=>{ if(!availableRarities[c.rarity]) availableRarities[c.rarity]=[]; availableRarities[c.rarity].push(c); });
+}
 
-/* OPEN PACK */
-document.getElementById("openPack").onclick=()=>{
+function loadSet(file){
+  loadingDiv.style.display="block";
+  fetch(file).then(r=>r.json()).then(j=>{
+    cards=j.data;
+    buildAvailableRarities();
+    loadingDiv.style.display="none";
+    openPackBtn.disabled=false;
+    startScreen.classList.add("hidden");
+    app.classList.remove("hidden");
+  });
+}
+
+/* ---------- HELPERS ---------- */
+function randomFrom(arr){ if(!arr||!arr.length) return null; return arr[Math.floor(Math.random()*arr.length)]; }
+function getByRarity(r){ return availableRarities[r]||[]; }
+function weightedRoll(table){
+  const filtered = table.filter(e=>getByRarity(e.rarity).length);
+  if(!filtered.length) return null;
+  let total=filtered.reduce((s,e)=>s+e.weight,0), roll=Math.random()*total;
+  for(let e of filtered){ if(roll<e.weight) return e.rarity; roll-=e.weight; }
+  return filtered[filtered.length-1].rarity;
+}
+function pullWeighted(table){ const r=weightedRoll(table); return randomFrom(getByRarity(r))||randomFrom(cards); }
+
+/* ---------- OPEN PACK ---------- */
+function openPack(){
+  if(!cards.length){ alert("Set not loaded"); return; }
   packDiv.innerHTML="";
   const pulls=[];
-  for(let i=0;i<4;i++) pulls.push(randomFrom(availableRarities["Common"]||cards));
-  for(let i=0;i<3;i++) pulls.push(randomFrom(availableRarities["Uncommon"]||cards));
+  for(let i=0;i<4;i++) pulls.push(randomFrom(getByRarity("Common"))||randomFrom(cards));
+  for(let i=0;i<3;i++) pulls.push(randomFrom(getByRarity("Uncommon"))||randomFrom(cards));
   pulls.push(pullWeighted([{rarity:"Common",weight:55},{rarity:"Uncommon",weight:32},{rarity:"Rare",weight:11},{rarity:"Illustration Rare",weight:1.5},{rarity:"Special Illustration Rare",weight:0.4},{rarity:"Hyper Rare",weight:0.1}]));
   pulls.push(pullWeighted([{rarity:"Common",weight:35},{rarity:"Uncommon",weight:43},{rarity:"Rare",weight:18},{rarity:"Illustration Rare",weight:12},{rarity:"Special Illustration Rare",weight:2.3},{rarity:"Hyper Rare",weight:0.7}]));
   pulls.push(pullWeighted([{rarity:"Rare",weight:11},{rarity:"Double Rare",weight:3},{rarity:"Ultra Rare",weight:1}]));
 
   stats.packsOpened++; stats.totalCards+=pulls.length;
-  pulls.forEach(c=>{stats.rarities[c.rarity]=(stats.rarities[c.rarity]||0)+1; const k=c.name+"_"+c.number; if(!collection[k])collection[k]={...c,count:0}; collection[k].count++;});
+  pulls.forEach(c=>stats.rarities[c.rarity]=(stats.rarities[c.rarity]||0)+1);
 
-  saveCollection(); saveStats();
-  renderPack(pulls); renderCollection(); updateStats(); updateCompletion();
-};
+  pulls.forEach(c=>{
+    const key=`${c.name}_${c.number}`;
+    if(!collection[key]) collection[key]={...c,count:0};
+    collection[key].count++;
+  });
 
-function renderPack(pulls){pulls.forEach((c,i)=>{const cls=c.rarity.replace(/\s+/g,"-"); const div=document.createElement("div"); div.className=`card rarity-${cls}`; div.innerHTML=`<img src="${c.image}">`; packDiv.appendChild(div); setTimeout(()=>div.classList.add("show"),i*250);});}
+  saveCollection(); renderCollection(); saveStats(); updateStatsDisplay();
 
-function renderCollection(){
-  const filter=filterSelect.value||"All";
-  const arr=Object.values(collection).filter(c=>filter==="All"||c.rarity===filter)
-    .sort((a,b)=>{const mA=a.number.match(/^(\d+)([a-z]?)$/i);const mB=b.number.match(/^(\d+)([a-z]?)$/i);const nA=parseInt(mA[1]),nB=parseInt(mB[1]);const lA=mA[2]||"",lB=mB[2]||""; if(nA!==nB)return nA-nB; if(lA<lB)return -1; if(lA>lB)return 1; return 0;});
-  collectionDiv.innerHTML=""; arr.forEach(c=>{const cls=c.rarity.replace(/\s+/g,"-"); const div=document.createElement("div"); div.className=`card rarity-${cls} show`; div.innerHTML=`<img src="${c.image}"><div>${c.name} ×${c.count}</div>`; collectionDiv.appendChild(div);});
+  pulls.forEach((c,i)=>{
+    const div=document.createElement("div");
+    div.className=`card rarity-${c.rarity.replace(/\s+/g,'-')}`;
+    if(i>=pulls.length-3) div.classList.add("last-three");
+    div.innerHTML=`<img src="${c.image}" alt="${c.name}">`;
+    packDiv.appendChild(div);
+    setTimeout(()=>div.classList.add("show"),i*350);
+  });
 }
 
-function buildFilter(){filterSelect.innerHTML=`<option value="All">All</option>`; Object.keys(availableRarities).forEach(r=>{const opt=document.createElement("option"); opt.value=r; opt.textContent=r; filterSelect.appendChild(opt);});}
-filterSelect.onchange=renderCollection;
-
-function updateStats(){const s=document.getElementById("stats"); let html=`<h3>Packs Opened: ${stats.packsOpened}</h3><h3>Total Cards: ${stats.totalCards}</h3><ul>`; Object.entries(stats.rarities).forEach(([r,c])=>html+=`<li>${r}: ${c}</li>`); html+="</ul>"; s.innerHTML=html;}
-
-function updateCompletion(){
-  const uO=Object.keys(collection);
-  const regularRarities=["Common","Uncommon","Rare","Double Rare"];
-  const tR=cards.filter(c=>regularRarities.includes(c.rarity)).length;
-  const oR=uO.filter(k=>regularRarities.includes(collection[k].rarity)).length;
-  const rPct=Math.floor((oR/tR)*100);
-  document.getElementById("regularLabel").textContent=`Regular: ${oR}/${tR} (${rPct}%)`;
-  document.getElementById("regularBar").style.width=rPct+"%";
-  const tM=cards.length; const oM=uO.length; const mPct=Math.floor((oM/tM)*100);
-  const masterBox=document.getElementById("masterContainer"); masterBox.style.display=tM>0?"block":"none";
-  document.getElementById("masterLabel").textContent=`Master: ${oM}/${tM} (${mPct}%)`;
-  document.getElementById("masterBar").style.width=mPct+"%";
-}
-
-/* NAVIGATION */
-document.getElementById("viewCollectionStats").onclick=()=>{openPackPage.classList.add("hidden"); collectionStatsPage.classList.remove("hidden"); renderCollection(); updateStats(); updateCompletion();};
-document.getElementById("backToOpenPack").onclick=()=>{collectionStatsPage.classList.add("hidden"); openPackPage.classList.remove("hidden");};
-document.getElementById("backToStart").onclick=()=>{openPackPage.classList.add("hidden"); startScreen.classList.remove("hidden");};
-
-/* RESET */
-document.getElementById("resetData").onclick=()=>{
-  if(!confirm("Reset all data?")) return;
-  localStorage.clear(); stats={packsOpened:0,totalCards:0,rarities:{}}; collection={};
-  renderCollection(); updateStats(); updateCompletion();
+/* ---------- START SCREEN ---------- */
+importSetBtn.onclick=()=>jsonInput.click();
+jsonInput.onchange=(e)=>{
+  const f=jsonInput.files[0];
+  if(!f||!f.name.endsWith(".json")) return alert("Please select a JSON file");
+  const r=new FileReader();
+  r.onload=ev=>{ try{ loadSet(ev.target.result); }catch{alert("Invalid JSON");} };
+  r.readAsText(f);
 };
+
+/* ---------- NAVIGATION ---------- */
+viewCollectionBtn.onclick=()=>collectionDiv.parentElement.classList.remove("hidden");
+backToStartBtn.onclick=()=>{
+  app.classList.add("hidden");
+  startScreen.classList.remove("hidden");
+};
+
+/* ---------- LOAD AVAILABLE SETS ---------- */
+fetch("sets").then(r=>r.json()).then(list=>{
+  list.forEach(s=>{
+    const btn=document.createElement("button");
+    btn.textContent=s;
+    btn.onclick=()=>loadSet(`sets/${s}`);
+    availableSetsDiv.appendChild(btn);
+  });
+}).catch(()=>{}); // fallback for manual import
