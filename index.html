@@ -16,27 +16,30 @@
   <input type="file" id="jsonInput" accept=".json" style="display:none">
 </div>
 
-<!-- ---------------- MAIN APP ---------------- -->
-<div id="app" class="hidden">
+<!-- ---------------- OPEN PACK PAGE ---------------- -->
+<div id="openPackPage" class="hidden">
   <div id="controls">
     <button id="openPack">Open Pack</button>
     <button id="viewCollection">View Collection & Stats</button>
-    <button id="resetData">Reset All Data</button> <!-- Reset now on Open Pack page -->
+    <button id="resetData">Reset All Data</button>
     <button id="backToStart">Back to Start</button>
   </div>
 
-  <div id="loading">Loading...</div>
+  <div id="loading">Loading set...</div>
 
   <div id="pack-container">
     <h2>Pack</h2>
     <div id="pack"></div>
   </div>
+</div>
 
-  <div id="collection-container" class="hidden">
-    <h2>Collection & Stats</h2>
-    <div id="stats"></div>
-    <div id="collection"></div>
+<!-- ---------------- COLLECTION & STATS PAGE ---------------- -->
+<div id="collectionPage" class="hidden">
+  <div id="controls">
+    <button id="backToOpenPack">Back to Open Pack</button>
   </div>
+  <div id="stats"></div>
+  <div id="collection"></div>
 </div>
 
 <script src="script.js"></script>
