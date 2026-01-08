@@ -113,70 +113,75 @@ function pullWeighted(table){ const r=weightedRoll(table); return randomFrom(get
 
 /* ---------------- OPEN PACK ---------------- */
 function openPack() {
-  if(!cards.length){ alert("Set not loaded"); return; }
-  packDiv.innerHTML="";
+  if (!cards.length) { alert("Set not loaded"); return; }
+  packDiv.innerHTML = "";
 
-  const pulls=[];
-  for(let i=0;i<4;i++) pulls.push(randomFrom(getByRarity("Common"))||randomFrom(cards));
-  for(let i=0;i<3;i++) pulls.push(randomFrom(getByRarity("Uncommon"))||randomFrom(cards));
+  const pulls = [];
+  for (let i = 0; i < 4; i++) pulls.push(randomFrom(getByRarity("Common")) || randomFrom(cards));
+  for (let i = 0; i < 3; i++) pulls.push(randomFrom(getByRarity("Uncommon")) || randomFrom(cards));
   pulls.push(pullWeighted([{ rarity:"Common", weight:55},{ rarity:"Uncommon", weight:32},{ rarity:"Rare", weight:11},{ rarity:"Illustration Rare", weight:1.5},{ rarity:"Special Illustration Rare", weight:0.4},{ rarity:"Hyper Rare", weight:0.1}]));
   pulls.push(pullWeighted([{ rarity:"Common", weight:35},{ rarity:"Uncommon", weight:43},{ rarity:"Rare", weight:18},{ rarity:"Illustration Rare", weight:12},{ rarity:"Special Illustration Rare", weight:2.3},{ rarity:"Hyper Rare", weight:0.7}]));
   pulls.push(pullWeighted([{ rarity:"Rare", weight:11},{ rarity:"Double Rare", weight:3},{ rarity:"Ultra Rare", weight:1}]));
 
-  stats.packsOpened++; stats.totalCards+=pulls.length;
-  pulls.forEach(c=>stats.rarities[c.rarity]=(stats.rarities[c.rarity]||0)+1);
-  pulls.forEach(c=>{ const key=`${c.name}_${c.number}`; if(!collection[key]) collection[key]={...c,count:0}; collection[key].count++; });
+  stats.packsOpened++;
+  stats.totalCards += pulls.length;
+  pulls.forEach(c => stats.rarities[c.rarity] = (stats.rarities[c.rarity] || 0) + 1);
+  pulls.forEach(c => { 
+    const key = `${c.name}_${c.number}`; 
+    if (!collection[key]) collection[key] = { ...c, count: 0 }; 
+    collection[key].count++; 
+  });
 
-  saveCollection(); renderCollection(collectionFilter.value||null); saveStats(); updateStatsDisplay();
+  saveCollection();
+  renderCollection(collectionFilter.value || null);
+  saveStats();
+  updateStatsDisplay();
 
   /* ------- 3 Last Cards -------- */
-pulls.forEach((c, i) => {
-  const div = document.createElement("div");
-  div.className = `card rarity-${c.rarity.replace(/\s+/g, '-')}`;
-  div.innerHTML = `<img src="${c.image}" alt="${c.name}">`;
+  pulls.forEach((c, i) => {
+    const div = document.createElement("div");
+    div.className = `card rarity-${c.rarity.replace(/\s+/g, '-')}`;
+    div.innerHTML = `<img src="${c.image}" alt="${c.name}">`;
 
-  if (i < pulls.length - 3) {
-    // First 7 cards: normal reveal
-    setTimeout(() => div.classList.add("show"), i * 350);
-    packDiv.appendChild(div);
-  } else {
-    // Last 3 cards: delay placement, glow appears after first 7
-    setTimeout(() => {
+    if (i < pulls.length - 3) {
+      // First 7 cards: normal reveal
+      setTimeout(() => div.classList.add("show"), i * 350);
       packDiv.appendChild(div);
-
-      // Start glow after first 7 cards are revealed
+    } else {
+      // Last 3 cards: delay placement, glow appears after first 7
       setTimeout(() => {
-        div.classList.add("last-three-hidden");   // start glow
-        div.querySelector("img").style.visibility = "hidden"; // hide image
-        // Trigger reflow for animation
-        void div.offsetWidth;
+        packDiv.appendChild(div);
 
-        // Click to reveal the card
-        div.addEventListener("click", function reveal() {
-          div.classList.add("show");
-          div.classList.remove("last-three-hidden");
-          div.querySelector("img").style.visibility = "visible";
-          div.removeEventListener("click", reveal);
-        });
-      }, 1000); // glow starts 1 second after first 7 cards
+        // Glow starts after first 7 cards
+        setTimeout(() => {
+          div.classList.add("last-three-hidden"); // start glow
+          div.querySelector("img").style.visibility = "hidden";
 
-    }, i * 350); // slight delay to keep spacing consistent
-  }
-});
+          void div.offsetWidth; // reflow
+
+          div.addEventListener("click", function reveal() {
+            div.classList.add("show");
+            div.classList.remove("last-three-hidden");
+            div.querySelector("img").style.visibility = "visible";
+            div.removeEventListener("click", reveal);
+          });
+        }, 1000); // glow delay
+      }, i * 350);
+    }
+  });
 }
 
 /* ---------------- START SCREEN ---------------- */
-// This runs **once**, on page load
 function initStartScreen() {
-  ["Z-Genesis_Melemele","Soaring_Titans"].forEach(s=>{
-    const btn=document.createElement("button");
-    btn.textContent=s;
-    btn.onclick=()=>loadSet(`sets/${s}.json`);
+  ["Z-Genesis_Melemele","Soaring_Titans"].forEach(s => {
+    const btn = document.createElement("button");
+    btn.textContent = s;
+    btn.onclick = () => loadSet(`sets/${s}.json`);
     availableSetsDiv.appendChild(btn);
   });
 }
 
-// Initialize once
+// Run once on page load
 initStartScreen();
 
 /* ---------------- IMPORT ---------------- */
