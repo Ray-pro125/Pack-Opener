@@ -129,28 +129,36 @@ function openPack(){
 
   saveCollection(); renderCollection(collectionFilter.value||null); saveStats(); updateStatsDisplay();
 
-  pulls.forEach((c,i)=>{
-    const div=document.createElement("div");
-    div.className=`card rarity-${c.rarity.replace(/\s+/g,'-')}`;
-    div.innerHTML=`<img src="${c.image}" alt="${c.name}">`;
+/* ------- 3 Last Cards -------- */
+  pulls.forEach((c, i) => {
+  const div = document.createElement("div");
+  div.className = `card rarity-${c.rarity.replace(/\s+/g, '-')}`;
+  div.innerHTML = `<img src="${c.image}" alt="${c.name}">`;
 
   if (i < pulls.length - 3) {
-  setTimeout(() => div.classList.add("show"), i * 350);
-  packDiv.appendChild(div);
-} else {
-  // Delay adding glow until all previous cards are shown
-  setTimeout(() => {
-    div.classList.add("last-three-hidden"); // glow appears but image hidden
+    // First cards: normal reveal
+    setTimeout(() => div.classList.add("show"), i * 350);
     packDiv.appendChild(div);
+  } else {
+    // Last 3 cards: delay glow and click-to-reveal
+    setTimeout(() => {
+      div.classList.add("last-three-hidden"); // glow appears, image hidden
+      div.querySelector("img").style.visibility = "hidden"; // ensure image hidden
+      packDiv.appendChild(div);
 
-    // Click-to-reveal
-    div.addEventListener("click", function reveal() {
-      div.classList.add("show");
-      div.classList.remove("last-three-hidden");
-      div.removeEventListener("click", reveal);
-    });
-  }, (pulls.length - 3) * 350);
-}
+      // Trigger reflow to make animation apply reliably
+      void div.offsetWidth;
+
+      // Click to reveal
+      div.addEventListener("click", function reveal() {
+        div.classList.add("show");
+        div.classList.remove("last-three-hidden");
+        div.querySelector("img").style.visibility = "visible";
+        div.removeEventListener("click", reveal);
+      });
+    }, (pulls.length - 3) * 350 + 400); // slightly after previous cards
+  }
+});
 
 /* ---------------- START SCREEN ---------------- */
 ["Z-Genesis_Melemele","Soaring_Titans"].forEach(s=>{
