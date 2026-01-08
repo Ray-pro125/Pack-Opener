@@ -102,3 +102,20 @@ progress::-webkit-progress-value {
   background: linear-gradient(90deg, #3b82f6, #2563eb);
   border-radius: 8px;
 }
+
+/* Hidden image for last 3 cards */
+.last-three-hidden img {
+  visibility: hidden;
+}
+
+/* Pulsing glow animation */
+@keyframes glowPulse {
+  0% { filter: brightness(1); }
+  50% { filter: brightness(1.35); }
+  100% { filter: brightness(1); }
+}
+
+.last-three-hidden {
+  animation: glowPulse 2.5s ease-in-out infinite;
+  cursor: pointer;
+}
