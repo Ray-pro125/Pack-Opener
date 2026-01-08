@@ -8,6 +8,7 @@ const app = document.getElementById("app");
 const openPackBtn = document.getElementById("openPack");
 const viewCollectionBtn = document.getElementById("viewCollection");
 const backToStartBtn = document.getElementById("backToStart");
+const resetBtn = document.getElementById("resetData");
 const packDiv = document.getElementById("pack");
 const collectionDiv = document.getElementById("collection");
 const statsDiv = document.getElementById("stats");
@@ -15,7 +16,6 @@ const loadingDiv = document.getElementById("loading");
 const availableSetsDiv = document.getElementById("availableSets");
 const importSetBtn = document.getElementById("importSet");
 const jsonInput = document.getElementById("jsonInput");
-const resetBtn = document.getElementById("resetData");
 
 /* ---------------- STATS & COLLECTION ---------------- */
 function saveStats() { localStorage.setItem("packStats", JSON.stringify(stats)); }
@@ -143,4 +143,53 @@ function openPack() {
     if (i >= pulls.length - 3) div.classList.add("last-three-hidden");
     div.innerHTML = `<img src="${c.image}" alt="${c.name}">`;
     packDiv.appendChild(div);
-    if (i < pulls.length - 3) setTimeout
+    if (i < pulls.length - 3) setTimeout(() => div.classList.add("show"), i * 350);
+  });
+}
+
+/* Reveal last 3 cards on click */
+packDiv.addEventListener("click", function revealLastThree() {
+  const lastThree = packDiv.querySelectorAll(".last-three-hidden");
+  lastThree.forEach(div => div.classList.add("show"));
+  lastThree.forEach(div => div.classList.remove("last-three-hidden"));
+  packDiv.removeEventListener("click", revealLastThree);
+});
+
+/* ---------------- START SCREEN ---------------- */
+const setsList = ["Z-Genesis_Melemele", "Soaring_Titans"];
+setsList.forEach(s => {
+  const btn = document.createElement("button");
+  btn.textContent = s;
+  btn.onclick = () => loadSet(`sets/${s}.json`);
+  availableSetsDiv.appendChild(btn);
+});
+
+/* ---------------- IMPORT ---------------- */
+importSetBtn.onclick = () => jsonInput.click();
+jsonInput.onchange = (e) => {
+  const f = jsonInput.files[0];
+  if (!f || !f.name.endsWith(".json")) return alert("Please select a JSON file");
+  const r = new FileReader();
+  r.onload = ev => { loadSet(ev.target.result); };
+  r.readAsText(f);
+};
+
+/* ---------------- NAVIGATION ---------------- */
+viewCollectionBtn.onclick = () => collectionDiv.parentElement.classList.remove("hidden");
+backToStartBtn.onclick = () => { app.classList.add("hidden"); startScreen.classList.remove("hidden"); };
+openPackBtn.onclick = openPack;
+
+/* ---------------- RESET BUTTON ---------------- */
+resetBtn.onclick = () => {
+  if (!confirm("This will erase all packs opened and your collection. Are you sure?")) return;
+  localStorage.removeItem("packStats");
+  localStorage.removeItem("collection");
+  stats = { packsOpened: 0, totalCards: 0, rarities: {} };
+  collection = {};
+  updateStatsDisplay();
+  renderCollection();
+};
+
+/* ---------------- INITIAL ---------------- */
+updateStatsDisplay();
+renderCollection();
