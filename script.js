@@ -163,6 +163,7 @@ pulls.forEach((c, i) => {
     }, i * 350); // slight delay to keep spacing consistent
   }
 });
+}
 
 /* ---------------- START SCREEN ---------------- */
 // This runs **once**, on page load
