@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pokémon TCG Simulator</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pokémon TCG Simulator</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -37,33 +37,35 @@
 <div id="collectionPage" class="hidden">
   <div id="controls">
     <button id="backToOpenPack">Back to Open Pack</button>
-    <label for="collectionFilter">Filter by Rarity:</label>
-    <select id="collectionFilter">
-      <option value="">All</option>
-      <option value="Common">Common</option>
-      <option value="Uncommon">Uncommon</option>
-      <option value="Rare">Rare</option>
-      <option value="Double Rare">Double Rare</option>
-      <option value="Illustration Rare">Illustration Rare</option>
-      <option value="Ultra Rare">Ultra Rare</option>
-      <option value="Special Illustration Rare">Special Illustration Rare</option>
-      <option value="Hyper Rare">Hyper Rare</option>
-    </select>
   </div>
-  
+
   <!-- Progress bars -->
-<div id="progressBars">
-  <div>
-    <label>Regular Set Completion:</label>
-    <progress id="regularProgress" value="0" max="100"></progress>
+  <div id="progressBars">
+    <div>
+      <label>Regular Set Completion:</label>
+      <progress id="regularProgress" value="0" max="100"></progress>
+    </div>
+    <div>
+      <label>Master Set Completion:</label>
+      <progress id="masterProgress" value="0" max="100"></progress>
+    </div>
   </div>
-  <div>
-    <label>Master Set Completion:</label>
-    <progress id="masterProgress" value="0" max="100"></progress>
-  </div>
-</div>
 
   <div id="stats"></div>
+
+  <label for="collectionFilter">Filter by rarity:</label>
+  <select id="collectionFilter">
+    <option value="">All</option>
+    <option>Common</option>
+    <option>Uncommon</option>
+    <option>Rare</option>
+    <option>Double Rare</option>
+    <option>Illustration Rare</option>
+    <option>Ultra Rare</option>
+    <option>Special Illustration Rare</option>
+    <option>Hyper Rare</option>
+  </select>
+
   <div id="collection"></div>
 </div>
 
