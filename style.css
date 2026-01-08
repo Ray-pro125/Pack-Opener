@@ -31,6 +31,21 @@ button:disabled { background: #444; cursor: not-allowed; }
 #controls { margin: 20px auto; }
 #pack, #collection { display: flex; flex-wrap: wrap; justify-content: center; gap: 14px; }
 
+/* ---------- Meta Master Link --------- */
+#metaLink {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  font-size: 14px;
+  color: #3b82f6;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+#metaLink:hover {
+  text-decoration: underline;
+}
+
 /* ---------- CARDS ---------- */
 .card {
   width: 200px;
