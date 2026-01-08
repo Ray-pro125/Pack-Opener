@@ -21,6 +21,7 @@ const loadingDiv = document.getElementById("loading");
 const availableSetsDiv = document.getElementById("availableSets");
 const importSetBtn = document.getElementById("importSet");
 const jsonInput = document.getElementById("jsonInput");
+const collectionFilter = document.getElementById("collectionFilter"); // optional: dropdown for filtering
 
 /* ---------------- STATS & COLLECTION ---------------- */
 function saveStats(){ localStorage.setItem("packStats",JSON.stringify(stats)); }
@@ -79,7 +80,7 @@ function renderCollection(filterRarity=null){
 
   arr.forEach(c=>{
     const div=document.createElement("div");
-    div.className=`card rarity-${c.rarity.replace(/\s+/g,'-')} show`; // show class added
+    div.className=`card rarity-${c.rarity.replace(/\s+/g,'-')} show`; // add show for glow
     div.innerHTML=`<img src="${c.image}"><div>${c.name} ×${c.count}</div>`;
     collectionDiv.appendChild(div);
   });
@@ -139,24 +140,23 @@ function openPack(){
 
   saveCollection(); renderCollection(); saveStats(); updateStatsDisplay();
 
+  // Render cards
   pulls.forEach((c,i)=>{
     const div=document.createElement("div");
     div.className=`card rarity-${c.rarity.replace(/\s+/g,'-')}`;
-
     div.innerHTML=`<img src="${c.image}" alt="${c.name}">`;
 
     // Last 3 cards glow + click-to-reveal
     if(i < pulls.length - 3){
-      div.classList.add("show"); // already visible
+      div.classList.add("show"); // already revealed
     } else {
-      div.classList.add("last-three-hidden"); // hidden but glowing
+      div.classList.add("last-three-hidden"); // glowing but hidden
       div.addEventListener("click", function reveal(){
         div.classList.add("show");
         div.classList.remove("last-three-hidden");
         div.removeEventListener("click", reveal);
       });
     }
-
     packDiv.appendChild(div);
   });
 }
