@@ -145,10 +145,11 @@ function openPack(){
         div.removeEventListener("click", reveal); 
       }); 
     } 
+    
     packDiv.appendChild(div);
-  
   });
 }
+
 /* ---------------- START SCREEN ---------------- */
 ["Z-Genesis_Melemele","Soaring_Titans"].forEach(s=>{
   const btn=document.createElement("button");
