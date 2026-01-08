@@ -92,8 +92,6 @@ button:disabled { background: #444; cursor: not-allowed; }
   100%{box-shadow:0 0 18px #ff0000,0 0 35px #ff0000;}
 }
 
-.last-three-hidden { opacity:0.6; cursor:pointer; }
-
 #progressBars {
   margin: 15px 0;
   display: flex;
@@ -129,19 +127,21 @@ progress::-webkit-progress-value {
   border-radius: 8px;
 }
 
-/* Hidden image for last 3 cards */
-.last-three-hidden img {
-  visibility: hidden;
+/* Last 3 cards glow animation */
+.last-three-hidden {
+  animation: glowPulse 2s ease-in-out infinite;
+  cursor: pointer;
 }
 
-/* Pulsing glow animation */
 @keyframes glowPulse {
   0% { filter: brightness(1); }
   50% { filter: brightness(1.35); }
   100% { filter: brightness(1); }
 }
 
-.last-three-hidden {
-  animation: glowPulse 2.5s ease-in-out infinite;
-  cursor: pointer;
+/* Ensure image is hidden initially for last 3 cards */
+.last-three-hidden img {
+  visibility: hidden;
+}
+
 }
