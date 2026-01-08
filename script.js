@@ -140,26 +140,27 @@ function openPack(){
 
   saveCollection(); renderCollection(); saveStats(); updateStatsDisplay();
 
-  // Render cards
-  pulls.forEach((c,i)=>{
-    const div=document.createElement("div");
-    div.className=`card rarity-${c.rarity.replace(/\s+/g,'-')}`;
-    div.innerHTML=`<img src="${c.image}" alt="${c.name}">`;
+ pulls.forEach((c, i) => {
+  const div = document.createElement("div");
+  div.className = `card rarity-${c.rarity.replace(/\s+/g, '-')}`;
+  div.innerHTML = `<img src="${c.image}" alt="${c.name}">`;
 
-    // Last 3 cards glow + click-to-reveal
-    if(i < pulls.length - 3){
-      div.classList.add("show"); // already revealed
-    } else {
-      div.classList.add("last-three-hidden"); // glowing but hidden
-      div.addEventListener("click", function reveal(){
-        div.classList.add("show");
-        div.classList.remove("last-three-hidden");
-        div.removeEventListener("click", reveal);
-      });
-    }
-    packDiv.appendChild(div);
-  });
-}
+  if (i < pulls.length - 3) {
+    // First 7 cards: animate sequentially
+    setTimeout(() => div.classList.add("show"), i * 350);
+  } else {
+    // Last 3 cards: glowing but hidden
+    div.classList.add("last-three-hidden");
+    div.addEventListener("click", function reveal() {
+      div.classList.add("show");
+      div.classList.remove("last-three-hidden");
+      div.removeEventListener("click", reveal);
+    });
+  }
+
+  packDiv.appendChild(div);
+});
+
 
 /* ---------------- START SCREEN ---------------- */
 ["Z-Genesis_Melemele","Soaring_Titans"].forEach(s=>{
