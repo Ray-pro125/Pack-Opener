@@ -129,14 +129,15 @@ progress::-webkit-progress-value {
 
 /* Pulsing glow animation for last 3 cards */
 @keyframes glowPulse {
-  0% { filter: brightness(1); }
-  50% { filter: brightness(1.35); }
-  100% { filter: brightness(1); }
+  0% { filter: brightness(1); box-shadow: 0 0 12px rgba(255,255,255,0.2); }
+  50% { filter: brightness(1.35); box-shadow: 0 0 25px rgba(255,255,255,0.6); }
+  100% { filter: brightness(1); box-shadow: 0 0 12px rgba(255,255,255,0.2); }
 }
 
 .last-three-hidden {
   animation: glowPulse 2.5s ease-in-out infinite;
   cursor: pointer;
+  border-radius: 14px; /* match normal card style */
 }
 
 /* Hide image for last 3 cards until clicked */
