@@ -36,19 +36,19 @@ function updateStatsDisplay(){
   html+="</ul>";
   statsDiv.innerHTML=html;
 
-  // Compute completion percentages
-const totalCards = cards.length;
-const collectedCards = Object.values(collection).reduce((sum, c) => sum + (c.count > 0 ? 1 : 0), 0);
-const regularMax = cards.filter(c => c.rarity !== "Double Rare").length; // Regular set
-const regularCollected = Object.values(collection).filter(c => (c.count > 0 && c.rarity !== "Double Rare")).length;
+  // ---------- Progress Bar Calculation ----------
+  // Regular set includes Common, Uncommon, Rare, Double Rare
+  const regularRarities = ["Common","Uncommon","Rare","Double Rare"];
+  const regularMax = cards.filter(c => regularRarities.includes(c.rarity)).length;
+  const regularCollected = Object.values(collection).filter(c => c.count > 0 && regularRarities.includes(c.rarity)).length;
 
-// Master set includes all cards
-const masterCollected = collectedCards;
+  // Master set includes all rarities
+  const masterMax = cards.length;
+  const masterCollected = Object.values(collection).filter(c => c.count > 0).length;
 
-// Update the progress bars
-document.getElementById("regularProgress").value = (regularCollected / regularMax) * 100;
-document.getElementById("masterProgress").value = (masterCollected / totalCards) * 100;
-
+  // Update the progress bars
+  document.getElementById("regularProgress").value = (regularCollected / regularMax) * 100;
+  document.getElementById("masterProgress").value = (masterCollected / masterMax) * 100;
 }
 
 function renderCollection(filterRarity=null){
