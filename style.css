@@ -49,17 +49,11 @@ button:disabled {
   transform: translateY(30px) scale(0.95);
   transition: opacity 0.45s ease, transform 0.45s cubic-bezier(.25,.8,.25,1);
   text-align: center;
-  cursor: pointer;
 }
 
 .card.show { opacity: 1; transform: translateY(0) scale(1); }
 .card img { width: 100%; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
 .card div { margin-top: 6px; font-size: 14px; opacity: 0.85; }
-
-/* Last 3 pack cards: glow visible before click */
-.last-three-hidden {
-  opacity: 0.6 !important; /* partially visible */
-}
 
 /* ---------- STATS ---------- */
 #stats { margin-top: 25px; background: rgba(20,20,20,0.85); padding:16px 22px; border-radius:12px; display:inline-block; text-align:left; box-shadow:0 6px 20px rgba(0,0,0,0.6);}
@@ -83,4 +77,14 @@ button:disabled {
   50%{box-shadow:0 0 18px #00ffff,0 0 35px #00ffff;}
   75%{box-shadow:0 0 18px #ff00ff,0 0 35px #ff00ff;}
   100%{box-shadow:0 0 18px #ff0000,0 0 35px #ff0000;}
+}
+
+/* Last 3 cards glow pulse */
+.last-three-card {
+  animation: glowPulse 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes glowPulse {
+  0% { transform: translateY(0) scale(1); box-shadow: inherit; }
+  100% { transform: translateY(-5px) scale(1.05); }
 }
