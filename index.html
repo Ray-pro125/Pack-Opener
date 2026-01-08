@@ -37,8 +37,26 @@
 <div id="collectionPage" class="hidden">
   <div id="controls">
     <button id="backToOpenPack">Back to Open Pack</button>
+    <select id="rarityFilter">
+      <option value="all">All Rarities</option>
+      <option value="Common">Common</option>
+      <option value="Uncommon">Uncommon</option>
+      <option value="Rare">Rare</option>
+      <option value="Double-Rare">Double Rare</option>
+      <option value="Illustration-Rare">Illustration Rare</option>
+      <option value="Ultra-Rare">Ultra Rare</option>
+      <option value="Special-Illustration-Rare">Special Illustration Rare</option>
+      <option value="Hyper-Rare">Hyper Rare</option>
+    </select>
   </div>
+
   <div id="stats"></div>
+  
+  <div id="progressBars">
+    <div>Regular Set Completion: <div class="progress-container"><div id="regularProgress" class="progress-bar"></div></div></div>
+    <div>Master Set Completion: <div class="progress-container"><div id="masterProgress" class="progress-bar"></div></div></div>
+  </div>
+
   <div id="collection"></div>
 </div>
 
