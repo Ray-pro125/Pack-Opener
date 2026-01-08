@@ -61,16 +61,30 @@ function buildAvailableRarities() {
   });
 }
 
-function loadSet(file) {
+function loadSet(fileOrJSON) {
   loadingDiv.style.display = "block";
-  fetch(file).then(r => r.json()).then(j => {
-    cards = j.data;
-    buildAvailableRarities();
-    loadingDiv.style.display = "none";
-    openPackBtn.disabled = false;
-    startScreen.classList.add("hidden");
-    app.classList.remove("hidden");
-  });
+  if (typeof fileOrJSON === "string") { // fetched from file
+    fetch(fileOrJSON)
+      .then(r => r.json())
+      .then(j => {
+        cards = j.data;
+        buildAvailableRarities();
+        loadingDiv.style.display = "none";
+        openPackBtn.disabled = false;
+        startScreen.classList.add("hidden");
+        app.classList.remove("hidden");
+      });
+  } else { // raw JSON from import
+    try {
+      const j = JSON.parse(fileOrJSON);
+      cards = j.data;
+      buildAvailableRarities();
+      loadingDiv.style.display = "none";
+      openPackBtn.disabled = false;
+      startScreen.classList.add("hidden");
+      app.classList.remove("hidden");
+    } catch { alert("Invalid JSON"); }
+  }
 }
 
 /* ---------------- HELPERS ---------------- */
@@ -141,30 +155,21 @@ packDiv.addEventListener("click", function revealLastThree() {
 });
 
 /* ---------------- START SCREEN ---------------- */
-availableSetsDiv.innerHTML = "";
-fetch("sets/index.json")
-  .then(res => res.json())
-  .then(list => {
-    list.forEach(file => {
-      const setName = file.replace(".json","");
-      const btn = document.createElement("button");
-      btn.textContent = setName;
-      btn.onclick = () => loadSet(`sets/${file}`);
-      availableSetsDiv.appendChild(btn);
-    });
-  })
-  .catch(err => {
-    console.error("Failed to load sets list:", err);
-    availableSetsDiv.innerHTML = "<p>No sets available</p>";
-  });
+const setsList = ["Z-Genesis_Melemele", "Soaring_Titans"];
+setsList.forEach(s => {
+  const btn = document.createElement("button");
+  btn.textContent = s;
+  btn.onclick = () => loadSet(`sets/${s}.json`);
+  availableSetsDiv.appendChild(btn);
+});
 
-/* Import JSON set */
+/* ---------------- IMPORT ---------------- */
 importSetBtn.onclick = () => jsonInput.click();
 jsonInput.onchange = (e) => {
   const f = jsonInput.files[0];
   if (!f || !f.name.endsWith(".json")) return alert("Please select a JSON file");
   const r = new FileReader();
-  r.onload = ev => { try { loadSet(ev.target.result); } catch { alert("Invalid JSON"); } };
+  r.onload = ev => { loadSet(ev.target.result); };
   r.readAsText(f);
 };
 
@@ -173,6 +178,6 @@ viewCollectionBtn.onclick = () => collectionDiv.parentElement.classList.remove("
 backToStartBtn.onclick = () => { app.classList.add("hidden"); startScreen.classList.remove("hidden"); };
 openPackBtn.onclick = openPack;
 
-/* ---------------- INITIAL RENDER ---------------- */
+/* ---------------- INITIAL ---------------- */
 updateStatsDisplay();
 renderCollection();
