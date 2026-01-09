@@ -152,7 +152,7 @@ progress::-webkit-progress-value {
   transform: scale(1); /* ready for click pop */
 }
 
-/* Grow slightly on hover/click for feedback */
+/* Slight grow on hover for interactivity */
 .last-three-hidden:hover {
   transform: scale(1.05);
   box-shadow: 0 0 35px rgba(255, 255, 255, 0.7);
@@ -165,15 +165,20 @@ progress::-webkit-progress-value {
   transition: opacity 0.5s ease-in-out;
 }
 
-/* Reveal image smoothly when card is clicked */
+/* Reveal image smoothly when clicked */
 .last-three-hidden.show img {
   visibility: visible;
   opacity: 1;
 }
 
-/* Optional: remove glow after reveal */
+/* Stop glow and reset scale after reveal */
 .last-three-hidden.show {
   animation: none;
   box-shadow: 0 0 0 transparent;
   transform: scale(1);
+}
+
+/* Optional: extra glow class applied by JS */
+.card.glow {
+  box-shadow: 0 0 40px rgba(255, 255, 255, 0.7);
 }
