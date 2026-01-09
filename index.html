@@ -26,10 +26,13 @@
 <!-- ---------------- OPEN PACK PAGE ---------------- -->
 <div id="openPackPage" class="hidden">
   <div id="controls">
-    <button id="openPack">Open Pack</button>
     <button id="viewCollection">View Collection & Stats</button>
     <button id="resetData">Reset All Data</button>
     <button id="backToStart">Back to Start</button>
+  </div>
+  
+  <div id="openPackCenter">
+    <button id="openPack">Open Pack</button>
   </div>
 
   <div id="loading">Loading set...</div>
@@ -71,8 +74,16 @@
 
   <div id="stats"></div>
   <div id="collection"></div>
+  
+  <!-- Recent Cards Container -->
+  <div id="recentCardsContainer">
+    <button id="toggleRecentCards" style="margin-top: 20px;">Show Recent Cards</button>
+    <div id="recentCards" class="hidden" style="margin-top: 15px;"></div>
+  </div>
 </div>
 
-<script src="script.js"></script>
+<script src="scripts/url-resolver.js"></script>
+<script src="scripts/meta-lightbox.js"></script>
+<script src="scripts/script.js"></script>
 </body>
 </html>
