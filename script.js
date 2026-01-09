@@ -57,16 +57,13 @@ function updateStatsDisplay(){
   statsDiv.innerHTML=html;
 
   // ---------- Progress Bar Calculation ----------
-  // Regular set includes Common, Uncommon, Rare, Double Rare
   const regularRarities = ["Common","Uncommon","Rare","Double Rare"];
   const regularMax = cards.filter(c => regularRarities.includes(c.rarity)).length;
   const regularCollected = Object.values(collection).filter(c => c.count > 0 && regularRarities.includes(c.rarity)).length;
 
-  // Master set includes all rarities
   const masterMax = cards.length;
   const masterCollected = Object.values(collection).filter(c => c.count > 0).length;
 
-  // Update the progress bars
   document.getElementById("regularProgress").value = (regularCollected / regularMax) * 100;
   document.getElementById("masterProgress").value = (masterCollected / masterMax) * 100;
 }
@@ -136,8 +133,19 @@ function loadSet(fileOrJSON){
 /* ---------------- HELPERS ---------------- */
 function randomFrom(arr){ if(!arr||!arr.length) return null; return arr[Math.floor(Math.random()*arr.length)]; }
 function getByRarity(r){ return availableRarities[r]||[]; }
-function weightedRoll(table){ const f=table.filter(e=>getByRarity(e.rarity).length); if(!f.length) return null; let total=f.reduce((s,e)=>s+e.weight,0),roll=Math.random()*total; for(let e of f){ if(roll<e.weight) return e.rarity; roll-=e.weight;} return f[f.length-1].rarity; }
-function pullWeighted(table){ const r=weightedRoll(table); return randomFrom(getByRarity(r))||randomFrom(cards); }
+function weightedRoll(table){ 
+  const f=table.filter(e=>getByRarity(e.rarity).length); 
+  if(!f.length) return null; 
+  let total=f.reduce((s,e)=>s+e.weight,0),roll=Math.random()*total; 
+  for(let e of f){ if(roll<e.weight) return e.rarity; roll-=e.weight;} 
+  return f[f.length-1].rarity; 
+}
+function pullWeighted(table){ 
+  const r=weightedRoll(table); 
+  const arr = getByRarity(r); 
+  if(!arr.length) return randomFrom(cards) || { name:"Unknown", number:"0", rarity:"Common", image:"" };
+  return randomFrom(arr); 
+}
 
 /* ---------------- OPEN PACK ---------------- */
 function openPack() {
@@ -146,7 +154,6 @@ function openPack() {
 
   const pulls = [];
 
-  // Pull cards
   for (let i = 0; i < 4; i++) pulls.push(randomFrom(getByRarity("Common")) || randomFrom(cards));
   for (let i = 0; i < 3; i++) pulls.push(randomFrom(getByRarity("Uncommon")) || randomFrom(cards));
   pulls.push(pullWeighted([{ rarity:"Common", weight:55},{ rarity:"Uncommon", weight:32},{ rarity:"Rare", weight:11},{ rarity:"Illustration Rare", weight:1.5},{ rarity:"Special Illustration Rare", weight:0.4},{ rarity:"Hyper Rare", weight:0.1}]));
@@ -177,23 +184,17 @@ function openPack() {
     packDiv.appendChild(div);
 
     if (i < normalCardsCount) {
-      // First cards: normal reveal
       setTimeout(() => div.classList.add("show"), i * 350);
     } else {
-      // Last 3 cards: hidden, glow, click-to-reveal
       div.classList.add("last-three-hidden");
-      div.querySelector("img").style.visibility = "hidden";
+      const img = div.querySelector("img");
+      img.style.visibility = "hidden";
+      div.classList.add("glow");
 
-      // Stagger glow for anticipation
-      setTimeout(() => {
-        div.classList.add("glow");
-      }, (i - normalCardsCount) * 800); // each card glows in sequence
-
-      // Click to fully reveal
       div.addEventListener("click", function reveal() {
         div.classList.add("show");
         div.classList.remove("last-three-hidden", "glow");
-        div.querySelector("img").style.visibility = "visible";
+        img.style.visibility = "visible";
         div.removeEventListener("click", reveal);
       });
     }
@@ -209,8 +210,6 @@ function initStartScreen() {
     availableSetsDiv.appendChild(btn);
   });
 }
-
-// Run once on page load
 initStartScreen();
 
 /* ---------------- IMPORT ---------------- */
@@ -223,18 +222,13 @@ jsonInput.onchange=(e)=>{
   r.readAsText(f);
 };
 
-/* URL IMPORT (only if elements exist) */
 if (importSetUrlBtn && setUrlInput && setUrlWrapper) {
   importSetUrlBtn.onclick = async () => {
-
-    // First click: reveal input
     if (setUrlWrapper.style.display === "none") {
       setUrlWrapper.style.display = "block";
       setUrlInput.focus();
       return;
     }
-
-    // Second click: attempt import
     const url = setUrlInput.value.trim();
     if (!url) return alert("Enter a URL");
 
@@ -249,9 +243,7 @@ if (importSetUrlBtn && setUrlInput && setUrlWrapper) {
 }
 
 /* ---------------- COLLECTION FILTER ---------------- */
-collectionFilter.addEventListener("change", ()=>{
-  renderCollection(collectionFilter.value||null);
-});
+collectionFilter.addEventListener("change", ()=>{ renderCollection(collectionFilter.value||null); });
 
 /* ---------------- NAVIGATION ---------------- */
 viewCollectionBtn.onclick=()=>{ openPackPage.classList.add("hidden"); collectionPage.classList.remove("hidden"); };
@@ -276,4 +268,3 @@ openPackPage.classList.add("hidden");
 collectionPage.classList.add("hidden");
 updateStatsDisplay();
 renderCollection();
-
