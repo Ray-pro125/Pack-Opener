@@ -25,6 +25,7 @@ const jsonInput = document.getElementById("jsonInput");
 /* URL import elements (only used if they exist) */
 const importSetUrlBtn = document.getElementById("importSetUrl");
 const setUrlInput = document.getElementById("setUrlInput");
+const setUrlWrapper = document.getElementById("setUrlWrapper");
 
 const collectionFilter = document.getElementById("collectionFilter");
 
@@ -221,10 +222,20 @@ jsonInput.onchange=(e)=>{
 };
 
 /* URL IMPORT (only if elements exist) */
-if (importSetUrlBtn && setUrlInput) {
+if (importSetUrlBtn && setUrlInput && setUrlWrapper) {
   importSetUrlBtn.onclick = async () => {
+
+    // First click: reveal input
+    if (setUrlWrapper.style.display === "none") {
+      setUrlWrapper.style.display = "block";
+      setUrlInput.focus();
+      return;
+    }
+
+    // Second click: attempt import
     const url = setUrlInput.value.trim();
     if (!url) return alert("Enter a URL");
+
     try {
       const r = await fetch(url);
       const j = await r.json();
