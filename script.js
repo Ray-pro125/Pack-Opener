@@ -22,6 +22,9 @@ const availableSetsDiv = document.getElementById("availableSets");
 const importSetBtn = document.getElementById("importSet");
 const jsonInput = document.getElementById("jsonInput");
 
+const urlInput = document.getElementById("setURL");
+const importURLBtn = document.getElementById("importURLSet");
+
 const collectionFilter = document.getElementById("collectionFilter");
 
 /* ---------------- STATS & COLLECTION ---------------- */
@@ -36,17 +39,13 @@ function updateStatsDisplay(){
   html+="</ul>";
   statsDiv.innerHTML=html;
 
-  // ---------- Progress Bar Calculation ----------
-  // Regular set includes Common, Uncommon, Rare, Double Rare
   const regularRarities = ["Common","Uncommon","Rare","Double Rare"];
   const regularMax = cards.filter(c => regularRarities.includes(c.rarity)).length;
   const regularCollected = Object.values(collection).filter(c => c.count > 0 && regularRarities.includes(c.rarity)).length;
 
-  // Master set includes all rarities
   const masterMax = cards.length;
   const masterCollected = Object.values(collection).filter(c => c.count > 0).length;
 
-  // Update the progress bars
   document.getElementById("regularProgress").value = (regularCollected / regularMax) * 100;
   document.getElementById("masterProgress").value = (masterCollected / masterMax) * 100;
 }
@@ -137,36 +136,13 @@ function openPack() {
   saveStats();
   updateStatsDisplay();
 
-  /* ------- 3 Last Cards -------- */
+  // ------- NORMAL REVEAL FOR ALL CARDS (Removed last 3 special effect) -------
   pulls.forEach((c, i) => {
     const div = document.createElement("div");
     div.className = `card rarity-${c.rarity.replace(/\s+/g, '-')}`;
     div.innerHTML = `<img src="${c.image}" alt="${c.name}">`;
-
-    if (i < pulls.length - 3) {
-      // First 7 cards: normal reveal
-      setTimeout(() => div.classList.add("show"), i * 350);
-      packDiv.appendChild(div);
-    } else {
-      // Last 3 cards: add after first 7 cards
-      setTimeout(() => {
-        packDiv.appendChild(div);
-        // Glow and click-to-reveal appear 1s after first 7
-        setTimeout(() => {
-          div.classList.add("last-three-hidden"); // start glow
-          div.querySelector("img").style.visibility = "hidden";
-
-          void div.offsetWidth; // force reflow for animation
-
-          div.addEventListener("click", function reveal() {
-            div.classList.add("show");
-            div.classList.remove("last-three-hidden");
-            div.querySelector("img").style.visibility = "visible";
-            div.removeEventListener("click", reveal);
-          });
-        }, 1000); // glow delay
-      }, (pulls.length - 3) * 350); // placement after first 7
-    }
+    setTimeout(() => div.classList.add("show"), i * 350);
+    packDiv.appendChild(div);
   });
 }
 
@@ -191,6 +167,13 @@ jsonInput.onchange=(e)=>{
   const r=new FileReader();
   r.onload=ev=>{ loadSet(ev.target.result); };
   r.readAsText(f);
+};
+
+// ---------------- URL IMPORT ----------------
+importURLBtn.onclick = () => {
+  const url = urlInput.value.trim();
+  if(!url) return alert("Please enter a URL");
+  loadSet(url);
 };
 
 /* ---------------- COLLECTION FILTER ---------------- */
