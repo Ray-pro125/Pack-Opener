@@ -168,33 +168,35 @@ function openPack() {
   updateStatsDisplay();
 
   /* -------- Reveal Cards -------- */
+  const normalCardsCount = pulls.length - 3;
+
   pulls.forEach((c, i) => {
     const div = document.createElement("div");
     div.className = `card rarity-${c.rarity.replace(/\s+/g,'-')}`;
     div.innerHTML = `<img src="${c.image}" alt="${c.name}">`;
-
-    // First 7 cards: normal reveal
-    if (i < pulls.length - 3) {
-      packDiv.appendChild(div);
-      setTimeout(() => div.classList.add("show"), i * 350);
-      return;
-    }
-
-    // Last 3 cards: hidden with glow, click to reveal
-    div.classList.add("last-three-hidden");
-    div.querySelector("img").style.visibility = "hidden";
     packDiv.appendChild(div);
 
-    // Stagger glow and click setup
-    setTimeout(() => {
-      div.classList.add("glow"); // optional CSS class for extra shine
+    if (i < normalCardsCount) {
+      // First cards: normal reveal
+      setTimeout(() => div.classList.add("show"), i * 350);
+    } else {
+      // Last 3 cards: hidden, glow, click-to-reveal
+      div.classList.add("last-three-hidden");
+      div.querySelector("img").style.visibility = "hidden";
+
+      // Stagger glow for anticipation
+      setTimeout(() => {
+        div.classList.add("glow");
+      }, (i - normalCardsCount) * 800); // each card glows in sequence
+
+      // Click to fully reveal
       div.addEventListener("click", function reveal() {
         div.classList.add("show");
         div.classList.remove("last-three-hidden", "glow");
         div.querySelector("img").style.visibility = "visible";
         div.removeEventListener("click", reveal);
       });
-    }, (i - (pulls.length - 3) + 7) * 350 + 500); // stagger timing after first 7
+    }
   });
 }
 
