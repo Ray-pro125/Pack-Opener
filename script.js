@@ -22,27 +22,7 @@ const availableSetsDiv = document.getElementById("availableSets");
 const importSetBtn = document.getElementById("importSet");
 const jsonInput = document.getElementById("jsonInput");
 
-/* URL import elements (only used if they exist) */
-const importSetUrlBtn = document.getElementById("importSetUrl");
-const setUrlInput = document.getElementById("setUrlInput");
-const setUrlWrapper = document.getElementById("setUrlWrapper");
-
 const collectionFilter = document.getElementById("collectionFilter");
-
-/* ---------------- VALIDATION ---------------- */
-function validateSetJSON(j){
-  if (!j || typeof j !== "object") return "Root is not an object";
-  if (!Array.isArray(j.data)) return 'Missing or invalid "data" array';
-
-  for (let i = 0; i < j.data.length; i++) {
-    const c = j.data[i];
-    if (!c.name) return `Card ${i} missing name`;
-    if (!c.number) return `Card ${i} missing number`;
-    if (!c.rarity) return `Card ${i} missing rarity`;
-    if (!c.image) return `Card ${i} missing image`;
-  }
-  return null;
-}
 
 /* ---------------- STATS & COLLECTION ---------------- */
 function saveStats(){ localStorage.setItem("packStats",JSON.stringify(stats)); }
@@ -98,37 +78,30 @@ function renderCollection(filterRarity=null){
 /* ---------------- LOAD SET ---------------- */
 function buildAvailableRarities(){
   availableRarities={};
-  cards.forEach(c=>{
-    if(!availableRarities[c.rarity]) availableRarities[c.rarity]=[];
-    availableRarities[c.rarity].push(c);
-  });
-}
-
-function applySetJSON(j){
-  const err = validateSetJSON(j);
-  if (err) { alert("Invalid set:\n" + err); return; }
-
-  cards = j.data;
-  buildAvailableRarities();
-  loadingDiv.style.display="none";
-  openPackBtn.disabled=false;
-  startScreen.classList.add("hidden");
-  openPackPage.classList.remove("hidden");
+  cards.forEach(c=>{ if(!availableRarities[c.rarity]) availableRarities[c.rarity]=[]; availableRarities[c.rarity].push(c); });
 }
 
 function loadSet(fileOrJSON){
   loadingDiv.style.display="block";
-  if (typeof fileOrJSON === "string" && fileOrJSON.trim().startsWith("{")) {
-    try { applySetJSON(JSON.parse(fileOrJSON)); }
-    catch { alert("Invalid JSON"); loadingDiv.style.display="none"; }
-    return;
-  }
-
-  if (typeof fileOrJSON === "string") {
-    fetch(fileOrJSON)
-      .then(r=>r.json())
-      .then(applySetJSON)
-      .catch(()=>{ alert("Failed to load set"); loadingDiv.style.display="none"; });
+  if(typeof fileOrJSON==="string"){
+    fetch(fileOrJSON).then(r=>r.json()).then(j=>{
+      cards=j.data;
+      buildAvailableRarities();
+      loadingDiv.style.display="none";
+      openPackBtn.disabled=false;
+      startScreen.classList.add("hidden");
+      openPackPage.classList.remove("hidden");
+    });
+  } else {
+    try{
+      const j=JSON.parse(fileOrJSON);
+      cards=j.data;
+      buildAvailableRarities();
+      loadingDiv.style.display="none";
+      openPackBtn.disabled=false;
+      startScreen.classList.add("hidden");
+      openPackPage.classList.remove("hidden");
+    }catch{ alert("Invalid JSON"); }
   }
 }
 
@@ -219,31 +192,6 @@ jsonInput.onchange=(e)=>{
   r.onload=ev=>{ loadSet(ev.target.result); };
   r.readAsText(f);
 };
-
-/* URL IMPORT (only if elements exist) */
-if (importSetUrlBtn && setUrlInput && setUrlWrapper) {
-  importSetUrlBtn.onclick = async () => {
-
-    // First click: reveal input
-    if (setUrlWrapper.style.display === "none") {
-      setUrlWrapper.style.display = "block";
-      setUrlInput.focus();
-      return;
-    }
-
-    // Second click: attempt import
-    const url = setUrlInput.value.trim();
-    if (!url) return alert("Enter a URL");
-
-    try {
-      const r = await fetch(url);
-      const j = await r.json();
-      applySetJSON(j);
-    } catch {
-      alert("Failed to load set from URL");
-    }
-  };
-}
 
 /* ---------------- COLLECTION FILTER ---------------- */
 collectionFilter.addEventListener("change", ()=>{
