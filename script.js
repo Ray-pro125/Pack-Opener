@@ -154,19 +154,28 @@ function openPack() {
 
   const pulls = [];
 
-  for (let i = 0; i < 4; i++) pulls.push(randomFrom(getByRarity("Common")) || randomFrom(cards));
-  for (let i = 0; i < 3; i++) pulls.push(randomFrom(getByRarity("Uncommon")) || randomFrom(cards));
-  pulls.push(pullWeighted([{ rarity:"Common", weight:55},{ rarity:"Uncommon", weight:32},{ rarity:"Rare", weight:11},{ rarity:"Illustration Rare", weight:1.5},{ rarity:"Special Illustration Rare", weight:0.4},{ rarity:"Hyper Rare", weight:0.1}]));
-  pulls.push(pullWeighted([{ rarity:"Common", weight:35},{ rarity:"Uncommon", weight:43},{ rarity:"Rare", weight:18},{ rarity:"Illustration Rare", weight:12},{ rarity:"Special Illustration Rare", weight:2.3},{ rarity:"Hyper Rare", weight:0.7}]));
-  pulls.push(pullWeighted([{ rarity:"Rare", weight:11},{ rarity:"Double Rare", weight:3},{ rarity:"Ultra Rare", weight:1}]));
+  // Safely pull cards
+  function safeRandom(rarity){
+    const arr = getByRarity(rarity);
+    if(arr.length) return randomFrom(arr);
+    return randomFrom(cards) || { name:"Unknown", number:"0", rarity:"Common", image:"" };
+  }
 
+  for (let i = 0; i < 4; i++) pulls.push(safeRandom("Common"));
+  for (let i = 0; i < 3; i++) pulls.push(safeRandom("Uncommon"));
+  pulls.push(safeRandom(pullWeighted([{ rarity:"Common", weight:55},{ rarity:"Uncommon", weight:32},{ rarity:"Rare", weight:11},{ rarity:"Illustration Rare", weight:1.5},{ rarity:"Special Illustration Rare", weight:0.4},{ rarity:"Hyper Rare", weight:0.1}])));
+  pulls.push(safeRandom(pullWeighted([{ rarity:"Common", weight:35},{ rarity:"Uncommon", weight:43},{ rarity:"Rare", weight:18},{ rarity:"Illustration Rare", weight:12},{ rarity:"Special Illustration Rare", weight:2.3},{ rarity:"Hyper Rare", weight:0.7}])));
+  pulls.push(safeRandom(pullWeighted([{ rarity:"Rare", weight:11},{ rarity:"Double Rare", weight:3},{ rarity:"Ultra Rare", weight:1}])));
+
+  // Update stats safely
   stats.packsOpened++;
   stats.totalCards += pulls.length;
-  pulls.forEach(c => stats.rarities[c.rarity] = (stats.rarities[c.rarity] || 0) + 1);
-  pulls.forEach(c => { 
+  pulls.forEach(c => {
+    if(!c) return;
+    stats.rarities[c.rarity] = (stats.rarities[c.rarity] || 0) + 1;
     const key = `${c.name}_${c.number}`; 
     if (!collection[key]) collection[key] = { ...c, count: 0 }; 
-    collection[key].count++; 
+    collection[key].count++;
   });
 
   saveCollection();
@@ -174,26 +183,26 @@ function openPack() {
   saveStats();
   updateStatsDisplay();
 
-  /* -------- Reveal Cards -------- */
+  // Reveal cards
   const normalCardsCount = pulls.length - 3;
 
-  pulls.forEach((c, i) => {
+  pulls.forEach((c,i)=>{
     const div = document.createElement("div");
     div.className = `card rarity-${c.rarity.replace(/\s+/g,'-')}`;
     div.innerHTML = `<img src="${c.image}" alt="${c.name}">`;
     packDiv.appendChild(div);
 
-    if (i < normalCardsCount) {
-      setTimeout(() => div.classList.add("show"), i * 350);
-    } else {
-      div.classList.add("last-three-hidden");
-      const img = div.querySelector("img");
-      img.style.visibility = "hidden";
-      div.classList.add("glow");
+    const img = div.querySelector("img");
 
-      div.addEventListener("click", function reveal() {
+    if(i < normalCardsCount){
+      setTimeout(()=> div.classList.add("show"), i*350);
+    } else {
+      // last three
+      div.classList.add("last-three-hidden", "glow");
+      img.style.visibility = "hidden";
+      div.addEventListener("click", function reveal(){
         div.classList.add("show");
-        div.classList.remove("last-three-hidden", "glow");
+        div.classList.remove("last-three-hidden","glow");
         img.style.visibility = "visible";
         div.removeEventListener("click", reveal);
       });
