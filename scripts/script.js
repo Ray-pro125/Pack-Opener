@@ -1,4 +1,12 @@
 let cards = [], availableRarities = {};
+const AUTO_REVEAL_RARITIES = ["Common", "Uncommon", "Rare"];
+const SPECIAL_GLOW_RARITIES = [
+  "Double Rare",
+  "Ultra Rare",
+  "Illustration Rare",
+  "Special Illustration Rare",
+  "Hyper Rare"
+];
 let stats = JSON.parse(localStorage.getItem("packStats")) || { packsOpened:0,totalCards:0,rarities:{} };
 let collection = JSON.parse(localStorage.getItem("collection")) || {};
 let lightbox = null, hoverTimeout = null;
@@ -293,23 +301,28 @@ function openPack() {
   saveStats();
   updateStatsDisplay();
 
-  // ------- REVEAL: last 3 cards click-to-reveal (no cardback) -------
+  // ------- REVEAL: rarity-aware last 3 cards with glow hint -------
   pulls.forEach((c, i) => {
     const div = document.createElement("div");
     div.className = `card rarity-${c.rarity.replace(/\s+/g, '-')}`;
 
     const isLastThree = i >= pulls.length - 3;
+    const autoReveal = AUTO_REVEAL_RARITIES.includes(c.rarity);
 
-    if (!isLastThree) {
-      // Normal auto reveal
+    if (!isLastThree || autoReveal) {
+      // Normal reveal (even in last 3 for C / UC / R)
       const img = document.createElement("img");
       img.src = c.image;
       img.alt = c.name;
       img.onerror = () => img.src = "cardback.png";
-      div.appendChild(img);
+       div.appendChild(img);
     } else {
-      // Click-to-reveal with no placeholder
+      // Special rarity in last 3 → hidden with glow hint
       div.dataset.revealed = "false";
+
+      if (SPECIAL_GLOW_RARITIES.includes(c.rarity)) {
+        div.classList.add("glow-hint");
+      }
 
       div.addEventListener("click", () => {
         if (div.dataset.revealed === "true") return;
@@ -321,15 +334,14 @@ function openPack() {
 
         div.appendChild(img);
         div.dataset.revealed = "true";
+        div.classList.remove("glow-hint");
         div.classList.add("revealed");
       }, { once: true });
     }
 
     packDiv.appendChild(div);
-
-    // Holder animation still applies
     setTimeout(() => div.classList.add("show"), i * 350);
-
+  
     attachLightboxHandlers(div, c, pulls, i);
   });
 }
