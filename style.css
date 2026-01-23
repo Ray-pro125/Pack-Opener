@@ -120,23 +120,36 @@ button:disabled { background: #444; cursor: not-allowed; }
   100%{box-shadow:0 0 18px #ff0000,0 0 35px #ff0000;}
 }
 
-/* ---------- HIDDEN SPECIAL CARD GLOW HINT (suspense color) ---------- */
+/* ---------- HIDDEN SPECIAL CARD GLOW HINT ---------- */
 .glow-hint {
   position: relative;
-  animation: glowHintPulse 2.6s ease-in-out infinite;
+  animation: glowBreathFlicker 2s ease-in-out infinite;
 }
 
-/* Calm neutral pulse so player can't guess rarity */
-@keyframes glowHintPulse {
-  0% {
-    box-shadow: 0 0 6px rgba(255,255,255,0.55); /* soft bluish */
-  }
-  50% {
-    box-shadow: 0 0 18px rgba(255,255,255,0.55);
-  }
-  100% {
-    box-shadow: 0 0 6px rgba(255,255,255,0.55);
-  }
+.glow-hint::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(120deg, rgba(200,200,255,0.15) 0%, rgba(200,200,255,0.45) 50%, rgba(200,200,255,0.15) 100%);
+  transform: rotate(45deg) translateX(-100%);
+  animation: shimmer 2s infinite;
+  pointer-events: none;
+}
+
+@keyframes glowBreathFlicker {
+  0%   { transform: scale(1); box-shadow: 0 0 6px rgba(180,180,255,0.3); }
+  25%  { box-shadow: 0 0 12px rgba(180,180,255,0.6); }
+  50%  { transform: scale(1.05); box-shadow: 0 0 22px rgba(180,180,255,0.5); }
+  75%  { box-shadow: 0 0 8px rgba(180,180,255,0.4); }
+  100% { transform: scale(1); box-shadow: 0 0 6px rgba(180,180,255,0.3); }
+}
+
+@keyframes shimmer {
+  0% { transform: rotate(45deg) translateX(-100%); }
+  100% { transform: rotate(45deg) translateX(100%); }
 }
 
 #progressBars {
