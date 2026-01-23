@@ -126,6 +126,17 @@ button:disabled { background: #444; cursor: not-allowed; }
   animation: glowHintPulse 2.6s ease-in-out infinite;
 }
 
+@keyframes glowHintPulse {
+  0% {
+    box-shadow: 0 0 6px;
+  }
+  50% {
+    box-shadow: 0 0 18px;
+  }
+  100% {
+    box-shadow: 0 0 6px;
+  }
+}
 #progressBars {
   margin: 15px 0;
   display: flex;
