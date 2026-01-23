@@ -337,7 +337,8 @@ function openPack() {
         div.classList.remove("glow-hint");
         div.classList.add("revealed");
       }, { once: true });
-   
+    }
+
     packDiv.appendChild(div);
     setTimeout(() => div.classList.add("show"), i * 350);
   
