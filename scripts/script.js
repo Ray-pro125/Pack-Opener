@@ -322,36 +322,6 @@ function openPack() {
 
       if (SPECIAL_GLOW_RARITIES.includes(c.rarity)) {
         div.classList.add("glow-hint");
-
-        // Determine stars based on rarity
-        let stars = [];
-        switch(c.rarity){
-          case "Double Rare": stars = ['★','★']; break;            // black
-          case "Ultra Rare": stars = ['☆','☆']; break;             // white
-          case "Illustration Rare": stars = ['★']; break;          // golden
-          case "Special Illustration Rare": stars = ['★','★']; break; // golden glittering
-          case "Hyper Rare": stars = ['🌈','🌈','🌈']; break;       // rainbow
-        }
-
-        // Append stars
-        stars.forEach((s, idx) => {
-          const star = document.createElement("div");
-          star.className = "star";
-          star.textContent = s;
-          // Position stars randomly within card
-          star.style.top = `${10 + Math.random()*60}%`;
-          star.style.left = `${10 + Math.random()*80}%`;
-          // Optional color overrides
-          if(c.rarity === "Double Rare") star.style.color = "black";
-          if(c.rarity === "Ultra Rare") star.style.color = "white";
-          if(c.rarity === "Illustration Rare") star.style.color = "gold";
-          if(c.rarity === "Special Illustration Rare") {
-            star.style.color = "gold";
-            star.style.textShadow = "0 0 6px gold, 0 0 12px orange";
-          }
-          if(c.rarity === "Hyper Rare") star.style.textShadow = "0 0 4px red, 0 0 6px orange, 0 0 8px yellow, 0 0 10px green, 0 0 12px blue, 0 0 14px violet";
-          div.appendChild(star);
-        });
       }
 
       div.addEventListener("click", () => {
@@ -366,12 +336,8 @@ function openPack() {
         div.dataset.revealed = "true";
         div.classList.remove("glow-hint");
         div.classList.add("revealed");
-        // remove stars when revealed
-        div.querySelectorAll('.star').forEach(s => s.remove());
       }, { once: true });
-
-          }
-
+   
     packDiv.appendChild(div);
     setTimeout(() => div.classList.add("show"), i * 350);
   
