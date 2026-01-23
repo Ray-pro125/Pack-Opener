@@ -291,13 +291,40 @@ function openPack() {
   saveStats();
   updateStatsDisplay();
 
-  // ------- NORMAL REVEAL FOR ALL CARDS (Removed last 3 special effect) -------
+  // ------- REVEAL: last 3 cards click-to-reveal -------
   pulls.forEach((c, i) => {
     const div = document.createElement("div");
     div.className = `card rarity-${c.rarity.replace(/\s+/g, '-')}`;
-    div.innerHTML = `<img src="${c.image}" alt="${c.name}" onerror="this.src='cardback.png'">`;
-    setTimeout(() => div.classList.add("show"), i * 350);
+
+    const img = document.createElement("img");
+    img.alt = c.name;
+    img.onerror = () => img.src = "cardback.png";
+
+    const isLastThree = i >= pulls.length - 3;
+
+    if (isLastThree) {
+      // Start face-down
+      img.src = "cardback.png";
+      img.dataset.revealed = "false";
+
+      div.addEventListener("click", () => {
+        if (img.dataset.revealed === "true") return;
+
+        img.src = c.image;
+        img.dataset.revealed = "true";
+        div.classList.add("revealed");
+      }, { once: true });
+    } else {
+      // Normal auto reveal
+      img.src = c.image;
+    }
+
+    div.appendChild(img);
     packDiv.appendChild(div);
+
+    // Holder animation still applies to all
+    setTimeout(() => div.classList.add("show"), i * 350);
+
     attachLightboxHandlers(div, c, pulls, i);
   });
 }
