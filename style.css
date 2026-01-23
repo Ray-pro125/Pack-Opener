@@ -120,6 +120,24 @@ button:disabled { background: #444; cursor: not-allowed; }
   100%{box-shadow:0 0 18px #ff0000,0 0 35px #ff0000;}
 }
 
+/* ---------- HIDDEN SPECIAL CARD GLOW HINT ---------- */
+.glow-hint {
+  position: relative;
+  animation: glowHintPulse 2.6s ease-in-out infinite;
+}
+
+@keyframes glowHintPulse {
+  0% {
+    box-shadow: 0 0 6px rgba(255, 215, 120, 0.25);
+  }
+  50% {
+    box-shadow: 0 0 18px rgba(255, 215, 120, 0.55);
+  }
+  100% {
+    box-shadow: 0 0 6px rgba(255, 215, 120, 0.25);
+  }
+}
+
 #progressBars {
   margin: 15px 0;
   display: flex;
@@ -186,5 +204,3 @@ progress::-webkit-progress-value {
   background: linear-gradient(135deg, #3a3a3a, #2a2a2a);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 }
-
-/* ---------- REMOVED last-3-cards glow & hidden styles ---------- */
