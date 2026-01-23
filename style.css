@@ -120,21 +120,25 @@ button:disabled { background: #444; cursor: not-allowed; }
   100%{box-shadow:0 0 18px #ff0000,0 0 35px #ff0000;}
 }
 
-/* ---------- HIDDEN SPECIAL CARD GLOW HINT ---------- */
+/* ---------- HIDDEN SPECIAL CARD GLOW HINT USING RARITY COLORS ---------- */
 .glow-hint {
   position: relative;
   animation: glowHintPulse 2.6s ease-in-out infinite;
 }
 
+/* This keyframe now uses current box-shadow set on the rarity class */
 @keyframes glowHintPulse {
-  0% {
-    box-shadow: 0 0 6px rgba(255, 215, 120, 0.25);
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+    /* Shadow taken from the rarity class */
+    box-shadow: inherit;
   }
   50% {
-    box-shadow: 0 0 18px rgba(255, 215, 120, 0.55);
-  }
-  100% {
-    box-shadow: 0 0 6px rgba(255, 215, 120, 0.25);
+    opacity: 1;
+    transform: scale(1.05);
+    /* Make the glow bigger, same color */
+    box-shadow: 0 0 2.2em currentColor;
   }
 }
 
