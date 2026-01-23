@@ -147,9 +147,26 @@ button:disabled { background: #444; cursor: not-allowed; }
   100% { transform: scale(1); box-shadow: 0 0 6px rgba(180,180,255,0.3); }
 }
 
-@keyframes shimmer {
-  0% { transform: rotate(45deg) translateX(-100%); }
-  100% { transform: rotate(45deg) translateX(100%); }
+/* ---------- STAR ANIMATION FOR SPECIAL CARDS ---------- */
+.glow-hint {
+  position: relative;
+  animation: glowBreathFlicker 2s ease-in-out infinite;
+}
+
+/* Generic star style */
+.glow-hint .star {
+  position: absolute;
+  font-size: 18px;
+  opacity: 0;
+  pointer-events: none;
+  animation: starFloat 2s ease-in-out infinite;
+}
+
+/* Animation for stars */
+@keyframes starFloat {
+  0%   { transform: translateY(0) scale(0.8); opacity: 0.5; }
+  50%  { transform: translateY(-8px) scale(1.1); opacity: 1; }
+  100% { transform: translateY(0) scale(0.8); opacity: 0.5; }
 }
 
 #progressBars {
