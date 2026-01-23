@@ -4,6 +4,8 @@ let collection = JSON.parse(localStorage.getItem("collection")) || {};
 let lightbox = null, hoverTimeout = null;
 let recentCards = JSON.parse(localStorage.getItem("recentCards")) || [];
 let firstPackOpened = false;
+let lightboxEnabled = false;
+
 
 // DOM elements
 const startScreen = document.getElementById("startScreen");
@@ -368,13 +370,15 @@ collectionFilter.addEventListener("change", ()=>{
 });
 
 /* ---------------- NAVIGATION ---------------- */
-viewCollectionBtn.onclick=()=>{ 
-  packDiv.innerHTML = ""; // Clear pack when navigating away
+viewCollectionBtn.onclick = () => { 
+  lightboxEnabled = true;
+  packDiv.innerHTML = "";
   openPackPage.classList.add("hidden"); 
   collectionPage.classList.remove("hidden"); 
 };
-backToOpenPackBtn.onclick=()=>{
-  packDiv.innerHTML = ""; // Clear pack when returning
+backToOpenPackBtn.onclick = () => {
+  lightboxEnabled = false;
+  packDiv.innerHTML = "";
   collectionPage.classList.add("hidden"); 
   openPackPage.classList.remove("hidden"); 
 };
@@ -383,7 +387,10 @@ backToStartBtn.onclick=()=>{
   openPackPage.classList.add("hidden"); 
   startScreen.classList.remove("hidden"); 
 };
-openPackBtn.onclick=openPack;
+openPackBtn.onclick = () => {
+  lightboxEnabled = false;
+  openPack();
+};
 
 /* ---------------- RESET ---------------- */
 resetBtn.onclick=()=>{
@@ -413,12 +420,11 @@ if (typeof MetaLightbox !== 'undefined') {
 
 /* ---------------- CARD LIGHTBOX HANDLERS ---------------- */
 function attachLightboxHandlers(cardElement, cardData, allCards, cardIndex) {
-  if (!lightbox) return;
-  
+  if (!lightbox || !lightboxEnabled) return;
+
   cardElement.dataset.cardIndex = cardIndex;
   cardElement.style.cursor = 'pointer';
-  
-  // Click only - no hover
+
   cardElement.addEventListener('click', (e) => {
     e.stopPropagation();
     if (allCards && allCards.length > 0) {
