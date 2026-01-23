@@ -123,50 +123,7 @@ button:disabled { background: #444; cursor: not-allowed; }
 /* ---------- HIDDEN SPECIAL CARD GLOW HINT ---------- */
 .glow-hint {
   position: relative;
-  animation: glowBreathFlicker 2s ease-in-out infinite;
-}
-
-.glow-hint::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(120deg, rgba(200,200,255,0.15) 0%, rgba(200,200,255,0.45) 50%, rgba(200,200,255,0.15) 100%);
-  transform: rotate(45deg) translateX(-100%);
-  animation: shimmer 2s infinite;
-  pointer-events: none;
-}
-
-@keyframes glowBreathFlicker {
-  0%   { transform: scale(1); box-shadow: 0 0 6px rgba(180,180,255,0.3); }
-  25%  { box-shadow: 0 0 12px rgba(180,180,255,0.6); }
-  50%  { transform: scale(1.05); box-shadow: 0 0 22px rgba(180,180,255,0.5); }
-  75%  { box-shadow: 0 0 8px rgba(180,180,255,0.4); }
-  100% { transform: scale(1); box-shadow: 0 0 6px rgba(180,180,255,0.3); }
-}
-
-/* ---------- STAR ANIMATION FOR SPECIAL CARDS ---------- */
-.glow-hint {
-  position: relative;
-  animation: glowBreathFlicker 2s ease-in-out infinite;
-}
-
-/* Generic star style */
-.glow-hint .star {
-  position: absolute;
-  font-size: 18px;
-  opacity: 0;
-  pointer-events: none;
-  animation: starFloat 2s ease-in-out infinite;
-}
-
-/* Animation for stars */
-@keyframes starFloat {
-  0%   { transform: translateY(0) scale(0.8); opacity: 0.5; }
-  50%  { transform: translateY(-8px) scale(1.1); opacity: 1; }
-  100% { transform: translateY(0) scale(0.8); opacity: 0.5; }
+  animation: glowHintPulse 2.6s ease-in-out infinite;
 }
 
 #progressBars {
