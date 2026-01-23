@@ -310,14 +310,13 @@ function openPack() {
     const autoReveal = AUTO_REVEAL_RARITIES.includes(c.rarity);
 
     if (!isLastThree || autoReveal) {
-      // Normal reveal (even in last 3 for C / UC / R)
+      // Normal reveal
       const img = document.createElement("img");
       img.src = c.image;
       img.alt = c.name;
-      img.onerror = () => img.src = "cardback.png";
-       div.appendChild(img);
+      div.appendChild(img);
     } else {
-      // Special rarity in last 3 → hidden with glow hint
+      // Special rarity in last 3 → hidden, only glow hint
       div.dataset.revealed = "false";
 
       if (SPECIAL_GLOW_RARITIES.includes(c.rarity)) {
@@ -330,8 +329,6 @@ function openPack() {
         const img = document.createElement("img");
         img.src = c.image;
         img.alt = c.name;
-        img.onerror = () => img.src = "cardback.png";
-
         div.appendChild(img);
         div.dataset.revealed = "true";
         div.classList.remove("glow-hint");
@@ -339,9 +336,9 @@ function openPack() {
       }, { once: true });
     }
 
+    // Add to DOM and show placeholder div immediately
     packDiv.appendChild(div);
     setTimeout(() => div.classList.add("show"), i * 350);
-  
     attachLightboxHandlers(div, c, pulls, i);
   });
 }
