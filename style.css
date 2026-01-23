@@ -120,21 +120,22 @@ button:disabled { background: #444; cursor: not-allowed; }
   100%{box-shadow:0 0 18px #ff0000,0 0 35px #ff0000;}
 }
 
-/* ---------- HIDDEN SPECIAL CARD GLOW HINT ---------- */
+/* ---------- HIDDEN SPECIAL CARD GLOW HINT (suspense color) ---------- */
 .glow-hint {
   position: relative;
   animation: glowHintPulse 2.6s ease-in-out infinite;
 }
 
+/* Calm neutral pulse so player can't guess rarity */
 @keyframes glowHintPulse {
   0% {
-    box-shadow: 0 0 6px rgba(255, 215, 120, 0.25);
+    box-shadow: 0 0 6px rgba(255,255,255,0.55); /* soft bluish */
   }
   50% {
-    box-shadow: 0 0 18px rgba(255, 215, 120, 0.55);
+    box-shadow: 0 0 18px rgba(255,255,255,0.55);
   }
   100% {
-    box-shadow: 0 0 6px rgba(255, 215, 120, 0.25);
+    box-shadow: 0 0 6px rgba(255,255,255,0.55);
   }
 }
 
