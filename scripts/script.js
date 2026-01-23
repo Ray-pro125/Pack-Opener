@@ -291,38 +291,41 @@ function openPack() {
   saveStats();
   updateStatsDisplay();
 
-  // ------- REVEAL: last 3 cards click-to-reveal -------
+  // ------- REVEAL: last 3 cards click-to-reveal (no cardback) -------
   pulls.forEach((c, i) => {
     const div = document.createElement("div");
     div.className = `card rarity-${c.rarity.replace(/\s+/g, '-')}`;
 
-    const img = document.createElement("img");
-    img.alt = c.name;
-    img.onerror = () => img.src = "cardback.png";
-
     const isLastThree = i >= pulls.length - 3;
 
-    if (isLastThree) {
-      // Start face-down
-      img.src = "cardback.png";
-      img.dataset.revealed = "false";
+    if (!isLastThree) {
+      // Normal auto reveal
+      const img = document.createElement("img");
+      img.src = c.image;
+      img.alt = c.name;
+      img.onerror = () => img.src = "cardback.png";
+      div.appendChild(img);
+    } else {
+      // Click-to-reveal with no placeholder
+      div.dataset.revealed = "false";
 
       div.addEventListener("click", () => {
-        if (img.dataset.revealed === "true") return;
+        if (div.dataset.revealed === "true") return;
 
+        const img = document.createElement("img");
         img.src = c.image;
-        img.dataset.revealed = "true";
+        img.alt = c.name;
+        img.onerror = () => img.src = "cardback.png";
+
+        div.appendChild(img);
+        div.dataset.revealed = "true";
         div.classList.add("revealed");
       }, { once: true });
-    } else {
-      // Normal auto reveal
-      img.src = c.image;
     }
 
-    div.appendChild(img);
     packDiv.appendChild(div);
 
-    // Holder animation still applies to all
+    // Holder animation still applies
     setTimeout(() => div.classList.add("show"), i * 350);
 
     attachLightboxHandlers(div, c, pulls, i);
