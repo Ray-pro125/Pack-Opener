@@ -1,10 +1,10 @@
 {
   "_type": "tcg-deck-builder-export",
-  "timestamp": 1767293051349,
+  "timestamp": 1770908978847,
   "version": "1.0",
   "data": [
     {
-      "id": "batch_1767293051349_gebt4b6j5",
+      "id": "batch_1770908978847_yjjoh83cf",
       "name": "Yanma",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -38,10 +38,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_o1fwwq756",
+      "id": "batch_1770908978847_ypy1jk3ye",
       "name": "Yanmega ex",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -75,10 +75,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_b5q8xk8wz",
+      "id": "batch_1770908978847_l7n1y9ep5",
       "name": "Roselia",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -112,10 +112,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_gkki4vni4",
+      "id": "batch_1770908978847_wamzd6907",
       "name": "Roserade",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -149,10 +149,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_ig0aqt9nh",
+      "id": "batch_1770908978847_2c5tarv3r",
       "name": "Capsakid",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -186,10 +186,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_rf4xrm41d",
+      "id": "batch_1770908978847_4yn4ozy30",
       "name": "Scovillain",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -223,10 +223,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_gb7edgycn",
+      "id": "batch_1770908978847_lqxo65tpg",
       "name": "Numel",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -260,10 +260,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_ilr8fz3wp",
+      "id": "batch_1770908978847_l0za4tjx5",
       "name": "Camerupt",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -297,10 +297,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_nhzuh8tej",
+      "id": "batch_1770908978847_70rjbm86x",
       "name": "Torkoal",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -334,10 +334,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_q92jk1qz2",
+      "id": "batch_1770908978847_ryaglmed2",
       "name": "Wooper",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -371,10 +371,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_aiscyb847",
+      "id": "batch_1770908978847_xf644m7ih",
       "name": "Quagsire ex",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -408,10 +408,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_ruzlc81fz",
+      "id": "batch_1770908978847_l2jyckqoa",
       "name": "Corphish",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -445,10 +445,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_whfyw5hka",
+      "id": "batch_1770908978847_x0wgrkwnm",
       "name": "Crawdaunt",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -482,10 +482,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_n1p43eyk4",
+      "id": "batch_1770908978847_c11104ckm",
       "name": "Snorunt",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -519,10 +519,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_4lob90zz3",
+      "id": "batch_1770908978847_241bvsiwy",
       "name": "Glalie",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -556,10 +556,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_aid30swnm",
+      "id": "batch_1770908978847_2hoexzche",
       "name": "Frosslass",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -593,10 +593,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_v8xjoojyk",
+      "id": "batch_1770908978847_x7dgwgwga",
       "name": "Voltorb",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -630,10 +630,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_ochqu872e",
+      "id": "batch_1770908978847_k1p50lvtu",
       "name": "Electrode",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -667,10 +667,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_7xnztqauq",
+      "id": "batch_1770908978847_0irzq1ryp",
       "name": "Oricorio",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -704,10 +704,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_qjjb610e8",
+      "id": "batch_1770908978847_pvtei5vn2",
       "name": "Tapu Koko ex",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -741,10 +741,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_7hh2u599a",
+      "id": "batch_1770908978847_yj5e7i822",
       "name": "Pincurchin",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -778,10 +778,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_fpvxybnn3",
+      "id": "batch_1770908978847_y31yrqn4r",
       "name": "Drifloon",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -815,10 +815,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_o2fjh5vg9",
+      "id": "batch_1770908978847_ghv3cunma",
       "name": "Drifblim",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -852,10 +852,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_gks8h3f9k",
+      "id": "batch_1770908978847_d5tmkkhlj",
       "name": "Ralts",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -889,10 +889,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_b3zil2xsp",
+      "id": "batch_1770908978847_8mwxw1ut4",
       "name": "Kirlia",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -926,10 +926,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_ozycspjl2",
+      "id": "batch_1770908978847_x44ho6efl",
       "name": "Sandygast",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -963,10 +963,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_qi2p1te8w",
+      "id": "batch_1770908978847_3r2ksq5h2",
       "name": "Palossand",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -1000,10 +1000,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_r7vz38kzf",
+      "id": "batch_1770908978847_n98tagr9u",
       "name": "Gallade ex",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -1037,10 +1037,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_7m5zm6cfd",
+      "id": "batch_1770908978847_ucqhyq87r",
       "name": "Roggenrola",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -1074,10 +1074,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_5nezwx4x7",
+      "id": "batch_1770908978847_hrgyqrerj",
       "name": "Boldore",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -1111,10 +1111,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_p78qoejdb",
+      "id": "batch_1770908978847_w54wvnt3h",
       "name": "Gigalith",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -1148,10 +1148,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_e9vs5m8cx",
+      "id": "batch_1770908978847_l4kod2t5x",
       "name": "Zubat",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -1185,10 +1185,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_tcsnr4nv5",
+      "id": "batch_1770908978847_bd9i9csuw",
       "name": "Golbat",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -1222,10 +1222,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_kw40lxhel",
+      "id": "batch_1770908978847_yljow0wl3",
       "name": "Crobat",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -1259,10 +1259,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_znxii4eee",
+      "id": "batch_1770908978847_ogsj367f2",
       "name": "Maschiff",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -1296,10 +1296,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_jddvypmbv",
+      "id": "batch_1770908978847_hibz7f1kr",
       "name": "Mabostiff",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -1333,10 +1333,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_14ps7oab8",
+      "id": "batch_1770908978847_6i9dmhjwh",
       "name": "Skarmory",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -1370,10 +1370,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_ci5yrigrf",
+      "id": "batch_1770908978847_btlnqh290",
       "name": "Pawniard",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -1407,10 +1407,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_30rg2mtfn",
+      "id": "batch_1770908978847_9quxytp8y",
       "name": "Bisharp",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -1444,10 +1444,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_6f11kriz0",
+      "id": "batch_1770908978847_c64rhilf7",
       "name": "Doduo",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -1481,10 +1481,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_yuaksr46b",
+      "id": "batch_1770908978847_o5r1a7ep8",
       "name": "Dodrio ex",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -1518,10 +1518,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_mjo3ja8l9",
+      "id": "batch_1770908978847_80rhnay3k",
       "name": "Pikipek",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -1555,10 +1555,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_8fjl6m4lw",
+      "id": "batch_1770908978847_peiq7kdj3",
       "name": "Trumbeak",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -1592,10 +1592,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_57fq4pd9r",
+      "id": "batch_1770908978847_pwr2o6xtd",
       "name": "Toucannon ex",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -1629,10 +1629,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_5q4n5agvf",
+      "id": "batch_1770908978847_y90mc2x3t",
       "name": "Fast Ball",
       "supertype": "Trainer",
       "isCustom": true,
@@ -1666,10 +1666,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_osb3gl135",
+      "id": "batch_1770908978847_915qi4ql6",
       "name": "Poké Ball",
       "supertype": "Trainer",
       "isCustom": true,
@@ -1703,10 +1703,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_hr8tdrwfn",
+      "id": "batch_1770908978847_7ktioyzg4",
       "name": "Potion",
       "supertype": "Trainer",
       "isCustom": true,
@@ -1740,10 +1740,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_2538199l7",
+      "id": "batch_1770908978847_kqzmvjmke",
       "name": "Nugget",
       "supertype": "Trainer",
       "isCustom": true,
@@ -1777,10 +1777,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_64pl38tq1",
+      "id": "batch_1770908978847_w161vfe85",
       "name": "Premier Ball",
       "supertype": "Trainer",
       "isCustom": true,
@@ -1814,10 +1814,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_6oyz1kjy5",
+      "id": "batch_1770908978847_fpbts542c",
       "name": "Repel",
       "supertype": "Trainer",
       "isCustom": true,
@@ -1851,10 +1851,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_4043oa860",
+      "id": "batch_1770908978847_pjswjp56x",
       "name": "Rotom Dex",
       "supertype": "Trainer",
       "isCustom": true,
@@ -1888,10 +1888,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_c1rxcbh0o",
+      "id": "batch_1770908978847_7rvypeb41",
       "name": "Professor's Letter",
       "supertype": "Trainer",
       "isCustom": true,
@@ -1925,10 +1925,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_6l64cwsrc",
+      "id": "batch_1770908978847_qoiq2hcvt",
       "name": "Energy Switch",
       "supertype": "Trainer",
       "isCustom": true,
@@ -1962,10 +1962,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_0ah5lwwe0",
+      "id": "batch_1770908978847_g8amvjktt",
       "name": "Akari",
       "supertype": "Trainer",
       "isCustom": true,
@@ -1999,10 +1999,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_ocsdxezca",
+      "id": "batch_1770908978847_65jw88gwj",
       "name": "Caitlin",
       "supertype": "Trainer",
       "isCustom": true,
@@ -2036,10 +2036,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_ghiycf1mp",
+      "id": "batch_1770908978847_olq2vptxu",
       "name": "Kahili",
       "supertype": "Trainer",
       "isCustom": true,
@@ -2073,10 +2073,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_g2oe02znc",
+      "id": "batch_1770908978847_s678joshd",
       "name": "Plumeria",
       "supertype": "Trainer",
       "isCustom": true,
@@ -2110,10 +2110,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_16ktulrru",
+      "id": "batch_1770908978847_ctujqtwdm",
       "name": "Ilima",
       "supertype": "Trainer",
       "isCustom": true,
@@ -2147,10 +2147,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_nqwr0dsys",
+      "id": "batch_1770908978847_avzeqw439",
       "name": "Hala",
       "supertype": "Trainer",
       "isCustom": true,
@@ -2184,10 +2184,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_j62rjbryw",
+      "id": "batch_1770908978847_98klecpya",
       "name": "Hau",
       "supertype": "Trainer",
       "isCustom": true,
@@ -2221,10 +2221,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_t5f0jszr4",
+      "id": "batch_1770908978847_ujup1wdev",
       "name": "Trainer's School",
       "supertype": "Trainer",
       "isCustom": true,
@@ -2258,10 +2258,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_b0nmt7jlz",
+      "id": "batch_1770908978847_yvjeqdwxi",
       "name": "Verdant Cavern",
       "supertype": "Trainer",
       "isCustom": true,
@@ -2295,10 +2295,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_nf1zjr2ia",
+      "id": "batch_1770908978847_a2s0d2y35",
       "name": "Poison Barb",
       "supertype": "Trainer",
       "isCustom": true,
@@ -2332,10 +2332,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_n24xoz189",
+      "id": "batch_1770908978847_vpbw6t52p",
       "name": "X Attack",
       "supertype": "Trainer",
       "isCustom": true,
@@ -2369,10 +2369,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_olga0vyhw",
+      "id": "batch_1770908978847_de4oxsrkl",
       "name": "Never-Melt Ice",
       "supertype": "Trainer",
       "isCustom": true,
@@ -2406,10 +2406,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_o5o9yhlse",
+      "id": "batch_1770908978847_kr5l69a48",
       "name": "Fightinium-Z",
       "supertype": "Trainer",
       "isCustom": true,
@@ -2443,10 +2443,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_lltzi3n3u",
+      "id": "batch_1770908978847_aveu1ffb7",
       "name": "Normalium-Z",
       "supertype": "Trainer",
       "isCustom": true,
@@ -2480,10 +2480,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_v0do13ia9",
+      "id": "batch_1770908978847_k2l5hml3e",
       "name": "Flyinium-Z",
       "supertype": "Trainer",
       "isCustom": true,
@@ -2517,10 +2517,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_1xj0acybi",
+      "id": "batch_1770908978847_qp179nv92",
       "name": "Tapunium-Z",
       "supertype": "Trainer",
       "isCustom": true,
@@ -2554,10 +2554,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_5264vfuxh",
+      "id": "batch_1770908978847_auz6lnc2d",
       "name": "Cavern Energy",
       "supertype": "Energy",
       "isCustom": true,
@@ -2591,10 +2591,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_e8uxip98u",
+      "id": "batch_1770908978847_yvkwq3pnx",
       "name": "Yanma",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -2628,10 +2628,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_azkh7ybas",
+      "id": "batch_1770908978847_tgp8xp0dl",
       "name": "Snorunt",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -2665,10 +2665,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_x08ifhsrw",
+      "id": "batch_1770908978847_rm05jsxpt",
       "name": "Oricorio",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -2702,10 +2702,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_ppolwuafc",
+      "id": "batch_1770908978847_ow9cf08ma",
       "name": "Sandygast",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -2739,10 +2739,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_l0bkak29a",
+      "id": "batch_1770908978847_fp5yjfa55",
       "name": "Bisharp",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -2776,10 +2776,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_gdczcqhc1",
+      "id": "batch_1770908978847_1c6jlhg8v",
       "name": "Trumbeak",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -2813,10 +2813,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_4d7j71lmp",
+      "id": "batch_1770908978847_jj9t6f7jr",
       "name": "Gallade ex",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -2850,10 +2850,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_eauol37vg",
+      "id": "batch_1770908978847_gf46n7rt1",
       "name": "Toucannon ex",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -2887,10 +2887,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_j5d21ti1b",
+      "id": "batch_1770908978847_4qzs4dm33",
       "name": "Verdant Cavern",
       "supertype": "Trainer",
       "isCustom": true,
@@ -2924,10 +2924,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_lu5kmydx6",
+      "id": "batch_1770908978847_xg1sxsghf",
       "name": "Fightinium-Z",
       "supertype": "Trainer",
       "isCustom": true,
@@ -2961,10 +2961,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_zzly0iap9",
+      "id": "batch_1770908978847_4gjpfwwnt",
       "name": "Yanmega ex",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -2998,10 +2998,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_j3s3xcp3b",
+      "id": "batch_1770908978847_x1wmxudqp",
       "name": "Quagsire ex",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -3035,10 +3035,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_58kdpdvhj",
+      "id": "batch_1770908978847_8uk1eg50u",
       "name": "Tapu Koko ex",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -3072,10 +3072,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_3cyijt4u2",
+      "id": "batch_1770908978847_8vd7est0f",
       "name": "Gallade ex",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -3109,10 +3109,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_i8o47od2y",
+      "id": "batch_1770908978847_6rt00lb69",
       "name": "Dodrio ex",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -3146,10 +3146,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_9sg4qyji0",
+      "id": "batch_1770908978847_fbv2y8ogb",
       "name": "Toucannon ex",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -3183,10 +3183,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_fkxj29fip",
+      "id": "batch_1770908978847_b2i3bfwra",
       "name": "Akari",
       "supertype": "Trainer",
       "isCustom": true,
@@ -3220,10 +3220,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_w0h0rbyiz",
+      "id": "batch_1770908978847_i9x0f7txk",
       "name": "Akari",
       "supertype": "Trainer",
       "isCustom": true,
@@ -3257,10 +3257,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_8raa0295h",
+      "id": "batch_1770908978847_e4iiudobo",
       "name": "Akari",
       "supertype": "Trainer",
       "isCustom": true,
@@ -3294,10 +3294,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_0qfztnni6",
+      "id": "batch_1770908978847_dc8ipzn3m",
       "name": "Gallade ex",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -3331,10 +3331,10 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     },
     {
-      "id": "batch_1767293051349_app09v603",
+      "id": "batch_1770908978847_gl6vlcngw",
       "name": "Toucannon ex",
       "supertype": "Pokémon",
       "isCustom": true,
@@ -3368,7 +3368,7 @@
       },
       "forteData": {},
       "rules": [],
-      "created": "2026-01-01T18:44:11.349Z"
+      "created": "2026-02-12T15:09:38.847Z"
     }
   ],
   "totalCards": 89
