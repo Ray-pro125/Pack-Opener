@@ -345,7 +345,7 @@ function openPack() {
 
 /* ---------------- START SCREEN ---------------- */
 function initStartScreen() {
-  ["Z-Genesis_Melemele","Soaring_Titans"].forEach(s => {
+  ["Z-Genesis_Melemele","z-genesis-akala"].forEach(s => {
     const btn = document.createElement("button");
     btn.textContent = s;
     btn.onclick = () => loadSet(`sets/${s}.json`);
