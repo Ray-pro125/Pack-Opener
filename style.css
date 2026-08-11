@@ -10,8 +10,8 @@ body {
 
 /* ---------- BUTTONS ---------- */
 button {
-  padding: 14px 30px;
-  font-size: 17px;
+  padding: 12px 24px;
+  font-size: 16px;
   font-weight: 600;
   border-radius: 8px;
   border: none;
@@ -26,48 +26,118 @@ button {
 button:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5); }
 button:disabled { background: #444; cursor: not-allowed; }
 
-/* ---------- PAGE CONTAINERS ---------- */
-.hidden { display: none; }
-#controls { margin: 20px auto; }
+/* ---------- PAGE CONTAINERS & CONTROLS ---------- */
+.hidden { display: none !important; }
+#controls { margin: 15px auto; }
+
+#importSection {
+  margin-top: 20px;
+}
+
+#urlImport {
+  margin-top: 10px;
+}
+
+#urlImport input {
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: 1px solid #444;
+  background: #222;
+  color: #fff;
+  font-size: 14px;
+  width: 260px;
+}
+
 #openPackCenter {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 60vh;
+  min-height: 40vh;
   margin: 20px 0;
 }
-#openPackCenter.hidden { display: none; }
 
-/* ---------- SET NAVIGATION TABS ---------- */
+/* ---------- ACTIVE SET DISPLAY ---------- */
+#activeSetHeader {
+  margin: 15px auto 5px;
+  font-size: 20px;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.05);
+  display: inline-block;
+  padding: 8px 20px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#activeSetHeader .set-label {
+  color: #94a3b8;
+  margin-right: 6px;
+}
+
+#currentSetDisplay {
+  color: #60a5fa;
+}
+
+/* ---------- SET SELECTION CONTAINER (COLLECTION PAGE) ---------- */
+.collection-nav {
+  margin-top: 20px;
+}
+
+#setSelectionContainer {
+  margin: 20px auto;
+  padding: 16px;
+  background: rgba(25, 25, 25, 0.7);
+  border-radius: 12px;
+  max-width: 1100px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.section-title {
+  display: block;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #9ca3af;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
 #collectionSetTabs {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   gap: 10px;
-  margin: 15px auto 25px;
-  max-width: 1200px;
 }
 
 #collectionSetTabs button {
-  padding: 10px 20px;
-  font-size: 15px;
-  background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 8px 18px;
+  font-size: 14px;
+  background: #222;
+  border: 1px solid #444;
   color: #d1d5db;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: none;
 }
 
 #collectionSetTabs button:hover {
-  background: linear-gradient(135deg, #3a3a3a, #2a2a2a);
-  color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.3);
+  background: #333;
+  color: #fff;
 }
 
 #collectionSetTabs button.active-set {
   background: linear-gradient(135deg, #3b82f6, #2563eb);
   color: #ffffff;
   border-color: #60a5fa;
-  box-shadow: 0 0 15px rgba(59, 130, 246, 0.6);
+  font-weight: bold;
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
+}
+
+#collectionFilter {
+  padding: 10px 14px;
+  border-radius: 6px;
+  background: #222;
+  color: #fff;
+  border: 1px solid #444;
+  font-size: 15px;
+  margin-left: 8px;
 }
 
 /* ---------- Meta Master Link --------- */
@@ -88,17 +158,17 @@ button:disabled { background: #444; cursor: not-allowed; }
 /* ---------- CARDS ---------- */
 #pack, #collection {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: clamp(8px, 1.5vw, 15px) clamp(12px, 2vw, 20px);
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 15px;
   justify-items: center;
   padding: 20px;
-  max-width: 1800px;
+  max-width: 1600px;
   margin: 0 auto;
 }
 
 .card {
   width: 100%;
-  max-width: 280px;
+  max-width: 240px;
   padding: 10px;
   background: linear-gradient(180deg, #1f1f1f, #121212);
   border-radius: 8px;
@@ -112,7 +182,9 @@ button:disabled { background: #444; cursor: not-allowed; }
   flex-direction: column;
   align-items: center;
 }
+
 .card.show { opacity: 1; transform: translateY(0) scale(1); }
+
 .card img { 
   width: 100%; 
   height: auto; 
@@ -121,20 +193,21 @@ button:disabled { background: #444; cursor: not-allowed; }
   border-radius: 4px; 
   box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
 }
-.card div { margin-top: 8px; font-size: 14px; opacity: 0.85; }
+
+.card div { margin-top: 8px; font-size: 13px; opacity: 0.85; }
 
 /* ---------- STATS ---------- */
 #stats {
-  margin-top: 25px;
+  margin-top: 20px;
   background: rgba(20,20,20,0.85);
-  padding:16px 22px;
-  border-radius:12px;
-  display:inline-block;
-  text-align:left;
-  box-shadow:0 6px 20px rgba(0,0,0,0.6);
+  padding: 16px 22px;
+  border-radius: 12px;
+  display: inline-block;
+  text-align: left;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.6);
 }
 
-/* ---------- GLOW ---------- */
+/* ---------- GLOW EFFECTS ---------- */
 .rarity-Common { box-shadow: 0 0 8px rgba(255,255,255,0.15); }
 .rarity-Uncommon { box-shadow: 0 0 10px rgba(34,197,94,0.5),0 0 20px rgba(34,197,94,0.25); }
 .rarity-Rare { box-shadow: 0 0 12px rgba(59,130,246,0.7),0 0 25px rgba(59,130,246,0.35); }
@@ -152,26 +225,13 @@ button:disabled { background: #444; cursor: not-allowed; }
   100%{box-shadow:0 0 18px #ff0000,0 0 35px #ff0000;}
 }
 
-/* ---------- HIDDEN SPECIAL CARD GLOW HINT ---------- */
-.glow-hint {
-  position: relative;
-  animation: glowHintPulse 2.6s ease-in-out infinite;
-}
-
-@keyframes glowHintPulse {
-  0% { box-shadow: 0 0 6px; }
-  50% { box-shadow: 0 0 18px; }
-  100% { box-shadow: 0 0 6px; }
-}
-
 #progressBars {
-  margin: 15px 0;
+  margin: 20px auto;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  width: 60%;
-  margin-left: auto;
-  margin-right: auto;
+  gap: 12px;
+  width: 80%;
+  max-width: 600px;
   text-align: left;
 }
 
@@ -212,12 +272,10 @@ progress::-webkit-progress-value {
 
 #recentCards {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: clamp(8px, 1.5vw, 15px) clamp(12px, 2vw, 20px);
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 15px;
   justify-items: center;
-  padding: 20px;
-  max-width: 1800px;
-  margin: 0 auto;
+  padding: 20px 0;
 }
 
 #toggleRecentCards {
