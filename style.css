@@ -156,9 +156,19 @@ button:disabled { background: #444; cursor: not-allowed; }
 }
 
 /* ---------- CARDS ---------- */
-#pack, #collection {
+#pack {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: repeat(5, 1fr); /* Exactly 5 cards per row */
+  gap: 15px;
+  justify-items: center;
+  padding: 20px;
+  max-width: 1100px;                      /* Scaled down so 5 cards fit nicely */
+  margin: 0 auto;
+}
+
+#collection {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* Stays dynamic for your full binder */
   gap: 15px;
   justify-items: center;
   padding: 20px;
