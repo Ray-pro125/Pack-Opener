@@ -365,12 +365,12 @@ function openPack() {
   saveStats();
   updateStatsDisplay();
 
-  // ------- REVEAL: rarity-aware last 3 cards with glow hint -------
+  // ------- REVEAL: rarity-aware last 3 cards with mystery slot glow -------
   pulls.forEach((c, i) => {
     const div = document.createElement("div");
     div.className = `card rarity-${c.rarity.replace(/\s+/g, '-')}`;
 
-    const isLastThree = i >= pulls.length - 3;
+    const isLastThree = i >= pulls.length - 3; // Index 7 (Card 8), Index 8 (Card 9), Index 9 (Card 10)
     const autoReveal = AUTO_REVEAL_RARITIES.includes(c.rarity);
 
     if (!isLastThree || autoReveal) {
@@ -380,11 +380,14 @@ function openPack() {
       img.alt = c.name;
       div.appendChild(img);
     } else {
-      // Special rarity in last 3 → hidden, only glow hint
+      // Special rarity in last 3 → hidden with multi-color mystery rotation glow
       div.dataset.revealed = "false";
 
-      if (SPECIAL_GLOW_RARITIES.includes(c.rarity)) {
-        div.classList.add("glow-hint");
+      // Assign rotation glow based on slot, not exact card rarity
+      if (i === 7 || i === 8) {
+        div.classList.add("glow-mystery-slots-8-9");
+      } else if (i === 9) {
+        div.classList.add("glow-mystery-slot-10");
       }
 
       div.addEventListener("click", () => {
@@ -395,7 +398,7 @@ function openPack() {
         img.alt = c.name;
         div.appendChild(img);
         div.dataset.revealed = "true";
-        div.classList.remove("glow-hint");
+        div.classList.remove("glow-mystery-slots-8-9", "glow-mystery-slot-10");
         div.classList.add("revealed");
       }, { once: true });
     }
