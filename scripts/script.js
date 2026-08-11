@@ -1,298 +1,90 @@
-// State Variables
-let currentSetName = "";
-let currentSetData = null; // Holds the cards definition for currentSetName
-let recentCardsList = [];
+let cards = [], availableRarities = {};
+const AUTO_REVEAL_RARITIES = ["Common", "Uncommon", "Rare"];
+const SPECIAL_GLOW_RARITIES = [
+  "Double Rare",
+  "Ultra Rare",
+  "Illustration Rare",
+  "Special Illustration Rare",
+  "Hyper Rare"
+];
 
-// DOM Elements
+/* ---------------- ACTIVE SET & LOCAL STORAGE ---------------- */
+let currentSetName = localStorage.getItem("activeSetName") || "Z-Genesis Melemele";
+
+function getCollectionKey() { return `collection_${currentSetName}`; }
+function getStatsKey() { return `packStats_${currentSetName}`; }
+
+let stats = { packsOpened: 0, totalCards: 0, rarities: {} };
+let collection = {};
+
+function loadCollectionAndStats() {
+  stats = JSON.parse(localStorage.getItem(getStatsKey())) || { packsOpened: 0, totalCards: 0, rarities: {} };
+  collection = JSON.parse(localStorage.getItem(getCollectionKey())) || {};
+}
+loadCollectionAndStats();
+
+let lightbox = null, hoverTimeout = null;
+let recentCards = JSON.parse(localStorage.getItem("recentCards")) || [];
+let firstPackOpened = false;
+let lightboxEnabled = false;
+
+// DOM elements
 const startScreen = document.getElementById("startScreen");
 const openPackPage = document.getElementById("openPackPage");
 const collectionPage = document.getElementById("collectionPage");
 
+const openPackBtn = document.getElementById("openPack");
+const viewCollectionBtn = document.getElementById("viewCollection");
+const backToStartBtn = document.getElementById("backToStart");
+const backToOpenPackBtn = document.getElementById("backToOpenPack");
+const resetBtn = document.getElementById("resetData");
+
+const packDiv = document.getElementById("pack");
+const collectionDiv = document.getElementById("collection");
+const statsDiv = document.getElementById("stats");
+const loadingDiv = document.getElementById("loading");
+const openPackCenter = document.getElementById("openPackCenter");
+
 const availableSetsDiv = document.getElementById("availableSets");
 const importSetBtn = document.getElementById("importSet");
 const jsonInput = document.getElementById("jsonInput");
-const setURLInput = document.getElementById("setURL");
-const importURLSetBtn = document.getElementById("importURLSet");
 
-const openPackBtn = document.getElementById("openPack");
-const packDiv = document.getElementById("pack");
-const viewCollectionBtn = document.getElementById("viewCollection");
-const resetDataBtn = document.getElementById("resetData");
-const backToStartBtn = document.getElementById("backToStart");
+const urlInput = document.getElementById("setURL");
+const importURLBtn = document.getElementById("importURLSet");
 
-const backToOpenPackBtn = document.getElementById("backToOpenPack");
 const collectionFilter = document.getElementById("collectionFilter");
-const collectionDiv = document.getElementById("collection");
-const statsDiv = document.getElementById("stats");
+const recentCardsDiv = document.getElementById("recentCards");
+const toggleRecentCardsBtn = document.getElementById("toggleRecentCards");
 const currentSetDisplay = document.getElementById("currentSetDisplay");
 
-const regularProgress = document.getElementById("regularProgress");
-const masterProgress = document.getElementById("masterProgress");
-const toggleRecentCardsBtn = document.getElementById("toggleRecentCards");
-const recentCardsDiv = document.getElementById("recentCards");
+/* ---------------- STATS & COLLECTION ---------------- */
+function saveStats() { localStorage.setItem(getStatsKey(), JSON.stringify(stats)); }
+function saveCollection() { localStorage.setItem(getCollectionKey(), JSON.stringify(collection)); }
 
-// Pre-defined Z-Genesis Sets
-const PRESET_SETS = [
-  { name: "Z1 Genesis", url: "https://master.meta-ptcg.org/sets/z1.json" },
-  { name: "Z2 Genesis", url: "https://master.meta-ptcg.org/sets/z2.json" },
-  { name: "Z3 Genesis", url: "https://master.meta-ptcg.org/sets/z3.json" },
-  { name: "Z4 Genesis", url: "https://master.meta-ptcg.org/sets/z4.json" },
-  { name: "Z5 Genesis", url: "https://master.meta-ptcg.org/sets/z5.json" },
-  { name: "Z6 Genesis", url: "https://master.meta-ptcg.org/sets/z6.json" }
-];
+function updateStatsDisplay() {
+  let html = `<h3>Set: ${currentSetName}</h3>
+              <h3>Packs Opened: ${stats.packsOpened}</h3>
+              <h3>Total cards: ${stats.totalCards}</h3><ul>`;
+  ["Common", "Uncommon", "Rare", "Double Rare", "Illustration Rare", "Ultra Rare", "Special Illustration Rare", "Hyper Rare"]
+    .forEach(r => html += `<li>${r}: ${stats.rarities[r] || 0}</li>`);
+  html += "</ul>";
+  statsDiv.innerHTML = html;
 
-/* ---------- INITIALIZATION ---------- */
-document.addEventListener("DOMContentLoaded", () => {
-  renderAvailableSets();
-  setupEventListeners();
+  const regularRarities = ["Common", "Uncommon", "Rare", "Double Rare"];
+  const regularMax = cards.filter(c => regularRarities.includes(c.rarity)).length;
+  const regularCollected = Object.values(collection).filter(c => c.count > 0 && regularRarities.includes(c.rarity)).length;
 
-  // Restore active set if available from previous session
-  const savedActiveSet = localStorage.getItem("activeSetName");
-  if (savedActiveSet && getSetData(savedActiveSet)) {
-    activateSet(savedActiveSet);
-  }
-});
+  const masterMax = cards.length;
+  const masterCollected = Object.values(collection).filter(c => c.count > 0).length;
 
-function setupEventListeners() {
-  importSetBtn.onclick = () => jsonInput.click();
-  jsonInput.onchange = handleJSONImport;
-  importURLSetBtn.onclick = handleURLImport;
+  // Prevent division by zero
+  const regularProgress = regularMax > 0 ? (regularCollected / regularMax) * 100 : 0;
+  const masterProgress = masterMax > 0 ? (masterCollected / masterMax) * 100 : 0;
 
-  openPackBtn.onclick = openPack;
-  viewCollectionBtn.onclick = showCollectionPage;
-  backToStartBtn.onclick = showStartScreen;
-  backToOpenPackBtn.onclick = showOpenPackPage;
-
-  resetDataBtn.onclick = resetCurrentSetData;
-  collectionFilter.onchange = () => renderCollection(collectionFilter.value);
-
-  toggleRecentCardsBtn.onclick = () => {
-    recentCardsDiv.classList.toggle("hidden");
-    toggleRecentCardsBtn.textContent = recentCardsDiv.classList.contains("hidden") 
-      ? "Show Recent Cards" 
-      : "Hide Recent Cards";
-  };
-}
-
-/* ---------- SET MANAGEMENT & CACHING ---------- */
-function saveSetData(setName, data) {
-  try {
-    localStorage.setItem(`setData_${setName}`, JSON.stringify(data));
-  } catch (e) {
-    console.warn("Storage quota exceeded caching set data", e);
-  }
-}
-
-function getSetData(setName) {
-  const cached = localStorage.getItem(`setData_${setName}`);
-  return cached ? JSON.parse(cached) : null;
-}
-
-function getKnownSets() {
-  const sets = new Set();
-  
-  // Always include Preset Sets
-  PRESET_SETS.forEach(set => sets.add(set.name));
-
-  // Include user imported / local storage sets
-  for (let i = 0; i < localStorage.length; i++) {
-    const key = localStorage.key(i);
-    if (key.startsWith("collection_")) {
-      sets.add(key.replace("collection_", ""));
-    } else if (key.startsWith("setData_")) {
-      sets.add(key.replace("setData_", ""));
-    }
-  }
-  return Array.from(sets);
-}
-
-// Synchronizes active set between Opening Packs & Collection views
-function activateSet(setName, setDataObj = null) {
-  if (setDataObj) {
-    saveSetData(setName, setDataObj);
-    currentSetData = setDataObj;
-  } else {
-    currentSetData = getSetData(setName);
-  }
-
-  currentSetName = setName;
-  localStorage.setItem("activeSetName", setName);
-  if (currentSetDisplay) currentSetDisplay.textContent = setName;
-}
-
-/* ---------- START SCREEN & LOADING ---------- */
-function renderAvailableSets() {
-  availableSetsDiv.innerHTML = "";
-
-  // Render Preset Z-Genesis buttons
-  PRESET_SETS.forEach(set => {
-    const btn = document.createElement("button");
-    btn.textContent = set.name;
-    btn.onclick = () => fetchAndLoadSet(set.name, set.url);
-    availableSetsDiv.appendChild(btn);
-  });
-
-  // Render buttons for additional custom imported sets stored in localStorage
-  const knownSets = getKnownSets().filter(name => !PRESET_SETS.some(p => p.name === name));
-  knownSets.forEach(setName => {
-    const btn = document.createElement("button");
-    btn.textContent = setName;
-    btn.onclick = () => {
-      activateSet(setName);
-      showOpenPackPage();
-    };
-    availableSetsDiv.appendChild(btn);
-  });
-}
-
-async function fetchAndLoadSet(name, url) {
-  try {
-    // If we already have the set cached in localStorage, load it instantly
-    const cachedData = getSetData(name);
-    if (cachedData) {
-      activateSet(name, cachedData);
-      showOpenPackPage();
-      return;
-    }
-
-    const response = await fetch(url);
-    if (!response.ok) throw new Error("Failed to fetch set JSON.");
-    const data = await response.json();
-    const setDisplayName = data.name || name;
-    activateSet(setDisplayName, data);
-    renderAvailableSets();
-    showOpenPackPage();
-  } catch (err) {
-    alert(`Error loading set: ${err.message}`);
-  }
-}
-
-function handleJSONImport(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    try {
-      const data = JSON.parse(e.target.result);
-      const setName = data.name || file.name.replace(".json", "");
-      activateSet(setName, data);
-      renderAvailableSets();
-      showOpenPackPage();
-    } catch (err) {
-      alert("Invalid JSON set file.");
-    }
-  };
-  reader.readAsText(file);
-}
-
-function handleURLImport() {
-  const url = setURLInput.value.trim();
-  if (!url) return alert("Please enter a JSON URL.");
-  const setName = "Custom Set";
-  fetchAndLoadSet(setName, url);
-}
-
-/* ---------- OPEN PACK ---------- */
-function openPack() {
-  if (!currentSetData || !currentSetData.cards || !currentSetData.cards.length) {
-    alert("No card pool loaded for this set!");
-    return;
-  }
-
-  const cards = currentSetData.cards;
-  const packCards = getRandomPackCards(cards);
-
-  // Update localStorage for current active set
-  const collectionKey = `collection_${currentSetName}`;
-  const statsKey = `packStats_${currentSetName}`;
-
-  let userCol = JSON.parse(localStorage.getItem(collectionKey) || "{}");
-  let userStats = JSON.parse(localStorage.getItem(statsKey) || '{"packsOpened":0}');
-
-  userStats.packsOpened = (userStats.packsOpened || 0) + 1;
-
-  packCards.forEach(card => {
-    userCol[card.id] = (userCol[card.id] || 0) + 1;
-  });
-
-  localStorage.setItem(collectionKey, JSON.stringify(userCol));
-  localStorage.setItem(statsKey, JSON.stringify(userStats));
-
-  // Render Pack UI
-  renderPackUI(packCards);
-  recentCardsList.unshift(...packCards);
-  recentCardsList = recentCardsList.slice(0, 20); // Keep last 20 cards
-}
-
-function getRandomPackCards(cardPool) {
-  const pack = [];
-  const byRarity = {};
-
-  cardPool.forEach(card => {
-    const r = card.rarity || "Common";
-    if (!byRarity[r]) byRarity[r] = [];
-    byRarity[r].push(card);
-  });
-
-  const getCard = (rarity) => {
-    const pool = byRarity[rarity] || byRarity["Common"] || cardPool;
-    return pool[Math.floor(Math.random() * pool.length)];
-  };
-
-  // 6 Commons, 3 Uncommons, 1 Rare+
-  for (let i = 0; i < 6; i++) pack.push(getCard("Common"));
-  for (let i = 0; i < 3; i++) pack.push(getCard("Uncommon"));
-
-  // Rare slot pull probabilities
-  const roll = Math.random();
-  if (roll < 0.02 && byRarity["Hyper Rare"]) pack.push(getCard("Hyper Rare"));
-  else if (roll < 0.06 && byRarity["Special Illustration Rare"]) pack.push(getCard("Special Illustration Rare"));
-  else if (roll < 0.12 && byRarity["Ultra Rare"]) pack.push(getCard("Ultra Rare"));
-  else if (roll < 0.20 && byRarity["Illustration Rare"]) pack.push(getCard("Illustration Rare"));
-  else if (roll < 0.35 && byRarity["Double Rare"]) pack.push(getCard("Double Rare"));
-  else pack.push(getCard("Rare"));
-
-  return pack;
-}
-
-function renderPackUI(cards) {
-  packDiv.innerHTML = "";
-  cards.forEach((card, index) => {
-    const cardEl = createCardElement(card);
-    packDiv.appendChild(cardEl);
-    setTimeout(() => cardEl.classList.add("show"), index * 80);
-  });
-}
-
-function createCardElement(card, count = null) {
-  const div = document.createElement("div");
-  const rarityClass = `rarity-${(card.rarity || "Common").replace(/\s+/g, "-")}`;
-  div.className = `card ${rarityClass}`;
-
-  const img = document.createElement("img");
-  img.src = card.image || card.images?.small || "";
-  img.alt = card.name;
-  img.loading = "lazy";
-
-  const info = document.createElement("div");
-  info.textContent = `${card.name} ${count !== null ? `(x${count})` : ""}`;
-
-  div.appendChild(img);
-  div.appendChild(info);
-  return div;
-}
-
-/* ---------- COLLECTION & TABS ---------- */
-function showCollectionPage() {
-  startScreen.classList.add("hidden");
-  openPackPage.classList.add("hidden");
-  collectionPage.classList.remove("hidden");
-
-  renderSetTabs();
-  updateStatsDisplay();
-  renderCollection(collectionFilter.value);
-  renderRecentCards();
+  const regEl = document.getElementById("regularProgress");
+  const mastEl = document.getElementById("masterProgress");
+  if (regEl) regEl.value = regularProgress;
+  if (mastEl) mastEl.value = masterProgress;
 }
 
 function renderSetTabs() {
@@ -300,121 +92,462 @@ function renderSetTabs() {
   if (!container) return;
   container.innerHTML = "";
 
-  const knownSets = getKnownSets();
-  if (!knownSets.length) {
-    container.innerHTML = "<p><em>No set collections stored yet. Open a pack to get started!</em></p>";
-    return;
+  const knownSets = new Set(["Z-Genesis Melemele", "Z-Genesis Akala"]);
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key.startsWith("collection_")) {
+      knownSets.add(key.replace("collection_", ""));
+    }
   }
 
   knownSets.forEach(setName => {
     const btn = document.createElement("button");
     btn.textContent = setName;
+    if (setName === currentSetName) btn.classList.add("active-set");
 
-    if (setName === currentSetName) {
-      btn.classList.add("active-set");
-    }
-
-    btn.onclick = async () => {
-      // Check if it's a preset set that hasn't been fetched yet
-      const preset = PRESET_SETS.find(p => p.name === setName);
-      if (preset && !getSetData(setName)) {
-        await fetchAndLoadSet(preset.name, preset.url);
+    btn.onclick = () => {
+      if (setName.startsWith("Z-Genesis")) {
+        loadSet(`sets/${setName}.json`, setName);
       } else {
-        activateSet(setName);
+        currentSetName = setName;
+        localStorage.setItem("activeSetName", setName);
+        loadCollectionAndStats();
+        updateStatsDisplay();
+        renderCollection(collectionFilter.value || null);
       }
-
       renderSetTabs();
-      updateStatsDisplay();
-      renderCollection(collectionFilter.value);
     };
 
     container.appendChild(btn);
   });
 }
 
-function renderCollection(filterRarity = "") {
+function renderCollection(filterRarity = null) {
   collectionDiv.innerHTML = "";
-  if (!currentSetData || !currentSetData.cards) return;
+  
+  // Build card binder view from set data if loaded, otherwise fallback to pulled cards
+  let listToRender = [];
+  if (cards && cards.length > 0) {
+    cards.forEach(c => {
+      const key = `${c.name}_${c.number}`;
+      const owned = collection[key];
+      const count = owned ? owned.count : 0;
+      listToRender.push({ ...c, count });
+    });
+  } else {
+    listToRender = Object.values(collection);
+  }
 
-  const userCol = JSON.parse(localStorage.getItem(`collection_${currentSetName}`) || "{}");
+  if (filterRarity) listToRender = listToRender.filter(c => c.rarity === filterRarity);
 
-  currentSetData.cards.forEach(card => {
-    if (filterRarity && card.rarity !== filterRarity) return;
+  listToRender.sort((a, b) => {
+    const ma = (a.number || "").toString().match(/^(\d+)([a-z]?)$/i);
+    const mb = (b.number || "").toString().match(/^(\d+)([a-z]?)$/i);
+    if (!ma || !mb) return 0;
+    const na = parseInt(ma[1]), nb = parseInt(mb[1]);
+    const la = ma[2] || '', lb = mb[2] || '';
+    if (na !== nb) return na - nb;
+    if (la < lb) return -1;
+    if (la > lb) return 1;
+    return 0;
+  });
 
-    const count = userCol[card.id] || 0;
-    const cardEl = createCardElement(card, count);
-
+  listToRender.forEach((c, i) => {
+    const div = document.createElement("div");
+    const count = c.count || 0;
+    div.className = `card rarity-${(c.rarity || 'Common').replace(/\s+/g, '-')} show`;
+    
     if (count === 0) {
-      cardEl.style.filter = "grayscale(100%) opacity(0.4)";
+      div.style.filter = "grayscale(100%) opacity(0.4)";
     }
 
-    collectionDiv.appendChild(cardEl);
-    setTimeout(() => cardEl.classList.add("show"), 20);
+    div.innerHTML = `<img src="${c.image || 'cardback.png'}" onerror="this.src='cardback.png'"><div>${c.name} ×${count}</div>`;
+    collectionDiv.appendChild(div);
+    attachLightboxHandlers(div, c, listToRender, i);
   });
 }
 
-function updateStatsDisplay() {
-  if (!currentSetData || !currentSetData.cards) {
-    statsDiv.innerHTML = "<p>No set data loaded.</p>";
-    return;
-  }
-
-  const userCol = JSON.parse(localStorage.getItem(`collection_${currentSetName}`) || "{}");
-  const userStats = JSON.parse(localStorage.getItem(`packStats_${currentSetName}`) || '{"packsOpened":0}');
-
-  const totalCardsInSet = currentSetData.cards.length;
-  const uniqueCollected = Object.keys(userCol).filter(id => userCol[id] > 0).length;
-  const totalCardsCollected = Object.values(userCol).reduce((a, b) => a + b, 0);
-
-  const regularCompletion = Math.min(100, Math.round((uniqueCollected / totalCardsInSet) * 100));
-  const masterCompletion = Math.min(100, Math.round((uniqueCollected / totalCardsInSet) * 100));
-
-  regularProgress.value = regularCompletion;
-  masterProgress.value = masterCompletion;
-
-  statsDiv.innerHTML = `
-    <strong>Set:</strong> ${currentSetName}<br>
-    <strong>Packs Opened:</strong> ${userStats.packsOpened || 0}<br>
-    <strong>Unique Cards:</strong> ${uniqueCollected} / ${totalCardsInSet}<br>
-    <strong>Total Cards Collected:</strong> ${totalCardsCollected}
-  `;
+/* ---------------- LOAD SET ---------------- */
+function buildAvailableRarities() {
+  availableRarities = {};
+  cards.forEach(c => { if (!availableRarities[c.rarity]) availableRarities[c.rarity] = []; availableRarities[c.rarity].push(c); });
 }
 
-function renderRecentCards() {
-  recentCardsDiv.innerHTML = "";
-  recentCardsList.forEach(card => {
-    const cardEl = createCardElement(card);
-    recentCardsDiv.appendChild(cardEl);
-    cardEl.classList.add("show");
-  });
-}
+function loadSet(fileOrJSON, explicitSetName = null) {
+  loadingDiv.style.display = "block";
 
-function resetCurrentSetData() {
-  if (!currentSetName) return;
-  if (confirm(`Are you sure you want to reset all collection data for "${currentSetName}"?`)) {
-    localStorage.removeItem(`collection_${currentSetName}`);
-    localStorage.removeItem(`packStats_${currentSetName}`);
+  const onSetLoaded = (data, nameFromData) => {
+    cards = data;
+    buildAvailableRarities();
+
+    // Set Active Set Name
+    currentSetName = explicitSetName || nameFromData || "Custom Set";
+    localStorage.setItem("activeSetName", currentSetName);
+    if (currentSetDisplay) currentSetDisplay.textContent = currentSetName;
+
+    loadCollectionAndStats();
     updateStatsDisplay();
-    renderCollection();
-    alert(`Data for ${currentSetName} has been reset.`);
+    renderCollection(collectionFilter.value || null);
+    renderSetTabs();
+
+    loadingDiv.style.display = "none";
+    openPackBtn.disabled = false;
+    packDiv.innerHTML = ""; // Clear any previous pack
+    firstPackOpened = false; // Reset for new set
+    if (openPackCenter) openPackCenter.classList.remove("hidden");
+    if (openPackBtn.parentElement !== openPackCenter && openPackCenter) {
+      openPackCenter.appendChild(openPackBtn);
+    }
+    startScreen.classList.add("hidden");
+    openPackPage.classList.remove("hidden");
+  };
+
+  if (typeof fileOrJSON === "string") {
+    const trimmed = fileOrJSON.trim();
+    const isJsonString = trimmed.startsWith('{') || trimmed.startsWith('[');
+
+    if (isJsonString) {
+      try {
+        const j = JSON.parse(fileOrJSON);
+        onSetLoaded(j.data, j.name);
+      } catch {
+        loadingDiv.style.display = "none";
+        alert("Invalid JSON");
+      }
+    } else {
+      const isLocalPath = fileOrJSON.startsWith('sets/') || fileOrJSON.startsWith('./') || (!fileOrJSON.startsWith('http://') && !fileOrJSON.startsWith('https://') && !fileOrJSON.startsWith('//'));
+      const fetchFn = (!isLocalPath && typeof URLResolver !== 'undefined' && URLResolver.importJson)
+        ? (url) => URLResolver.importJson(url)
+        : (url) => fetch(url).then(r => r.json());
+
+      fetchFn(fileOrJSON).then(j => {
+        const inferredName = explicitSetName || fileOrJSON.replace(/^sets\//, '').replace(/\.json$/, '');
+        onSetLoaded(j.data, j.name || inferredName);
+      }).catch(err => {
+        loadingDiv.style.display = "none";
+        alert(`Failed to load set: ${err.message || err}`);
+      });
+    }
+  } else {
+    try {
+      const j = JSON.parse(fileOrJSON);
+      onSetLoaded(j.data, j.name);
+    } catch { alert("Invalid JSON"); }
   }
 }
 
-/* ---------- NAVIGATION ---------- */
-function showStartScreen() {
+/* ---------------- HELPERS ---------------- */
+function randomFrom(arr) { if (!arr || !arr.length) return null; return arr[Math.floor(Math.random() * arr.length)]; }
+function getByRarity(r) { return availableRarities[r] || []; }
+function weightedRoll(table) { const f = table.filter(e => getByRarity(e.rarity).length); if (!f.length) return null; let total = f.reduce((s, e) => s + e.weight, 0), roll = Math.random() * total; for (let e of f) { if (roll < e.weight) return e.rarity; roll -= e.weight; } return f[f.length - 1].rarity; }
+function pullWeighted(table) { const r = weightedRoll(table); return randomFrom(getByRarity(r)) || randomFrom(cards); }
+
+/* ---------------- OPEN PACK ---------------- */
+function openPack() {
+  if (!cards.length) { alert("Set not loaded"); return; }
+
+  // Clear previous pack display
+  packDiv.innerHTML = "";
+
+  // Move button to controls after first pack and hide center container
+  if (!firstPackOpened) {
+    firstPackOpened = true;
+    const controls = document.getElementById("controls");
+    if (controls && openPackCenter) {
+      openPackCenter.classList.add("hidden");
+      controls.insertBefore(openPackBtn, controls.firstChild);
+    }
+  }
+
+  const pulls = [];
+  const pulledKeys = new Set(); // Track cards already pulled in this pack
+
+  // Helper to get card key
+  const getCardKey = (c) => c ? `${c.name}_${c.number}` : null;
+
+  // Helper to filter out already pulled cards
+  const filterUnpulled = (arr) => arr ? arr.filter(c => {
+    const key = getCardKey(c);
+    return key && !pulledKeys.has(key);
+  }) : [];
+
+  // Helper to pull random card excluding already pulled ones
+  const pullUnique = (rarity) => {
+    const available = filterUnpulled(getByRarity(rarity));
+    if (available.length === 0) {
+      const fallback = filterUnpulled(cards);
+      return fallback.length > 0 ? randomFrom(fallback) : null;
+    }
+    return randomFrom(available);
+  };
+
+  // Helper to pull weighted excluding already pulled ones
+  const pullWeightedUnique = (table) => {
+    // Create filtered table with only rarities that have unpulled cards
+    const filteredTable = table.filter(e => {
+      const available = filterUnpulled(getByRarity(e.rarity));
+      return available.length > 0;
+    });
+
+    if (!filteredTable.length) {
+      const fallback = filterUnpulled(cards);
+      return fallback.length > 0 ? randomFrom(fallback) : null;
+    }
+
+    // Custom weighted roll that uses filtered cards
+    let total = filteredTable.reduce((s, e) => s + e.weight, 0);
+    if (total === 0) {
+      const fallback = filterUnpulled(cards);
+      return fallback.length > 0 ? randomFrom(fallback) : null;
+    }
+
+    let roll = Math.random() * total;
+    let selectedRarity = null;
+    for (let e of filteredTable) {
+      if (roll < e.weight) {
+        selectedRarity = e.rarity;
+        break;
+      }
+      roll -= e.weight;
+    }
+    if (!selectedRarity) selectedRarity = filteredTable[filteredTable.length - 1].rarity;
+
+    const available = filterUnpulled(getByRarity(selectedRarity));
+    if (available.length === 0) {
+      const fallback = filterUnpulled(cards);
+      return fallback.length > 0 ? randomFrom(fallback) : null;
+    }
+    return randomFrom(available);
+  };
+
+  // Pull 4 Common (unique)
+  for (let i = 0; i < 4; i++) {
+    const card = pullUnique("Common");
+    if (card) {
+      pulls.push(card);
+      pulledKeys.add(getCardKey(card));
+    }
+  }
+
+  // Pull 3 Uncommon (unique)
+  for (let i = 0; i < 3; i++) {
+    const card = pullUnique("Uncommon");
+    if (card) {
+      pulls.push(card);
+      pulledKeys.add(getCardKey(card));
+    }
+  }
+
+  // Pull remaining slots (unique)
+  const card8 = pullWeightedUnique([{ rarity: "Common", weight: 55 }, { rarity: "Uncommon", weight: 32 }, { rarity: "Rare", weight: 11 }, { rarity: "Illustration Rare", weight: 1.5 }, { rarity: "Special Illustration Rare", weight: 0.4 }, { rarity: "Hyper Rare", weight: 0.1 }]);
+  if (card8) { pulls.push(card8); pulledKeys.add(getCardKey(card8)); }
+
+  const card9 = pullWeightedUnique([{ rarity: "Common", weight: 35 }, { rarity: "Uncommon", weight: 43 }, { rarity: "Rare", weight: 18 }, { rarity: "Illustration Rare", weight: 12 }, { rarity: "Special Illustration Rare", weight: 2.3 }, { rarity: "Hyper Rare", weight: 0.7 }]);
+  if (card9) { pulls.push(card9); pulledKeys.add(getCardKey(card9)); }
+
+  const card10 = pullWeightedUnique([{ rarity: "Rare", weight: 11 }, { rarity: "Double Rare", weight: 3 }, { rarity: "Ultra Rare", weight: 1 }]);
+  if (card10) { pulls.push(card10); pulledKeys.add(getCardKey(card10)); }
+
+  stats.packsOpened++;
+  stats.totalCards += pulls.length;
+  pulls.forEach(c => stats.rarities[c.rarity] = (stats.rarities[c.rarity] || 0) + 1);
+  pulls.forEach(c => {
+    const key = `${c.name}_${c.number}`;
+    if (!collection[key]) collection[key] = { ...c, count: 0 };
+    collection[key].count++;
+    // Add to recent cards (keep last 20)
+    recentCards.unshift({ ...c, timestamp: Date.now() });
+    if (recentCards.length > 20) recentCards.pop();
+  });
+  localStorage.setItem("recentCards", JSON.stringify(recentCards));
+
+  saveCollection();
+  renderCollection(collectionFilter.value || null);
+  saveStats();
+  updateStatsDisplay();
+
+  // ------- REVEAL: rarity-aware last 3 cards with glow hint -------
+  pulls.forEach((c, i) => {
+    const div = document.createElement("div");
+    div.className = `card rarity-${c.rarity.replace(/\s+/g, '-')}`;
+
+    const isLastThree = i >= pulls.length - 3;
+    const autoReveal = AUTO_REVEAL_RARITIES.includes(c.rarity);
+
+    if (!isLastThree || autoReveal) {
+      // Normal reveal
+      const img = document.createElement("img");
+      img.src = c.image;
+      img.alt = c.name;
+      div.appendChild(img);
+    } else {
+      // Special rarity in last 3 → hidden, only glow hint
+      div.dataset.revealed = "false";
+
+      if (SPECIAL_GLOW_RARITIES.includes(c.rarity)) {
+        div.classList.add("glow-hint");
+      }
+
+      div.addEventListener("click", () => {
+        if (div.dataset.revealed === "true") return;
+
+        const img = document.createElement("img");
+        img.src = c.image;
+        img.alt = c.name;
+        div.appendChild(img);
+        div.dataset.revealed = "true";
+        div.classList.remove("glow-hint");
+        div.classList.add("revealed");
+      }, { once: true });
+    }
+
+    // Add to DOM and show placeholder div immediately
+    packDiv.appendChild(div);
+    setTimeout(() => div.classList.add("show"), i * 350);
+    attachLightboxHandlers(div, c, pulls, i);
+  });
+}
+
+/* ---------------- START SCREEN ---------------- */
+function initStartScreen() {
+  availableSetsDiv.innerHTML = "";
+  ["Z-Genesis Melemele", "Z-Genesis Akala"].forEach(s => {
+    const btn = document.createElement("button");
+    btn.textContent = s;
+    btn.onclick = () => loadSet(`sets/${s}.json`, s);
+    availableSetsDiv.appendChild(btn);
+  });
+}
+
+// Run once on page load
+initStartScreen();
+
+/* ---------------- IMPORT ---------------- */
+importSetBtn.onclick = () => jsonInput.click();
+jsonInput.onchange = (e) => {
+  const f = jsonInput.files[0];
+  if (!f || !f.name.endsWith(".json")) return alert("Please select a JSON file");
+  const r = new FileReader();
+  r.onload = ev => { loadSet(ev.target.result, f.name.replace(".json", "")); };
+  r.readAsText(f);
+};
+
+// ---------------- URL IMPORT ----------------
+importURLBtn.onclick = () => {
+  const url = urlInput.value.trim();
+  if (!url) return alert("Please enter a URL");
+  loadSet(url, "Custom Set");
+};
+
+/* ---------------- COLLECTION FILTER ---------------- */
+collectionFilter.addEventListener("change", () => {
+  renderCollection(collectionFilter.value || null);
+});
+
+/* ---------------- NAVIGATION ---------------- */
+viewCollectionBtn.onclick = () => {
+  lightboxEnabled = true;
+  packDiv.innerHTML = "";
   openPackPage.classList.add("hidden");
-  collectionPage.classList.add("hidden");
-  startScreen.classList.remove("hidden");
-  renderAvailableSets();
-}
-
-function showOpenPackPage() {
-  if (!currentSetName) {
-    alert("Please select a set first!");
-    return;
-  }
-  startScreen.classList.add("hidden");
+  collectionPage.classList.remove("hidden");
+  renderSetTabs();
+  updateStatsDisplay();
+  renderCollection(collectionFilter.value || null);
+};
+backToOpenPackBtn.onclick = () => {
+  lightboxEnabled = false;
+  packDiv.innerHTML = "";
   collectionPage.classList.add("hidden");
   openPackPage.classList.remove("hidden");
-  if (currentSetDisplay) currentSetDisplay.textContent = currentSetName;
+};
+backToStartBtn.onclick = () => {
+  packDiv.innerHTML = ""; // Clear pack when going back
+  openPackPage.classList.add("hidden");
+  startScreen.classList.remove("hidden");
+};
+openPackBtn.onclick = () => {
+  lightboxEnabled = false;
+  openPack();
+};
+
+/* ---------------- RESET ---------------- */
+resetBtn.onclick = () => {
+  if (!confirm(`Erase all collection data for "${currentSetName}"?`)) return;
+  localStorage.removeItem(getCollectionKey());
+  localStorage.removeItem(getStatsKey());
+  stats = { packsOpened: 0, totalCards: 0, rarities: {} };
+  collection = {};
+  updateStatsDisplay();
+  renderCollection(collectionFilter.value || null);
+};
+
+/* ---------------- LIGHTBOX INITIALIZATION ---------------- */
+if (typeof MetaLightbox !== 'undefined') {
+  lightbox = new MetaLightbox({
+    theme: 'dark',
+    showMetadata: false,  // Hide metadata to make it smaller
+    showNavigation: true,
+    showCounter: false,  // Hide counter
+    closeOnBackdropClick: true,
+    closeOnEscape: true,
+    overlayOpacity: 0.95,
+    apiBaseUrl: null,
+    apiEndpoint: null
+  });
 }
+
+/* ---------------- CARD LIGHTBOX HANDLERS ---------------- */
+function attachLightboxHandlers(cardElement, cardData, allCards, cardIndex) {
+  if (!lightbox || !lightboxEnabled) return;
+
+  cardElement.dataset.cardIndex = cardIndex;
+  cardElement.style.cursor = 'pointer';
+
+  cardElement.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (allCards && allCards.length > 0) {
+      lightbox.open(allCards, cardIndex);
+    } else {
+      lightbox.open([cardData], 0);
+    }
+  });
+}
+
+/* ---------------- RECENT CARDS ---------------- */
+function renderRecentCards() {
+  if (!recentCardsDiv || !recentCards.length) return;
+  recentCardsDiv.innerHTML = "";
+  recentCardsDiv.style.display = "flex";
+  recentCardsDiv.style.flexWrap = "wrap";
+  recentCardsDiv.style.gap = "14px";
+  recentCardsDiv.style.justifyContent = "center";
+
+  recentCards.slice(0, 10).forEach((c, i) => {
+    if (!c || !c.image) return;
+    const div = document.createElement("div");
+    div.className = `card rarity-${(c.rarity || 'Common').replace(/\s+/g, '-')} show`;
+    div.innerHTML = `<img src="${c.image}" alt="${c.name || ''}" onerror="this.src='cardback.png'">`;
+    recentCardsDiv.appendChild(div);
+    attachLightboxHandlers(div, c, recentCards.slice(0, 10), i);
+  });
+}
+
+if (toggleRecentCardsBtn) {
+  toggleRecentCardsBtn.onclick = () => {
+    if (recentCardsDiv.classList.contains("hidden")) {
+      recentCardsDiv.classList.remove("hidden");
+      renderRecentCards();
+      toggleRecentCardsBtn.textContent = "Hide Recent Cards";
+    } else {
+      recentCardsDiv.classList.add("hidden");
+      toggleRecentCardsBtn.textContent = "Show Recent Cards";
+    }
+  };
+}
+
+/* ---------------- INITIAL ---------------- */
+startScreen.classList.remove("hidden");
+openPackPage.classList.add("hidden");
+collectionPage.classList.add("hidden");
+updateStatsDisplay();
+renderCollection();
