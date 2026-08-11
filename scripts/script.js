@@ -380,10 +380,16 @@ function openPack() {
       img.alt = c.name;
       div.appendChild(img);
     } else {
-      // Special rarity in last 3 → hidden with multi-color mystery rotation glow
+      // Special rarity in last 3 → face-down card back with mystery rotation glow
       div.dataset.revealed = "false";
 
-      // Assign rotation glow based on slot, not exact card rarity
+      // Insert cardback.png immediately so the div maintains its full card size
+      const img = document.createElement("img");
+      img.src = "cardback.png";
+      img.alt = "Hidden Card";
+      div.appendChild(img);
+
+      // Assign mystery rotation glow based on slot index
       if (i === 7 || i === 8) {
         div.classList.add("glow-mystery-slots-8-9");
       } else if (i === 9) {
@@ -393,16 +399,14 @@ function openPack() {
       div.addEventListener("click", () => {
         if (div.dataset.revealed === "true") return;
 
-        const img = document.createElement("img");
+        // Reveal card: swap face-down image with actual card image
         img.src = c.image;
         img.alt = c.name;
-        div.appendChild(img);
         div.dataset.revealed = "true";
         div.classList.remove("glow-mystery-slots-8-9", "glow-mystery-slot-10");
         div.classList.add("revealed");
       }, { once: true });
     }
-
     // Add to DOM and show placeholder div immediately
     packDiv.appendChild(div);
     setTimeout(() => div.classList.add("show"), i * 350);
