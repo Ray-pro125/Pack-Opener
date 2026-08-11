@@ -198,8 +198,7 @@ function loadSet(fileOrJSON, explicitSetName = null) {
     if (openPackBtn.parentElement !== openPackCenter && openPackCenter) {
       openPackCenter.appendChild(openPackBtn);
     }
-    startScreen.classList.add("hidden");
-    openPackPage.classList.remove("hidden");
+    showScreen(openPackPage);
   };
 
   if (typeof fileOrJSON === "string") {
@@ -443,28 +442,35 @@ importURLBtn.onclick = () => {
 collectionFilter.addEventListener("change", () => {
   renderCollection(collectionFilter.value || null);
 });
+/* ---------------- SCREEN HELPER ---------------- */
+function showScreen(screenToShow) {
+  startScreen.classList.add("hidden");
+  openPackPage.classList.add("hidden");
+  collectionPage.classList.add("hidden");
+  screenToShow.classList.remove("hidden");
+}
 
 /* ---------------- NAVIGATION ---------------- */
 viewCollectionBtn.onclick = () => {
   lightboxEnabled = true;
   packDiv.innerHTML = "";
-  openPackPage.classList.add("hidden");
-  collectionPage.classList.remove("hidden");
+  showScreen(collectionPage);
   renderSetTabs();
   updateStatsDisplay();
   renderCollection(collectionFilter.value || null);
 };
+
 backToOpenPackBtn.onclick = () => {
   lightboxEnabled = false;
   packDiv.innerHTML = "";
-  collectionPage.classList.add("hidden");
-  openPackPage.classList.remove("hidden");
+  showScreen(openPackPage);
 };
+
 backToStartBtn.onclick = () => {
   packDiv.innerHTML = ""; // Clear pack when going back
-  openPackPage.classList.add("hidden");
-  startScreen.classList.remove("hidden");
+  showScreen(startScreen);
 };
+
 openPackBtn.onclick = () => {
   lightboxEnabled = false;
   openPack();
