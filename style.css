@@ -235,19 +235,20 @@ button:disabled { background: #444; cursor: not-allowed; }
   100%{box-shadow:0 0 18px #ff0000,0 0 35px #ff0000;}
 }
 
-/* --- Mystery Rotation Glow: Slots 8 & 9 (Illustration Rare, SIR, Hyper Rare) --- */
+/* --- Mystery Glow: Slots 8 & 9 (Illustration Rare, SIR, Hyper Rare) --- */
+/* Colors: Cyan (IR) -> Deep Magenta-Pink (SIR) -> Sparkle Gold (HR) */
 @keyframes mysteryGlowSlots89 {
   0% {
-    box-shadow: 0 0 18px 6px rgba(0, 229, 255, 0.85), 0 0 30px 10px rgba(0, 229, 255, 0.4);
+    box-shadow: 0 0 18px 6px rgba(0, 220, 255, 0.85), 0 0 30px 10px rgba(0, 220, 255, 0.4);
   }
   33% {
-    box-shadow: 0 0 18px 6px rgba(235, 64, 255, 0.85), 0 0 30px 10px rgba(235, 64, 255, 0.4);
+    box-shadow: 0 0 18px 6px rgba(230, 30, 140, 0.85), 0 0 30px 10px rgba(230, 30, 140, 0.4);
   }
   66% {
     box-shadow: 0 0 18px 6px rgba(255, 215, 0, 0.85), 0 0 30px 10px rgba(255, 215, 0, 0.4);
   }
   100% {
-    box-shadow: 0 0 18px 6px rgba(0, 229, 255, 0.85), 0 0 30px 10px rgba(0, 229, 255, 0.4);
+    box-shadow: 0 0 18px 6px rgba(0, 220, 255, 0.85), 0 0 30px 10px rgba(0, 220, 255, 0.4);
   }
 }
 
@@ -256,16 +257,17 @@ button:disabled { background: #444; cursor: not-allowed; }
   cursor: pointer;
 }
 
-/* --- Mystery Rotation Glow: Slot 10 (Double Rare, Ultra Rare) --- */
+/* --- Mystery Glow: Slot 10 (Double Rare, Ultra Rare) --- */
+/* Colors: Violet-Purple (Double Rare) -> Hot Magenta-Pink (Ultra Rare) */
 @keyframes mysteryGlowSlot10 {
   0% {
-    box-shadow: 0 0 18px 6px rgba(68, 138, 255, 0.85), 0 0 30px 10px rgba(68, 138, 255, 0.4);
+    box-shadow: 0 0 18px 6px rgba(138, 43, 226, 0.85), 0 0 30px 10px rgba(138, 43, 226, 0.4);
   }
   50% {
-    box-shadow: 0 0 18px 6px rgba(255, 234, 0, 0.85), 0 0 30px 10px rgba(255, 234, 0, 0.4);
+    box-shadow: 0 0 18px 6px rgba(255, 20, 147, 0.85), 0 0 30px 10px rgba(255, 20, 147, 0.4);
   }
   100% {
-    box-shadow: 0 0 18px 6px rgba(68, 138, 255, 0.85), 0 0 30px 10px rgba(68, 138, 255, 0.4);
+    box-shadow: 0 0 18px 6px rgba(138, 43, 226, 0.85), 0 0 30px 10px rgba(138, 43, 226, 0.4);
   }
 }
 
