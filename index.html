@@ -13,13 +13,16 @@
   <a href="https://master.meta-ptcg.org" target="_blank" id="metaLink">Master Meta</a>
   <h2>Choose a Set</h2>
   <div id="availableSets"></div>
-  <button id="importSet">Import JSON Set</button>
-  <input type="file" id="jsonInput" accept=".json" style="display:none">
+  
+  <div id="importSection">
+    <button id="importSet">Import JSON Set</button>
+    <input type="file" id="jsonInput" accept=".json" style="display:none">
 
-  <!-- URL Import Field -->
-  <div id="urlImport">
-    <input type="text" id="setURL" placeholder="Enter JSON Set URL">
-    <button id="importURLSet">Import from URL</button>
+    <!-- URL Import Field -->
+    <div id="urlImport">
+      <input type="text" id="setURL" placeholder="Enter JSON Set URL">
+      <button id="importURLSet">Import from URL</button>
+    </div>
   </div>
 </div>
 
@@ -30,12 +33,18 @@
     <button id="resetData">Reset Current Set Data</button>
     <button id="backToStart">Back to Start</button>
   </div>
+
+  <!-- Active Set Title Display -->
+  <div id="activeSetHeader">
+    <span class="set-label">Active Set:</span>
+    <span id="currentSetDisplay">None</span>
+  </div>
   
   <div id="openPackCenter">
     <button id="openPack">Open Pack</button>
   </div>
 
-  <div id="loading">Loading set...</div>
+  <div id="loading" class="hidden">Loading set...</div>
 
   <div id="pack-container">
     <h2>Pack</h2>
@@ -45,13 +54,18 @@
 
 <!-- ---------------- COLLECTION & STATS PAGE ---------------- -->
 <div id="collectionPage" class="hidden">
-  <div id="controls">
+  <div class="collection-nav">
     <button id="backToOpenPack">Back to Open Pack</button>
-    
-    <!-- 1. SET SWITCHER TABS (Added directly in HTML) -->
-    <div id="collectionSetTabs"></div>
+  </div>
 
-    <!-- 2. RARITY FILTER -->
+  <!-- 1. SET SELECTION TABS (Dedicated row on top) -->
+  <div id="setSelectionContainer">
+    <span class="section-title">Select Collection Set</span>
+    <div id="collectionSetTabs"></div>
+  </div>
+
+  <!-- 2. CONTROLS & RARITY FILTER (Separated on its own line) -->
+  <div id="controls">
     <label for="collectionFilter">Filter by Rarity:</label>
     <select id="collectionFilter">
       <option value="">All</option>
@@ -82,8 +96,8 @@
   
   <!-- Recent Cards Container -->
   <div id="recentCardsContainer">
-    <button id="toggleRecentCards" style="margin-top: 20px;">Show Recent Cards</button>
-    <div id="recentCards" class="hidden" style="margin-top: 15px;"></div>
+    <button id="toggleRecentCards">Show Recent Cards</button>
+    <div id="recentCards" class="hidden"></div>
   </div>
 </div>
 
