@@ -1,4 +1,7 @@
-let cards = [], availableRarities = {};
+let cards = [];
+let availableRarities = {};
+let currentSetName = ""; // Tracks the currently active set
+
 const AUTO_REVEAL_RARITIES = ["Common", "Uncommon", "Rare"];
 const SPECIAL_GLOW_RARITIES = [
   "Double Rare",
@@ -8,14 +11,14 @@ const SPECIAL_GLOW_RARITIES = [
   "Hyper Rare"
 ];
 
+// Set-specific state variables
+let stats = { packsOpened: 0, totalCards: 0, rarities: {} };
+let collection = {};
+let recentCards = [];
 
-let stats = JSON.parse(localStorage.getItem("packStats")) || { packsOpened:0,totalCards:0,rarities:{} };
-let collection = JSON.parse(localStorage.getItem("collection")) || {};
-let lightbox = null, hoverTimeout = null;
-let recentCards = JSON.parse(localStorage.getItem("recentCards")) || [];
+let lightbox = null;
 let firstPackOpened = false;
 let lightboxEnabled = false;
-
 
 // DOM elements
 const startScreen = document.getElementById("startScreen");
@@ -45,19 +48,90 @@ const collectionFilter = document.getElementById("collectionFilter");
 const recentCardsDiv = document.getElementById("recentCards");
 const toggleRecentCardsBtn = document.getElementById("toggleRecentCards");
 
+// Inject / Handle Set Selector Dropdown in Collection Page
+let collectionSetSelect = document.getElementById("collectionSetSelect");
+if (!collectionSetSelect) {
+  const filterParent = collectionFilter ? collectionFilter.parentElement : collectionPage;
+  collectionSetSelect = document.createElement("select");
+  collectionSetSelect.id = "collectionSetSelect";
+  if (filterParent) {
+    filterParent.insertBefore(collectionSetSelect, collectionFilter);
+  }
+}
+
+collectionSetSelect.addEventListener("change", (e) => {
+  if (e.target.value) {
+    setActiveSet(e.target.value);
+  }
+});
+
+/* ---------------- SET STORAGE MANAGEMENT ---------------- */
+
+// Load set-specific data from localStorage
+function loadSetStorage(setName) {
+  if (!setName) return;
+  
+  // Track set in list of known sets
+  let knownSets = JSON.parse(localStorage.getItem("knownSets")) || [];
+  if (!knownSets.includes(setName)) {
+    knownSets.push(setName);
+    localStorage.setItem("knownSets", JSON.stringify(knownSets));
+  }
+  updateSetDropdown();
+
+  stats = JSON.parse(localStorage.getItem(`packStats_${setName}`)) || { packsOpened: 0, totalCards: 0, rarities: {} };
+  collection = JSON.parse(localStorage.getItem(`collection_${setName}`)) || {};
+  recentCards = JSON.parse(localStorage.getItem(`recentCards_${setName}`)) || [];
+}
+
+function saveStats() { 
+  if (currentSetName) localStorage.setItem(`packStats_${currentSetName}`, JSON.stringify(stats)); 
+}
+
+function saveCollection() { 
+  if (currentSetName) localStorage.setItem(`collection_${currentSetName}`, JSON.stringify(collection)); 
+}
+
+function saveRecentCards() {
+  if (currentSetName) localStorage.setItem(`recentCards_${currentSetName}`, JSON.stringify(recentCards));
+}
+
+// Populate the collection set dropdown
+function updateSetDropdown() {
+  const knownSets = JSON.parse(localStorage.getItem("knownSets")) || [];
+  collectionSetSelect.innerHTML = "";
+  
+  knownSets.forEach(setName => {
+    const opt = document.createElement("option");
+    opt.value = setName;
+    opt.textContent = setName;
+    if (setName === currentSetName) opt.selected = true;
+    collectionSetSelect.appendChild(opt);
+  });
+}
+
+function setActiveSet(setName) {
+  currentSetName = setName;
+  loadSetStorage(setName);
+  updateStatsDisplay();
+  renderCollection(collectionFilter ? collectionFilter.value : null);
+  if (recentCardsDiv && !recentCardsDiv.classList.contains("hidden")) {
+    renderRecentCards();
+  }
+}
+
 /* ---------------- STATS & COLLECTION ---------------- */
-function saveStats(){ localStorage.setItem("packStats",JSON.stringify(stats)); }
-function saveCollection(){ localStorage.setItem("collection",JSON.stringify(collection)); }
 
-function updateStatsDisplay(){
-  let html=`<h3>Packs Opened: ${stats.packsOpened}</h3>
-            <h3>Total cards: ${stats.totalCards}</h3><ul>`;
-  ["Common","Uncommon","Rare","Double Rare","Illustration Rare","Ultra Rare","Special Illustration Rare","Hyper Rare"]
-    .forEach(r=>html+=`<li>${r}: ${stats.rarities[r]||0}</li>`);
-  html+="</ul>";
-  statsDiv.innerHTML=html;
+function updateStatsDisplay() {
+  let html = `<h3>Set: ${currentSetName || "None"}</h3>
+              <h3>Packs Opened: ${stats.packsOpened}</h3>
+              <h3>Total cards: ${stats.totalCards}</h3><ul>`;
+  ["Common", "Uncommon", "Rare", "Double Rare", "Illustration Rare", "Ultra Rare", "Special Illustration Rare", "Hyper Rare"]
+    .forEach(r => html += `<li>${r}: ${stats.rarities[r] || 0}</li>`);
+  html += "</ul>";
+  statsDiv.innerHTML = html;
 
-  const regularRarities = ["Common","Uncommon","Rare","Double Rare"];
+  const regularRarities = ["Common", "Uncommon", "Rare", "Double Rare"];
   const regularMax = cards.filter(c => regularRarities.includes(c.rarity)).length;
   const regularCollected = Object.values(collection).filter(c => c.count > 0 && regularRarities.includes(c.rarity)).length;
 
@@ -68,125 +142,114 @@ function updateStatsDisplay(){
   const regularProgress = regularMax > 0 ? (regularCollected / regularMax) * 100 : 0;
   const masterProgress = masterMax > 0 ? (masterCollected / masterMax) * 100 : 0;
   
-  document.getElementById("regularProgress").value = regularProgress;
-  document.getElementById("masterProgress").value = masterProgress;
+  const regEl = document.getElementById("regularProgress");
+  const mastEl = document.getElementById("masterProgress");
+  if (regEl) regEl.value = regularProgress;
+  if (mastEl) mastEl.value = masterProgress;
 }
 
-function renderCollection(filterRarity=null){
-  collectionDiv.innerHTML="";
+function renderCollection(filterRarity = null) {
+  collectionDiv.innerHTML = "";
   let arr = Object.values(collection);
-  if(filterRarity) arr = arr.filter(c => c.rarity === filterRarity);
+  if (filterRarity) arr = arr.filter(c => c.rarity === filterRarity);
 
-  arr.sort((a,b)=>{
-    const ma=a.number.match(/^(\d+)([a-z]?)$/i);
-    const mb=b.number.match(/^(\d+)([a-z]?)$/i);
-    const na=parseInt(ma[1]), nb=parseInt(mb[1]);
-    const la=ma[2]||'', lb=mb[2]||'';
-    if(na!==nb) return na-nb;
-    if(la<lb) return -1;
-    if(la>lb) return 1;
+  arr.sort((a, b) => {
+    const ma = a.number.match(/^(\d+)([a-z]?)$/i) || [0, "0", ""];
+    const mb = b.number.match(/^(\d+)([a-z]?)$/i) || [0, "0", ""];
+    const na = parseInt(ma[1]), nb = parseInt(mb[1]);
+    const la = ma[2] || '', lb = mb[2] || '';
+    if (na !== nb) return na - nb;
+    if (la < lb) return -1;
+    if (la > lb) return 1;
     return 0;
   });
 
-  arr.forEach((c, i)=>{
-    const div=document.createElement("div");
-    div.className=`card rarity-${c.rarity.replace(/\s+/g,'-')} show`;
-    div.innerHTML=`<img src="${c.image}" onerror="this.src='cardback.png'"><div>${c.name} ×${c.count}</div>`;
+  arr.forEach((c, i) => {
+    const div = document.createElement("div");
+    div.className = `card rarity-${c.rarity.replace(/\s+/g, '-')} show`;
+    div.innerHTML = `<img src="${c.image}" onerror="this.src='cardback.png'"><div>${c.name} ×${c.count}</div>`;
     collectionDiv.appendChild(div);
     attachLightboxHandlers(div, c, arr, i);
   });
 }
 
 /* ---------------- LOAD SET ---------------- */
-function buildAvailableRarities(){
-  availableRarities={};
-  cards.forEach(c=>{ if(!availableRarities[c.rarity]) availableRarities[c.rarity]=[]; availableRarities[c.rarity].push(c); });
+function buildAvailableRarities() {
+  availableRarities = {};
+  cards.forEach(c => { 
+    if (!availableRarities[c.rarity]) availableRarities[c.rarity] = []; 
+    availableRarities[c.rarity].push(c); 
+  });
 }
 
-function loadSet(fileOrJSON){
-  loadingDiv.style.display="block";
-  if(typeof fileOrJSON==="string"){
-    // Check if it's a JSON string (starts with { or [) vs a URL
+function processSetData(jsonData, setName) {
+  cards = jsonData.data || [];
+  
+  // Infer set name if not explicitly given
+  const resolvedSetName = setName || jsonData.name || "Custom Set";
+  setActiveSet(resolvedSetName);
+
+  buildAvailableRarities();
+  loadingDiv.style.display = "none";
+  openPackBtn.disabled = false;
+  packDiv.innerHTML = ""; 
+  firstPackOpened = false; 
+  if (openPackCenter) openPackCenter.classList.remove("hidden");
+  if (openPackBtn.parentElement !== openPackCenter && openPackCenter) {
+    openPackCenter.appendChild(openPackBtn);
+  }
+  startScreen.classList.add("hidden");
+  openPackPage.classList.remove("hidden");
+}
+
+function loadSet(fileOrJSON, setNameHint = null) {
+  loadingDiv.style.display = "block";
+  if (typeof fileOrJSON === "string") {
     const trimmed = fileOrJSON.trim();
     const isJsonString = trimmed.startsWith('{') || trimmed.startsWith('[');
     
-    if(isJsonString){
-      // It's a JSON string from FileReader
-      try{
-        const j=JSON.parse(fileOrJSON);
-        cards=j.data;
-        buildAvailableRarities();
-        loadingDiv.style.display="none";
-        openPackBtn.disabled=false;
-        packDiv.innerHTML = ""; // Clear any previous pack
-        firstPackOpened = false; // Reset for new set
-        if (openPackCenter) openPackCenter.classList.remove("hidden");
-        if (openPackBtn.parentElement !== openPackCenter && openPackCenter) {
-          openPackCenter.appendChild(openPackBtn);
-        }
-        startScreen.classList.add("hidden");
-        openPackPage.classList.remove("hidden");
-      }catch{ 
-        loadingDiv.style.display="none";
+    if (isJsonString) {
+      try {
+        const j = JSON.parse(fileOrJSON);
+        processSetData(j, setNameHint);
+      } catch { 
+        loadingDiv.style.display = "none";
         alert("Invalid JSON"); 
       }
     } else {
-      // It's a URL - use URL resolver for external URLs, fetch for local paths
+      // derive set name from path if not provided
+      const inferredName = setNameHint || fileOrJSON.split('/').pop().replace('.json', '');
       const isLocalPath = fileOrJSON.startsWith('sets/') || fileOrJSON.startsWith('./') || (!fileOrJSON.startsWith('http://') && !fileOrJSON.startsWith('https://') && !fileOrJSON.startsWith('//'));
       const fetchFn = (!isLocalPath && typeof URLResolver !== 'undefined' && URLResolver.importJson) 
         ? (url) => URLResolver.importJson(url)
-        : (url) => fetch(url).then(r=>r.json());
-    fetchFn(fileOrJSON).then(j=>{
-      cards=j.data;
-      buildAvailableRarities();
-      loadingDiv.style.display="none";
-      openPackBtn.disabled=false;
-      packDiv.innerHTML = ""; // Clear any previous pack
-      firstPackOpened = false; // Reset for new set
-      if (openPackCenter) openPackCenter.classList.remove("hidden");
-      if (openPackBtn.parentElement !== openPackCenter && openPackCenter) {
-        openPackCenter.appendChild(openPackBtn);
-      }
-      startScreen.classList.add("hidden");
-      openPackPage.classList.remove("hidden");
-    }).catch(err=>{
-        loadingDiv.style.display="none";
+        : (url) => fetch(url).then(r => r.json());
+
+      fetchFn(fileOrJSON).then(j => {
+        processSetData(j, inferredName);
+      }).catch(err => {
+        loadingDiv.style.display = "none";
         alert(`Failed to load set: ${err.message || err}`);
       });
     }
   } else {
-    try{
-      const j=JSON.parse(fileOrJSON);
-      cards=j.data;
-      buildAvailableRarities();
-      loadingDiv.style.display="none";
-      openPackBtn.disabled=false;
-      packDiv.innerHTML = ""; // Clear any previous pack
-      firstPackOpened = false; // Reset for new set
-      if (openPackCenter) openPackCenter.classList.remove("hidden");
-      if (openPackBtn.parentElement !== openPackCenter && openPackCenter) {
-        openPackCenter.appendChild(openPackBtn);
-      }
-      startScreen.classList.add("hidden");
-      openPackPage.classList.remove("hidden");
-    }catch{ alert("Invalid JSON"); }
+    try {
+      const j = JSON.parse(fileOrJSON);
+      processSetData(j, setNameHint);
+    } catch { alert("Invalid JSON"); }
   }
 }
 
 /* ---------------- HELPERS ---------------- */
-function randomFrom(arr){ if(!arr||!arr.length) return null; return arr[Math.floor(Math.random()*arr.length)]; }
-function getByRarity(r){ return availableRarities[r]||[]; }
-function weightedRoll(table){ const f=table.filter(e=>getByRarity(e.rarity).length); if(!f.length) return null; let total=f.reduce((s,e)=>s+e.weight,0),roll=Math.random()*total; for(let e of f){ if(roll<e.weight) return e.rarity; roll-=e.weight;} return f[f.length-1].rarity; }
-function pullWeighted(table){ const r=weightedRoll(table); return randomFrom(getByRarity(r))||randomFrom(cards); }
+function randomFrom(arr) { if (!arr || !arr.length) return null; return arr[Math.floor(Math.random() * arr.length)]; }
+function getByRarity(r) { return availableRarities[r] || []; }
+function weightedRoll(table) { const f = table.filter(e => getByRarity(e.rarity).length); if (!f.length) return null; let total = f.reduce((s, e) => s + e.weight, 0), roll = Math.random() * total; for (let e of f) { if (roll < e.weight) return e.rarity; roll -= e.weight; } return f[f.length - 1].rarity; }
 
 /* ---------------- OPEN PACK ---------------- */
 function openPack() {
   if (!cards.length) { alert("Set not loaded"); return; }
   
-  // Clear previous pack display
   packDiv.innerHTML = "";
   
-  // Move button to controls after first pack and hide center container
   if (!firstPackOpened) {
     firstPackOpened = true;
     const controls = document.getElementById("controls");
@@ -197,18 +260,14 @@ function openPack() {
   }
 
   const pulls = [];
-  const pulledKeys = new Set(); // Track cards already pulled in this pack
+  const pulledKeys = new Set();
   
-  // Helper to get card key
   const getCardKey = (c) => c ? `${c.name}_${c.number}` : null;
-  
-  // Helper to filter out already pulled cards
   const filterUnpulled = (arr) => arr ? arr.filter(c => {
     const key = getCardKey(c);
     return key && !pulledKeys.has(key);
   }) : [];
   
-  // Helper to pull random card excluding already pulled ones
   const pullUnique = (rarity) => {
     const available = filterUnpulled(getByRarity(rarity));
     if (available.length === 0) {
@@ -218,20 +277,13 @@ function openPack() {
     return randomFrom(available);
   };
   
-  // Helper to pull weighted excluding already pulled ones
   const pullWeightedUnique = (table) => {
-    // Create filtered table with only rarities that have unpulled cards
-    const filteredTable = table.filter(e => {
-      const available = filterUnpulled(getByRarity(e.rarity));
-      return available.length > 0;
-    });
-    
+    const filteredTable = table.filter(e => filterUnpulled(getByRarity(e.rarity)).length > 0);
     if (!filteredTable.length) {
       const fallback = filterUnpulled(cards);
       return fallback.length > 0 ? randomFrom(fallback) : null;
     }
     
-    // Custom weighted roll that uses filtered cards
     let total = filteredTable.reduce((s, e) => s + e.weight, 0);
     if (total === 0) {
       const fallback = filterUnpulled(cards);
@@ -250,32 +302,19 @@ function openPack() {
     if (!selectedRarity) selectedRarity = filteredTable[filteredTable.length - 1].rarity;
     
     const available = filterUnpulled(getByRarity(selectedRarity));
-    if (available.length === 0) {
-      const fallback = filterUnpulled(cards);
-      return fallback.length > 0 ? randomFrom(fallback) : null;
-    }
-    return randomFrom(available);
+    return available.length > 0 ? randomFrom(available) : randomFrom(filterUnpulled(cards));
   };
   
-  // Pull 4 Common (unique)
+  // Pull cards
   for (let i = 0; i < 4; i++) {
     const card = pullUnique("Common");
-    if (card) {
-      pulls.push(card);
-      pulledKeys.add(getCardKey(card));
-    }
+    if (card) { pulls.push(card); pulledKeys.add(getCardKey(card)); }
   }
-  
-  // Pull 3 Uncommon (unique)
   for (let i = 0; i < 3; i++) {
     const card = pullUnique("Uncommon");
-    if (card) {
-      pulls.push(card);
-      pulledKeys.add(getCardKey(card));
-    }
+    if (card) { pulls.push(card); pulledKeys.add(getCardKey(card)); }
   }
   
-  // Pull remaining slots (unique)
   const card8 = pullWeightedUnique([{ rarity:"Common", weight:55},{ rarity:"Uncommon", weight:32},{ rarity:"Rare", weight:11},{ rarity:"Illustration Rare", weight:1.5},{ rarity:"Special Illustration Rare", weight:0.4},{ rarity:"Hyper Rare", weight:0.1}]);
   if (card8) { pulls.push(card8); pulledKeys.add(getCardKey(card8)); }
   
@@ -292,18 +331,18 @@ function openPack() {
     const key = `${c.name}_${c.number}`; 
     if (!collection[key]) collection[key] = { ...c, count: 0 }; 
     collection[key].count++; 
-    // Add to recent cards (keep last 20)
+    
     recentCards.unshift({...c, timestamp: Date.now()});
     if (recentCards.length > 20) recentCards.pop();
   });
-  localStorage.setItem("recentCards", JSON.stringify(recentCards));
 
+  saveRecentCards();
   saveCollection();
-  renderCollection(collectionFilter.value || null);
+  renderCollection(collectionFilter ? collectionFilter.value : null);
   saveStats();
   updateStatsDisplay();
 
-  // ------- REVEAL: rarity-aware last 3 cards with glow hint -------
+  // Render pack pulls
   pulls.forEach((c, i) => {
     const div = document.createElement("div");
     div.className = `card rarity-${c.rarity.replace(/\s+/g, '-')}`;
@@ -312,22 +351,18 @@ function openPack() {
     const autoReveal = AUTO_REVEAL_RARITIES.includes(c.rarity);
 
     if (!isLastThree || autoReveal) {
-      // Normal reveal
       const img = document.createElement("img");
       img.src = c.image;
       img.alt = c.name;
       div.appendChild(img);
     } else {
-      // Special rarity in last 3 → hidden, only glow hint
       div.dataset.revealed = "false";
-
       if (SPECIAL_GLOW_RARITIES.includes(c.rarity)) {
         div.classList.add("glow-hint");
       }
 
       div.addEventListener("click", () => {
         if (div.dataset.revealed === "true") return;
-
         const img = document.createElement("img");
         img.src = c.image;
         img.alt = c.name;
@@ -338,7 +373,6 @@ function openPack() {
       }, { once: true });
     }
 
-    // Add to DOM and show placeholder div immediately
     packDiv.appendChild(div);
     setTimeout(() => div.classList.add("show"), i * 350);
     attachLightboxHandlers(div, c, pulls, i);
@@ -347,80 +381,108 @@ function openPack() {
 
 /* ---------------- START SCREEN ---------------- */
 function initStartScreen() {
-  ["Z-Genesis Melemele","Z-Genesis Akala"].forEach(s => {
+  if (!availableSetsDiv) return;
+  availableSetsDiv.innerHTML = "";
+  ["Z-Genesis Melemele", "Z-Genesis Akala"].forEach(s => {
     const btn = document.createElement("button");
     btn.textContent = s;
-    btn.onclick = () => loadSet(`sets/${s}.json`);
+    btn.onclick = () => loadSet(`sets/${s}.json`, s);
     availableSetsDiv.appendChild(btn);
   });
 }
 
-// Run once on page load
 initStartScreen();
 
 /* ---------------- IMPORT ---------------- */
-importSetBtn.onclick=()=>jsonInput.click();
-jsonInput.onchange=(e)=>{
-  const f=jsonInput.files[0];
-  if(!f||!f.name.endsWith(".json")) return alert("Please select a JSON file");
-  const r=new FileReader();
-  r.onload=ev=>{ loadSet(ev.target.result); };
-  r.readAsText(f);
-};
+if (importSetBtn) importSetBtn.onclick = () => jsonInput.click();
+if (jsonInput) {
+  jsonInput.onchange = (e) => {
+    const f = jsonInput.files[0];
+    if (!f || !f.name.endsWith(".json")) return alert("Please select a JSON file");
+    const setName = f.name.replace(".json", "");
+    const r = new FileReader();
+    r.onload = ev => { loadSet(ev.target.result, setName); };
+    r.readAsText(f);
+  };
+}
 
-// ---------------- URL IMPORT ----------------
-importURLBtn.onclick = () => {
-  const url = urlInput.value.trim();
-  if(!url) return alert("Please enter a URL");
-  loadSet(url);
-};
+if (importURLBtn) {
+  importURLBtn.onclick = () => {
+    const url = urlInput.value.trim();
+    if (!url) return alert("Please enter a URL");
+    const inferredName = url.split('/').pop().replace('.json', '') || "Imported Set";
+    loadSet(url, inferredName);
+  };
+}
 
 /* ---------------- COLLECTION FILTER ---------------- */
-collectionFilter.addEventListener("change", ()=>{
-  renderCollection(collectionFilter.value||null);
-});
+if (collectionFilter) {
+  collectionFilter.addEventListener("change", () => {
+    renderCollection(collectionFilter.value || null);
+  });
+}
 
 /* ---------------- NAVIGATION ---------------- */
-viewCollectionBtn.onclick = () => { 
-  lightboxEnabled = true;
-  packDiv.innerHTML = "";
-  openPackPage.classList.add("hidden"); 
-  collectionPage.classList.remove("hidden"); 
-};
-backToOpenPackBtn.onclick = () => {
-  lightboxEnabled = false;
-  packDiv.innerHTML = "";
-  collectionPage.classList.add("hidden"); 
-  openPackPage.classList.remove("hidden"); 
-};
-backToStartBtn.onclick=()=>{ 
-  packDiv.innerHTML = ""; // Clear pack when going back
-  openPackPage.classList.add("hidden"); 
-  startScreen.classList.remove("hidden"); 
-};
-openPackBtn.onclick = () => {
-  lightboxEnabled = false;
-  openPack();
-};
+if (viewCollectionBtn) {
+  viewCollectionBtn.onclick = () => { 
+    lightboxEnabled = true;
+    packDiv.innerHTML = "";
+    openPackPage.classList.add("hidden"); 
+    collectionPage.classList.remove("hidden"); 
+    updateSetDropdown();
+  };
+}
 
-/* ---------------- RESET ---------------- */
-resetBtn.onclick=()=>{
-  if(!confirm("Erase all data?")) return;
-  localStorage.removeItem("packStats");
-  localStorage.removeItem("collection");
-  stats={packsOpened:0,totalCards:0,rarities:{}};
-  collection={};
-  updateStatsDisplay();
-  renderCollection();
-};
+if (backToOpenPackBtn) {
+  backToOpenPackBtn.onclick = () => {
+    lightboxEnabled = false;
+    packDiv.innerHTML = "";
+    collectionPage.classList.add("hidden"); 
+    openPackPage.classList.remove("hidden"); 
+  };
+}
+
+if (backToStartBtn) {
+  backToStartBtn.onclick = () => { 
+    packDiv.innerHTML = ""; 
+    openPackPage.classList.add("hidden"); 
+    startScreen.classList.remove("hidden"); 
+  };
+}
+
+if (openPackBtn) {
+  openPackBtn.onclick = () => {
+    lightboxEnabled = false;
+    openPack();
+  };
+}
+
+/* ---------------- RESET CURRENT SET DATA ---------------- */
+if (resetBtn) {
+  resetBtn.onclick = () => {
+    if (!currentSetName) return;
+    if (!confirm(`Erase data for set: "${currentSetName}"?`)) return;
+    
+    localStorage.removeItem(`packStats_${currentSetName}`);
+    localStorage.removeItem(`collection_${currentSetName}`);
+    localStorage.removeItem(`recentCards_${currentSetName}`);
+    
+    stats = { packsOpened: 0, totalCards: 0, rarities: {} };
+    collection = {};
+    recentCards = [];
+    
+    updateStatsDisplay();
+    renderCollection();
+  };
+}
 
 /* ---------------- LIGHTBOX INITIALIZATION ---------------- */
 if (typeof MetaLightbox !== 'undefined') {
   lightbox = new MetaLightbox({
     theme: 'dark',
-    showMetadata: false,  // Hide metadata to make it smaller
+    showMetadata: false,
     showNavigation: true,
-    showCounter: false,  // Hide counter
+    showCounter: false,
     closeOnBackdropClick: true,
     closeOnEscape: true,
     overlayOpacity: 0.95,
@@ -429,7 +491,6 @@ if (typeof MetaLightbox !== 'undefined') {
   });
 }
 
-/* ---------------- CARD LIGHTBOX HANDLERS ---------------- */
 function attachLightboxHandlers(cardElement, cardData, allCards, cardIndex) {
   if (!lightbox || !lightboxEnabled) return;
 
@@ -478,9 +539,7 @@ if (toggleRecentCardsBtn) {
   };
 }
 
-/* ---------------- INITIAL ---------------- */
+/* ---------------- INITIALIZE PAGE ---------------- */
 startScreen.classList.remove("hidden");
 openPackPage.classList.add("hidden");
 collectionPage.classList.add("hidden");
-updateStatsDisplay();
-renderCollection();
