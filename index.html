@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pokémon TCG Simulator</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pokémon TCG Simulator</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -27,7 +27,7 @@
 <div id="openPackPage" class="hidden">
   <div id="controls">
     <button id="viewCollection">View Collection & Stats</button>
-    <button id="resetData">Reset All Data</button>
+    <button id="resetData">Reset Current Set Data</button>
     <button id="backToStart">Back to Start</button>
   </div>
   
@@ -47,6 +47,11 @@
 <div id="collectionPage" class="hidden">
   <div id="controls">
     <button id="backToOpenPack">Back to Open Pack</button>
+    
+    <!-- 1. SET SWITCHER TABS (Added directly in HTML) -->
+    <div id="collectionSetTabs"></div>
+
+    <!-- 2. RARITY FILTER -->
     <label for="collectionFilter">Filter by Rarity:</label>
     <select id="collectionFilter">
       <option value="">All</option>
