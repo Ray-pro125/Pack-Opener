@@ -158,12 +158,12 @@ button:disabled { background: #444; cursor: not-allowed; }
 /* ---------- CARDS ---------- */
 #pack {
   display: grid;
-  grid-template-columns: repeat(5, 1fr); /* Exactly 5 cards per row */
-  gap: 15px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 25px; /* Increased to give glows space without overlapping */
   justify-items: center;
-  padding: 20px;
-  max-width: 1100px;                      /* Scaled down so 5 cards fit nicely */
-  margin: 0 auto;
+  align-items: center;
+  max-width: 1150px;
+  margin: 20px auto;
 }
 
 #collection {
@@ -233,6 +233,45 @@ button:disabled { background: #444; cursor: not-allowed; }
   50%{box-shadow:0 0 18px #00ffff,0 0 35px #00ffff;}
   75%{box-shadow:0 0 18px #ff00ff,0 0 35px #ff00ff;}
   100%{box-shadow:0 0 18px #ff0000,0 0 35px #ff0000;}
+}
+
+/* --- Mystery Rotation Glow: Slots 8 & 9 (Illustration Rare, SIR, Hyper Rare) --- */
+@keyframes mysteryGlowSlots89 {
+  0% {
+    box-shadow: 0 0 18px 6px rgba(0, 229, 255, 0.85), 0 0 30px 10px rgba(0, 229, 255, 0.4);
+  }
+  33% {
+    box-shadow: 0 0 18px 6px rgba(235, 64, 255, 0.85), 0 0 30px 10px rgba(235, 64, 255, 0.4);
+  }
+  66% {
+    box-shadow: 0 0 18px 6px rgba(255, 215, 0, 0.85), 0 0 30px 10px rgba(255, 215, 0, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 18px 6px rgba(0, 229, 255, 0.85), 0 0 30px 10px rgba(0, 229, 255, 0.4);
+  }
+}
+
+.glow-mystery-slots-8-9 {
+  animation: mysteryGlowSlots89 3.5s infinite ease-in-out !important;
+  cursor: pointer;
+}
+
+/* --- Mystery Rotation Glow: Slot 10 (Double Rare, Ultra Rare) --- */
+@keyframes mysteryGlowSlot10 {
+  0% {
+    box-shadow: 0 0 18px 6px rgba(68, 138, 255, 0.85), 0 0 30px 10px rgba(68, 138, 255, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 18px 6px rgba(255, 234, 0, 0.85), 0 0 30px 10px rgba(255, 234, 0, 0.4);
+  }
+  100% {
+    box-shadow: 0 0 18px 6px rgba(68, 138, 255, 0.85), 0 0 30px 10px rgba(68, 138, 255, 0.4);
+  }
+}
+
+.glow-mystery-slot-10 {
+  animation: mysteryGlowSlot10 2.5s infinite ease-in-out !important;
+  cursor: pointer;
 }
 
 #progressBars {
