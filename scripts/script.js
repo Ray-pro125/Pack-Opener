@@ -7,6 +7,8 @@ const SPECIAL_GLOW_RARITIES = [
   "Special Illustration Rare",
   "Hyper Rare"
 ];
+
+
 let stats = JSON.parse(localStorage.getItem("packStats")) || { packsOpened:0,totalCards:0,rarities:{} };
 let collection = JSON.parse(localStorage.getItem("collection")) || {};
 let lightbox = null, hoverTimeout = null;
