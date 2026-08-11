@@ -31,21 +31,22 @@ const masterProgress = document.getElementById("masterProgress");
 const toggleRecentCardsBtn = document.getElementById("toggleRecentCards");
 const recentCardsDiv = document.getElementById("recentCards");
 
-// Pre-defined Sets
+// Pre-defined Z-Genesis Sets
 const PRESET_SETS = [
-  { name: "Scarlet & Violet", url: "https://master.meta-ptcg.org/sets/sv1.json" },
-  { name: "Paldea Evolved", url: "https://master.meta-ptcg.org/sets/sv2.json" },
-  { name: "Obsidian Flames", url: "https://master.meta-ptcg.org/sets/sv3.json" },
-  { name: "151", url: "https://master.meta-ptcg.org/sets/sv3.5.json" },
-  { name: "Paradox Rift", url: "https://master.meta-ptcg.org/sets/sv4.json" }
+  { name: "Z1 Genesis", url: "https://master.meta-ptcg.org/sets/z1.json" },
+  { name: "Z2 Genesis", url: "https://master.meta-ptcg.org/sets/z2.json" },
+  { name: "Z3 Genesis", url: "https://master.meta-ptcg.org/sets/z3.json" },
+  { name: "Z4 Genesis", url: "https://master.meta-ptcg.org/sets/z4.json" },
+  { name: "Z5 Genesis", url: "https://master.meta-ptcg.org/sets/z5.json" },
+  { name: "Z6 Genesis", url: "https://master.meta-ptcg.org/sets/z6.json" }
 ];
 
 /* ---------- INITIALIZATION ---------- */
 document.addEventListener("DOMContentLoaded", () => {
-  renderPresetSets();
+  renderAvailableSets();
   setupEventListeners();
 
-  // Restore active set if available
+  // Restore active set if available from previous session
   const savedActiveSet = localStorage.getItem("activeSetName");
   if (savedActiveSet && getSetData(savedActiveSet)) {
     activateSet(savedActiveSet);
@@ -89,6 +90,11 @@ function getSetData(setName) {
 
 function getKnownSets() {
   const sets = new Set();
+  
+  // Always include Preset Sets
+  PRESET_SETS.forEach(set => sets.add(set.name));
+
+  // Include user imported / local storage sets
   for (let i = 0; i < localStorage.length; i++) {
     const key = localStorage.key(i);
     if (key.startsWith("collection_")) {
@@ -100,7 +106,7 @@ function getKnownSets() {
   return Array.from(sets);
 }
 
-// Crucial: Set Activator that synchronizes BOTH opening packs & collection
+// Synchronizes active set between Opening Packs & Collection views
 function activateSet(setName, setDataObj = null) {
   if (setDataObj) {
     saveSetData(setName, setDataObj);
@@ -115,22 +121,46 @@ function activateSet(setName, setDataObj = null) {
 }
 
 /* ---------- START SCREEN & LOADING ---------- */
-function renderPresetSets() {
+function renderAvailableSets() {
   availableSetsDiv.innerHTML = "";
+
+  // Render Preset Z-Genesis buttons
   PRESET_SETS.forEach(set => {
     const btn = document.createElement("button");
     btn.textContent = set.name;
     btn.onclick = () => fetchAndLoadSet(set.name, set.url);
     availableSetsDiv.appendChild(btn);
   });
+
+  // Render buttons for additional custom imported sets stored in localStorage
+  const knownSets = getKnownSets().filter(name => !PRESET_SETS.some(p => p.name === name));
+  knownSets.forEach(setName => {
+    const btn = document.createElement("button");
+    btn.textContent = setName;
+    btn.onclick = () => {
+      activateSet(setName);
+      showOpenPackPage();
+    };
+    availableSetsDiv.appendChild(btn);
+  });
 }
 
 async function fetchAndLoadSet(name, url) {
   try {
+    // If we already have the set cached in localStorage, load it instantly
+    const cachedData = getSetData(name);
+    if (cachedData) {
+      activateSet(name, cachedData);
+      showOpenPackPage();
+      return;
+    }
+
     const response = await fetch(url);
     if (!response.ok) throw new Error("Failed to fetch set JSON.");
     const data = await response.json();
-    activateSet(name, data);
+    const setDisplayName = data.name || name;
+    activateSet(setDisplayName, data);
+    renderAvailableSets();
     showOpenPackPage();
   } catch (err) {
     alert(`Error loading set: ${err.message}`);
@@ -147,6 +177,7 @@ function handleJSONImport(event) {
       const data = JSON.parse(e.target.result);
       const setName = data.name || file.name.replace(".json", "");
       activateSet(setName, data);
+      renderAvailableSets();
       showOpenPackPage();
     } catch (err) {
       alert("Invalid JSON set file.");
@@ -158,7 +189,7 @@ function handleJSONImport(event) {
 function handleURLImport() {
   const url = setURLInput.value.trim();
   if (!url) return alert("Please enter a JSON URL.");
-  const setName = "Custom Set (" + new URL(url).hostname + ")";
+  const setName = "Custom Set";
   fetchAndLoadSet(setName, url);
 }
 
@@ -172,7 +203,7 @@ function openPack() {
   const cards = currentSetData.cards;
   const packCards = getRandomPackCards(cards);
 
-  // Update localStorage for current set
+  // Update localStorage for current active set
   const collectionKey = `collection_${currentSetName}`;
   const statsKey = `packStats_${currentSetName}`;
 
@@ -188,14 +219,13 @@ function openPack() {
   localStorage.setItem(collectionKey, JSON.stringify(userCol));
   localStorage.setItem(statsKey, JSON.stringify(userStats));
 
-  // Render Pack Visual
+  // Render Pack UI
   renderPackUI(packCards);
   recentCardsList.unshift(...packCards);
-  recentCardsList = recentCardsList.slice(0, 20); // Keep last 20
+  recentCardsList = recentCardsList.slice(0, 20); // Keep last 20 cards
 }
 
 function getRandomPackCards(cardPool) {
-  // Pick 10 cards simulating common TCG pull ratios
   const pack = [];
   const byRarity = {};
 
@@ -214,7 +244,7 @@ function getRandomPackCards(cardPool) {
   for (let i = 0; i < 6; i++) pack.push(getCard("Common"));
   for (let i = 0; i < 3; i++) pack.push(getCard("Uncommon"));
 
-  // Rare Slot (Hit chance)
+  // Rare slot pull probabilities
   const roll = Math.random();
   if (roll < 0.02 && byRarity["Hyper Rare"]) pack.push(getCard("Hyper Rare"));
   else if (roll < 0.06 && byRarity["Special Illustration Rare"]) pack.push(getCard("Special Illustration Rare"));
@@ -284,9 +314,15 @@ function renderSetTabs() {
       btn.classList.add("active-set");
     }
 
-    btn.onclick = () => {
-      // Switching tabs switches the active set and loads its pool!
-      activateSet(setName);
+    btn.onclick = async () => {
+      // Check if it's a preset set that hasn't been fetched yet
+      const preset = PRESET_SETS.find(p => p.name === setName);
+      if (preset && !getSetData(setName)) {
+        await fetchAndLoadSet(preset.name, preset.url);
+      } else {
+        activateSet(setName);
+      }
+
       renderSetTabs();
       updateStatsDisplay();
       renderCollection(collectionFilter.value);
@@ -331,7 +367,7 @@ function updateStatsDisplay() {
   const totalCardsCollected = Object.values(userCol).reduce((a, b) => a + b, 0);
 
   const regularCompletion = Math.min(100, Math.round((uniqueCollected / totalCardsInSet) * 100));
-  const masterCompletion = Math.min(100, Math.round((uniqueCollected / totalCardsInSet) * 100)); // Dynamic if set has secret rares
+  const masterCompletion = Math.min(100, Math.round((uniqueCollected / totalCardsInSet) * 100));
 
   regularProgress.value = regularCompletion;
   masterProgress.value = masterCompletion;
@@ -369,6 +405,7 @@ function showStartScreen() {
   openPackPage.classList.add("hidden");
   collectionPage.classList.add("hidden");
   startScreen.classList.remove("hidden");
+  renderAvailableSets();
 }
 
 function showOpenPackPage() {
