@@ -148,6 +148,7 @@ function renderSetTabs() {
   });
 }
 
+/* ---------------- RENDER COLLECTION ---------------- */
 function renderCollection(filterRarity = null) {
   collectionDiv.innerHTML = "";
   
@@ -194,6 +195,7 @@ function renderCollection(filterRarity = null) {
     collectionDiv.appendChild(div);
     attachLightboxHandlers(div, c, listToRender, i);
   });
+} // <-- THIS CLOSING BRACKET WAS MISSING!
 
 /* ---------------- LOAD SET ---------------- */
 function buildAvailableRarities() {
