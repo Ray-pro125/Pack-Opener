@@ -57,6 +57,32 @@ const recentCardsDiv = document.getElementById("recentCards");
 const toggleRecentCardsBtn = document.getElementById("toggleRecentCards");
 const currentSetDisplay = document.getElementById("currentSetDisplay");
 
+function getMaxSetNumber() {
+  if (!cards || !cards.length) return 0;
+  let max = 0;
+  cards.forEach(c => {
+    const numStr = String(c.number || "");
+    const match = numStr.match(/\d+/);
+    if (match) {
+      const num = parseInt(match[0], 10);
+      if (num > max) max = num;
+    }
+  });
+  return max;
+}
+
+// Pre-detects if a card image is horizontal and adds .horizontal to the card div
+function applyCardOrientation(cardData, cardDiv) {
+  if (!cardData || !cardData.image) return;
+  const img = new Image();
+  img.src = cardData.image;
+  img.onload = () => {
+    if (img.naturalWidth > img.naturalHeight) {
+      cardDiv.classList.add("horizontal");
+    }
+  };
+}
+
 /* ---------------- STATS & COLLECTION ---------------- */
 function saveStats() { localStorage.setItem(getStatsKey(), JSON.stringify(stats)); }
 function saveCollection() { localStorage.setItem(getCollectionKey(), JSON.stringify(collection)); }
@@ -157,6 +183,9 @@ function renderCollection(filterRarity = null) {
     const count = c.count || 0;
     div.className = `card rarity-${(c.rarity || 'Common').replace(/\s+/g, '-')} show`;
     
+    // Auto-detect horizontal orientation for collection grid
+    applyCardOrientation(c, div);
+
     if (count === 0) {
       div.style.filter = "grayscale(100%) opacity(0.4)";
     }
@@ -165,7 +194,6 @@ function renderCollection(filterRarity = null) {
     collectionDiv.appendChild(div);
     attachLightboxHandlers(div, c, listToRender, i);
   });
-}
 
 /* ---------------- LOAD SET ---------------- */
 function buildAvailableRarities() {
@@ -244,11 +272,9 @@ function pullWeighted(table) { const r = weightedRoll(table); return randomFrom(
 /* ---------------- OPEN PACK ---------------- */
 function openPack() {
   if (!cards.length) { alert("Set not loaded"); return; }
-
-  // Clear previous pack display
+  
   packDiv.innerHTML = "";
 
-  // Move button to controls after first pack and hide center container
   if (!firstPackOpened) {
     firstPackOpened = true;
     const controls = document.getElementById("controls");
@@ -259,18 +285,14 @@ function openPack() {
   }
 
   const pulls = [];
-  const pulledKeys = new Set(); // Track cards already pulled in this pack
+  const pulledKeys = new Set();
 
-  // Helper to get card key
   const getCardKey = (c) => c ? `${c.name}_${c.number}` : null;
-
-  // Helper to filter out already pulled cards
   const filterUnpulled = (arr) => arr ? arr.filter(c => {
     const key = getCardKey(c);
     return key && !pulledKeys.has(key);
   }) : [];
 
-  // Helper to pull random card excluding already pulled ones
   const pullUnique = (rarity) => {
     const available = filterUnpulled(getByRarity(rarity));
     if (available.length === 0) {
@@ -280,20 +302,13 @@ function openPack() {
     return randomFrom(available);
   };
 
-  // Helper to pull weighted excluding already pulled ones
   const pullWeightedUnique = (table) => {
-    // Create filtered table with only rarities that have unpulled cards
-    const filteredTable = table.filter(e => {
-      const available = filterUnpulled(getByRarity(e.rarity));
-      return available.length > 0;
-    });
-
+    const filteredTable = table.filter(e => filterUnpulled(getByRarity(e.rarity)).length > 0);
     if (!filteredTable.length) {
       const fallback = filterUnpulled(cards);
       return fallback.length > 0 ? randomFrom(fallback) : null;
     }
 
-    // Custom weighted roll that uses filtered cards
     let total = filteredTable.reduce((s, e) => s + e.weight, 0);
     if (total === 0) {
       const fallback = filterUnpulled(cards);
@@ -303,10 +318,7 @@ function openPack() {
     let roll = Math.random() * total;
     let selectedRarity = null;
     for (let e of filteredTable) {
-      if (roll < e.weight) {
-        selectedRarity = e.rarity;
-        break;
-      }
+      if (roll < e.weight) { selectedRarity = e.rarity; break; }
       roll -= e.weight;
     }
     if (!selectedRarity) selectedRarity = filteredTable[filteredTable.length - 1].rarity;
@@ -319,34 +331,48 @@ function openPack() {
     return randomFrom(available);
   };
 
-  // Pull 4 Common (unique)
-  for (let i = 0; i < 4; i++) {
-    const card = pullUnique("Common");
-    if (card) {
-      pulls.push(card);
-      pulledKeys.add(getCardKey(card));
+  // Determine pack size based on highest card number in the set
+  const maxSetNum = getMaxSetNumber();
+  const is5CardPack = maxSetNum <= 60;
+
+  if (is5CardPack) {
+    /* ---------------- 5-CARD PACK PULLS (Placeholder Ratio) ---------------- */
+    for (let i = 0; i < 3; i++) {
+      const c = pullUnique("Common");
+      if (c) { pulls.push(c); pulledKeys.add(getCardKey(c)); }
     }
+    const c4 = pullUnique("Uncommon");
+    if (c4) { pulls.push(c4); pulledKeys.add(getCardKey(c4)); }
+
+    const c5 = pullWeightedUnique([
+      { rarity: "Rare", weight: 70 },
+      { rarity: "Double Rare", weight: 20 },
+      { rarity: "Ultra Rare", weight: 10 }
+    ]);
+    if (c5) { pulls.push(c5); pulledKeys.add(getCardKey(c5)); }
+
+  } else {
+    /* ---------------- 10-CARD PACK PULLS ---------------- */
+    for (let i = 0; i < 4; i++) {
+      const c = pullUnique("Common");
+      if (c) { pulls.push(c); pulledKeys.add(getCardKey(c)); }
+    }
+    for (let i = 0; i < 3; i++) {
+      const c = pullUnique("Uncommon");
+      if (c) { pulls.push(c); pulledKeys.add(getCardKey(c)); }
+    }
+
+    const card8 = pullWeightedUnique([{ rarity: "Common", weight: 55 }, { rarity: "Uncommon", weight: 32 }, { rarity: "Rare", weight: 11 }, { rarity: "Illustration Rare", weight: 1.5 }, { rarity: "Special Illustration Rare", weight: 0.4 }, { rarity: "Hyper Rare", weight: 0.1 }]);
+    if (card8) { pulls.push(card8); pulledKeys.add(getCardKey(card8)); }
+
+    const card9 = pullWeightedUnique([{ rarity: "Common", weight: 35 }, { rarity: "Uncommon", weight: 43 }, { rarity: "Rare", weight: 18 }, { rarity: "Illustration Rare", weight: 12 }, { rarity: "Special Illustration Rare", weight: 2.3 }, { rarity: "Hyper Rare", weight: 0.7 }]);
+    if (card9) { pulls.push(card9); pulledKeys.add(getCardKey(card9)); }
+
+    const card10 = pullWeightedUnique([{ rarity: "Rare", weight: 11 }, { rarity: "Double Rare", weight: 3 }, { rarity: "Ultra Rare", weight: 1 }]);
+    if (card10) { pulls.push(card10); pulledKeys.add(getCardKey(card10)); }
   }
 
-  // Pull 3 Uncommon (unique)
-  for (let i = 0; i < 3; i++) {
-    const card = pullUnique("Uncommon");
-    if (card) {
-      pulls.push(card);
-      pulledKeys.add(getCardKey(card));
-    }
-  }
-
-  // Pull remaining slots (unique)
-  const card8 = pullWeightedUnique([{ rarity: "Common", weight: 55 }, { rarity: "Uncommon", weight: 32 }, { rarity: "Rare", weight: 11 }, { rarity: "Illustration Rare", weight: 1.5 }, { rarity: "Special Illustration Rare", weight: 0.4 }, { rarity: "Hyper Rare", weight: 0.1 }]);
-  if (card8) { pulls.push(card8); pulledKeys.add(getCardKey(card8)); }
-
-  const card9 = pullWeightedUnique([{ rarity: "Common", weight: 35 }, { rarity: "Uncommon", weight: 43 }, { rarity: "Rare", weight: 18 }, { rarity: "Illustration Rare", weight: 12 }, { rarity: "Special Illustration Rare", weight: 2.3 }, { rarity: "Hyper Rare", weight: 0.7 }]);
-  if (card9) { pulls.push(card9); pulledKeys.add(getCardKey(card9)); }
-
-  const card10 = pullWeightedUnique([{ rarity: "Rare", weight: 11 }, { rarity: "Double Rare", weight: 3 }, { rarity: "Ultra Rare", weight: 1 }]);
-  if (card10) { pulls.push(card10); pulledKeys.add(getCardKey(card10)); }
-
+  // Update Stats & Storage
   stats.packsOpened++;
   stats.totalCards += pulls.length;
   pulls.forEach(c => stats.rarities[c.rarity] = (stats.rarities[c.rarity] || 0) + 1);
@@ -354,52 +380,49 @@ function openPack() {
     const key = `${c.name}_${c.number}`;
     if (!collection[key]) collection[key] = { ...c, count: 0 };
     collection[key].count++;
-    // Add to recent cards (keep last 20)
     recentCards.unshift({ ...c, timestamp: Date.now() });
     if (recentCards.length > 20) recentCards.pop();
   });
-  localStorage.setItem("recentCards", JSON.stringify(recentCards));
 
+  localStorage.setItem("recentCards", JSON.stringify(recentCards));
   saveCollection();
   renderCollection(collectionFilter.value || null);
   saveStats();
   updateStatsDisplay();
 
-  // ------- REVEAL: rarity-aware last 3 cards with mystery slot glow -------
+  // Reveal Display
   pulls.forEach((c, i) => {
     const div = document.createElement("div");
     div.className = `card rarity-${c.rarity.replace(/\s+/g, '-')}`;
 
-    const isLastThree = i >= pulls.length - 3; // Index 7 (Card 8), Index 8 (Card 9), Index 9 (Card 10)
+    // Apply double-width class if image is horizontal
+    applyCardOrientation(c, div);
+
+    const isLastThree = i >= pulls.length - 3;
     const autoReveal = AUTO_REVEAL_RARITIES.includes(c.rarity);
 
     if (!isLastThree || autoReveal) {
-      // Normal reveal
       const img = document.createElement("img");
       img.src = c.image;
       img.alt = c.name;
       div.appendChild(img);
     } else {
-      // Special rarity in last 3 → face-down card back with mystery rotation glow
       div.dataset.revealed = "false";
 
-      // Insert cardback.png immediately so the div maintains its full card size
       const img = document.createElement("img");
       img.src = "cardback.png";
       img.alt = "Hidden Card";
       div.appendChild(img);
 
-      // Assign mystery rotation glow based on slot index
-      if (i === 7 || i === 8) {
+      if (i === pulls.length - 3 || i === pulls.length - 2) {
         div.classList.add("glow-mystery-slots-8-9");
-      } else if (i === 9) {
+      } else if (i === pulls.length - 1) {
         div.classList.add("glow-mystery-slot-10");
       }
 
       div.addEventListener("click", () => {
         if (div.dataset.revealed === "true") return;
 
-        // Reveal card: swap face-down image with actual card image
         img.src = c.image;
         img.alt = c.name;
         div.dataset.revealed = "true";
@@ -407,7 +430,7 @@ function openPack() {
         div.classList.add("revealed");
       }, { once: true });
     }
-    // Add to DOM and show placeholder div immediately
+
     packDiv.appendChild(div);
     setTimeout(() => div.classList.add("show"), i * 350);
     attachLightboxHandlers(div, c, pulls, i);
