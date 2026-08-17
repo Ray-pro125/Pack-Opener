@@ -71,6 +71,18 @@ function getMaxSetNumber() {
   return max;
 }
 
+// Recalculates grid columns whenever a landscape card loads
+function updatePackSlotCount() {
+  const pack = document.getElementById("pack");
+  if (!pack) return;
+  const totalCards = pack.children.length;
+  const horizontalCount = pack.querySelectorAll(".card.horizontal").length;
+  
+  // Total slots = (Base card count) + (1 extra slot per horizontal card)
+  const totalSlots = totalCards + horizontalCount;
+  pack.style.setProperty("--pack-slots", totalSlots || 5);
+}
+
 // Pre-detects if a card image is horizontal and adds .horizontal to the card div
 function applyCardOrientation(cardData, cardDiv) {
   if (!cardData || !cardData.image) return;
@@ -79,6 +91,7 @@ function applyCardOrientation(cardData, cardDiv) {
   img.onload = () => {
     if (img.naturalWidth > img.naturalHeight) {
       cardDiv.classList.add("horizontal");
+      updatePackSlotCount();
     }
   };
 }
