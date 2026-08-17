@@ -208,9 +208,11 @@ button:disabled { background: #444; cursor: not-allowed; }
 
 /* Horizontal / Landscape Card Handling */
 .card.horizontal {
-  grid-column: span 2;
-  aspect-ratio: 3.42 / 2.45; /* Horizontal card aspect ratio */
-  max-width: 420px;           /* Double width to span 2 grid slots */
+  grid-column: span 1;       /* Keeps card in its exact slot on the same line */
+  aspect-ratio: 3.42 / 2.45; /* Landscape ratio so it doesn't stretch */
+  width: 100%;
+  height: auto;
+  align-self: center;        /* Centers card vertically with neighboring cards */
 }
 
 /* ---------- STATS ---------- */
