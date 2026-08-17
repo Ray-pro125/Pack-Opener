@@ -157,18 +157,22 @@ button:disabled { background: #444; cursor: not-allowed; }
 
 /* ---------- CARDS ---------- */
 #pack {
+  --gap: 25px;
+  --col-width: calc((100% - (4 * var(--gap))) / 5);
+  --card-height: calc(var(--col-width) * (7 / 5));
+
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 25px; /* Increased to give glows space without overlapping */
+  gap: var(--gap);
   justify-items: center;
-  align-items: center;
+  align-items: start;
   max-width: 1150px;
   margin: 20px auto;
 }
 
 #collection {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* Stays dynamic for your full binder */
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: 15px;
   justify-items: center;
   padding: 20px;
@@ -179,6 +183,7 @@ button:disabled { background: #444; cursor: not-allowed; }
 .card {
   width: 100%;
   max-width: 240px;
+  height: var(--card-height, auto);
   padding: 10px;
   background: linear-gradient(180deg, #1f1f1f, #121212);
   border-radius: 8px;
@@ -191,15 +196,16 @@ button:disabled { background: #444; cursor: not-allowed; }
   display: flex;
   flex-direction: column;
   align-items: center;
+  box-sizing: border-box;
 }
 
 .card.show { opacity: 1; transform: translateY(0) scale(1); }
 
 .card img { 
   width: 100%; 
-  height: auto; 
+  height: 100%; 
   aspect-ratio: 5 / 7;
-  object-fit: contain; 
+  object-fit: cover; 
   border-radius: 4px; 
   box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
 }
@@ -208,17 +214,17 @@ button:disabled { background: #444; cursor: not-allowed; }
 
 /* Horizontal / Landscape Card Handling */
 .card.horizontal {
-  grid-column: span 2;                  /* Spans across 2 columns */
-  aspect-ratio: 3.42 / 2.45 !important; /* Full landscape aspect ratio */
-  height: 100% !important;              /* Matches the exact height of neighboring portrait cards */
-  width: auto !important;               /* Width scales proportionally from the height */
-  justify-self: center;                 /* Centers cleanly inside the 2-column span */
+  grid-column: span 2;
+  height: var(--card-height) !important;
+  width: calc(var(--card-height) * (3.42 / 2.45)) !important;
+  justify-self: center;
 }
 
 .card.horizontal img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  aspect-ratio: 3.42 / 2.45;
+  object-fit: fill;
 }
 
 /* ---------- STATS ---------- */
