@@ -157,16 +157,12 @@ button:disabled { background: #444; cursor: not-allowed; }
 
 /* ---------- CARDS ---------- */
 #pack {
-  --gap: 25px;
-  --col-width: calc((100% - (4 * var(--gap))) / 5);
-  --card-height: calc(var(--col-width) * (7 / 5));
-
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: var(--gap);
+  grid-template-columns: repeat(var(--pack-slots, 5), 1fr);
+  gap: 20px;
+  align-items: center;
   justify-items: center;
-  align-items: start;
-  max-width: 1150px;
+  max-width: 1350px;
   margin: 20px auto;
 }
 
@@ -181,10 +177,10 @@ button:disabled { background: #444; cursor: not-allowed; }
 }
 
 .card {
+  grid-column: span 1;
   width: 100%;
-  max-width: 240px;
-  height: var(--card-height, auto);
-  padding: 10px;
+  aspect-ratio: 5 / 7;
+  padding: 8px;
   background: linear-gradient(180deg, #1f1f1f, #121212);
   border-radius: 8px;
   box-shadow: 0 8px 25px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.05);
@@ -204,8 +200,7 @@ button:disabled { background: #444; cursor: not-allowed; }
 .card img { 
   width: 100%; 
   height: 100%; 
-  aspect-ratio: 5 / 7;
-  object-fit: cover; 
+  object-fit: fill; 
   border-radius: 4px; 
   box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
 }
@@ -214,17 +209,10 @@ button:disabled { background: #444; cursor: not-allowed; }
 
 /* Horizontal / Landscape Card Handling */
 .card.horizontal {
-  grid-column: span 2;
-  height: var(--card-height) !important;
-  width: calc(var(--card-height) * (3.42 / 2.45)) !important;
-  justify-self: center;
-}
-
-.card.horizontal img {
-  width: 100%;
-  height: 100%;
-  aspect-ratio: 3.42 / 2.45;
-  object-fit: fill;
+  grid-column: span 2 !important;
+  aspect-ratio: 3.42 / 2.45 !important;
+  width: 100% !important;
+  height: auto !important;
 }
 
 /* ---------- STATS ---------- */
