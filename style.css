@@ -208,11 +208,17 @@ button:disabled { background: #444; cursor: not-allowed; }
 
 /* Horizontal / Landscape Card Handling */
 .card.horizontal {
-  grid-column: span 1;       /* Keeps card in its exact slot on the same line */
-  aspect-ratio: 3.42 / 2.45; /* Landscape ratio so it doesn't stretch */
+  grid-column: span 1;
+  aspect-ratio: 3.42 / 2.45 !important; /* Force landscape frame */
   width: 100%;
-  height: auto;
-  align-self: center;        /* Centers card vertically with neighboring cards */
+  height: auto !important;               /* Stop grid from stretching frame height */
+  align-self: center;                    /* Center card vertically in its row */
+}
+
+.card.horizontal img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;                     /* Fit image edge-to-edge inside frame */
 }
 
 /* ---------- STATS ---------- */
