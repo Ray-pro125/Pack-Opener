@@ -210,12 +210,10 @@ button:disabled { background: #444; cursor: not-allowed; }
 /* Horizontal / Landscape Card Handling */
 .card.horizontal {
   grid-column: span 2 !important;
-  width: calc(100% + 10px) !important; /* Expands width by exactly 1 gap unit */
-  margin-left: 0 !important;           /* Flushes strictly against Slot 1's left edge */
-  margin-right: -10px !important;      /* Pulls only into the internal gap area */
-  height: auto !important;
-  align-self: center;                  /* Prevents vertical stretching */
-  justify-self: start;                 /* Anchors the element to the left boundary */
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  object-fit: contain;
 }
 
 /* ---------- STATS ---------- */
