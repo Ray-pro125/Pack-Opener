@@ -211,7 +211,9 @@ button:disabled { background: #444; cursor: not-allowed; }
 .card.horizontal {
   grid-column: span 2 !important;
   aspect-ratio: 3.42 / 2.45 !important;
-  width: 100% !important;
+  width: calc(100% + 20px) !important; /* Bridges the 20px grid gap */
+  margin-left: -10px;                  /* Centers the expansion across both slots */
+  margin-right: -10px;
   height: auto !important;
 }
 
