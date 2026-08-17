@@ -206,6 +206,13 @@ button:disabled { background: #444; cursor: not-allowed; }
 
 .card div { margin-top: 8px; font-size: 13px; opacity: 0.85; }
 
+/* Horizontal / Landscape Card Handling */
+.card.horizontal {
+  grid-column: span 2;
+  aspect-ratio: 3.42 / 2.45; /* Horizontal card aspect ratio */
+  max-width: 420px;           /* Double width to span 2 grid slots */
+}
+
 /* ---------- STATS ---------- */
 #stats {
   margin-top: 20px;
