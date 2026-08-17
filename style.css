@@ -210,11 +210,10 @@ button:disabled { background: #444; cursor: not-allowed; }
 /* Horizontal / Landscape Card Handling */
 .card.horizontal {
   grid-column: span 2 !important;
-  aspect-ratio: 3.42 / 2.45 !important;
-  width: calc(100% + 20px) !important; /* Spans across 2 tracks + 1 internal gap */
-  margin-left: 0 !important;            /* Keeps left outer gap perfectly intact */
-  margin-right: -20px !important;       /* Absorbs ONLY the internal slot gap to the right */
-  height: auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  object-fit: contain;
 }
 
 /* ---------- STATS ---------- */
