@@ -156,14 +156,14 @@ button:disabled { background: #444; cursor: not-allowed; }
 }
 
 /* ---------- CARDS ---------- */
+/* Ensure the grid row strictly enforces standard card height */
 #pack {
   display: grid;
   grid-template-columns: repeat(var(--pack-slots, 5), 1fr);
   gap: 20px;
   align-items: center;
-  justify-items: stretch; /* Stretches cards to fit their exact track widths */
-  max-width: 1350px;
-  margin: 20px auto;
+  /* Lock row height to standard card ratio (7/5 = 1.4) */
+  grid-auto-rows: minmax(0, 1fr); 
 }
 
 #collection {
@@ -210,12 +210,25 @@ button:disabled { background: #444; cursor: not-allowed; }
 /* Horizontal / Landscape Card Handling */
 .card.horizontal {
   grid-column: span 2 !important;
-  height: 100% !important;        /* Match the exact vertical height of the row */
-  width: auto !important;          /* Let width scale naturally so it doesn't blow up */
-  aspect-ratio: 7 / 5 !important;  /* Horizontal ratio */
-  margin: 0 auto !important;       /* Center inside the 2-slot span with standard gaps intact */
+  
+  /* Lock height strictly to 100% of the row */
+  height: 100% !important;
+  max-height: 100% !important;
+  
+  /* Let width fit the height naturally */
+  width: auto !important;
+  aspect-ratio: 1.4 / 1 !important; /* 7/5 horizontal aspect ratio */
+  
+  /* Keep standard margins/gaps, center inside the spanned area */
+  margin: 0 auto !important;
   justify-self: center;
   align-self: center;
+}
+
+.card.horizontal img {
+  height: 100% !important;
+  width: auto !important;
+  object-fit: contain;
 }
 
 /* ---------- STATS ---------- */
