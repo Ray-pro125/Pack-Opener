@@ -208,17 +208,17 @@ button:disabled { background: #444; cursor: not-allowed; }
 
 /* Horizontal / Landscape Card Handling */
 .card.horizontal {
-  grid-column: span 1;
-  aspect-ratio: 3.42 / 2.45 !important; /* Force landscape frame */
-  width: 100%;
-  height: auto !important;               /* Stop grid from stretching frame height */
-  align-self: center;                    /* Center card vertically in its row */
+  grid-column: span 2;                  /* Spans across 2 columns */
+  aspect-ratio: 3.42 / 2.45 !important; /* Full landscape aspect ratio */
+  height: 100% !important;              /* Matches the exact height of neighboring portrait cards */
+  width: auto !important;               /* Width scales proportionally from the height */
+  justify-self: center;                 /* Centers cleanly inside the 2-column span */
 }
 
 .card.horizontal img {
   width: 100%;
   height: 100%;
-  object-fit: cover;                     /* Fit image edge-to-edge inside frame */
+  object-fit: cover;
 }
 
 /* ---------- STATS ---------- */
