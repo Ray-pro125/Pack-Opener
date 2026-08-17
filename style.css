@@ -210,12 +210,12 @@ button:disabled { background: #444; cursor: not-allowed; }
 /* Horizontal / Landscape Card Handling */
 .card.horizontal {
   grid-column: span 2 !important;
-  aspect-ratio: 7 / 5 !important; /* Perfect sideways aspect ratio */
-  width: 100% !important;
-  max-height: 100% !important;
-  margin: 0 !important;
-  align-self: center;             /* Prevents vertical stretching */
+  height: 100% !important;        /* Match the exact vertical height of the row */
+  width: auto !important;          /* Let width scale naturally so it doesn't blow up */
+  aspect-ratio: 7 / 5 !important;  /* Horizontal ratio */
+  margin: 0 auto !important;       /* Center inside the 2-slot span with standard gaps intact */
   justify-self: center;
+  align-self: center;
 }
 
 /* ---------- STATS ---------- */
