@@ -160,7 +160,7 @@ button:disabled { background: #444; cursor: not-allowed; }
   display: grid;
   grid-template-columns: repeat(var(--pack-slots, 5), 1fr);
   gap: 20px;
-  align-items: center;
+  align-items: stretch; /* Updated from center */
   justify-items: center;
   max-width: 1350px;
   margin: 20px auto;
@@ -210,11 +210,12 @@ button:disabled { background: #444; cursor: not-allowed; }
 /* Horizontal / Landscape Card Handling */
 .card.horizontal {
   grid-column: span 2 !important;
-  aspect-ratio: 3.42 / 2.45 !important;
-  width: calc(100% + 20px) !important; /* Bridges the 20px grid gap */
-  margin-left: -10px;                  /* Centers the expansion across both slots */
-  margin-right: -10px;
-  height: auto !important;
+  aspect-ratio: 7 / 5 !important; /* Perfect inverted ratio of 5 / 7 */
+  width: auto !important;
+  max-height: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  justify-self: center;
 }
 
 /* ---------- STATS ---------- */
