@@ -103,7 +103,6 @@ function updateStatsDisplay() {
   const masterMax = cards.length;
   const masterCollected = Object.values(collection).filter(c => c.count > 0).length;
 
-  // Prevent division by zero
   const regularProgress = regularMax > 0 ? (regularCollected / regularMax) * 100 : 0;
   const masterProgress = masterMax > 0 ? (masterCollected / masterMax) * 100 : 0;
 
@@ -148,11 +147,9 @@ function renderSetTabs() {
   });
 }
 
-/* ---------------- RENDER COLLECTION ---------------- */
 function renderCollection(filterRarity = null) {
   collectionDiv.innerHTML = "";
   
-  // Build card binder view from set data if loaded, otherwise fallback to pulled cards
   let listToRender = [];
   if (cards && cards.length > 0) {
     cards.forEach(c => {
@@ -184,7 +181,6 @@ function renderCollection(filterRarity = null) {
     const count = c.count || 0;
     div.className = `card rarity-${(c.rarity || 'Common').replace(/\s+/g, '-')} show`;
     
-    // Auto-detect horizontal orientation for collection grid
     applyCardOrientation(c, div);
 
     if (count === 0) {
@@ -195,7 +191,7 @@ function renderCollection(filterRarity = null) {
     collectionDiv.appendChild(div);
     attachLightboxHandlers(div, c, listToRender, i);
   });
-} // <-- THIS CLOSING BRACKET WAS MISSING!
+}
 
 /* ---------------- LOAD SET ---------------- */
 function buildAvailableRarities() {
@@ -204,26 +200,25 @@ function buildAvailableRarities() {
 }
 
 function loadSet(fileOrJSON, explicitSetName = null) {
-  loadingDiv.style.display = "block";
+  if (loadingDiv) loadingDiv.style.display = "block";
 
   const onSetLoaded = (data, nameFromData) => {
-    cards = data;
+    cards = Array.isArray(data) ? data : (data ? data.data || [] : []);
     buildAvailableRarities();
 
-    // Set Active Set Name
     currentSetName = explicitSetName || nameFromData || "Custom Set";
     localStorage.setItem("activeSetName", currentSetName);
     if (currentSetDisplay) currentSetDisplay.textContent = currentSetName;
 
     loadCollectionAndStats();
     updateStatsDisplay();
-    renderCollection(collectionFilter.value || null);
+    renderCollection(collectionFilter ? collectionFilter.value : null);
     renderSetTabs();
 
-    loadingDiv.style.display = "none";
+    if (loadingDiv) loadingDiv.style.display = "none";
     openPackBtn.disabled = false;
-    packDiv.innerHTML = ""; // Clear any previous pack
-    firstPackOpened = false; // Reset for new set
+    packDiv.innerHTML = "";
+    firstPackOpened = false;
     if (openPackCenter) openPackCenter.classList.remove("hidden");
     if (openPackBtn.parentElement !== openPackCenter && openPackCenter) {
       openPackCenter.appendChild(openPackBtn);
@@ -238,9 +233,9 @@ function loadSet(fileOrJSON, explicitSetName = null) {
     if (isJsonString) {
       try {
         const j = JSON.parse(fileOrJSON);
-        onSetLoaded(j.data, j.name);
+        onSetLoaded(j.data || j, j.name);
       } catch {
-        loadingDiv.style.display = "none";
+        if (loadingDiv) loadingDiv.style.display = "none";
         alert("Invalid JSON");
       }
     } else {
@@ -251,16 +246,15 @@ function loadSet(fileOrJSON, explicitSetName = null) {
 
       fetchFn(fileOrJSON).then(j => {
         const inferredName = explicitSetName || fileOrJSON.replace(/^sets\//, '').replace(/\.json$/, '');
-        onSetLoaded(j.data, j.name || inferredName);
+        onSetLoaded(j.data || j, j.name || inferredName);
       }).catch(err => {
-        loadingDiv.style.display = "none";
+        if (loadingDiv) loadingDiv.style.display = "none";
         alert(`Failed to load set: ${err.message || err}`);
       });
     }
   } else {
     try {
-      const j = JSON.parse(fileOrJSON);
-      onSetLoaded(j.data, j.name);
+      onSetLoaded(fileOrJSON.data || fileOrJSON, fileOrJSON.name);
     } catch { alert("Invalid JSON"); }
   }
 }
@@ -333,28 +327,35 @@ function openPack() {
     return randomFrom(available);
   };
 
-  // Determine pack size based on highest card number in the set
   const maxSetNum = getMaxSetNumber();
   const is5CardPack = maxSetNum <= 60;
 
   if (is5CardPack) {
-    /* ---------------- 5-CARD PACK PULLS (Placeholder Ratio) ---------------- */
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 2; i++) {
       const c = pullUnique("Common");
       if (c) { pulls.push(c); pulledKeys.add(getCardKey(c)); }
     }
-    const c4 = pullUnique("Uncommon");
+    const c3 = pullUnique("Uncommon");
+    if (c3) { pulls.push(c3); pulledKeys.add(getCardKey(c3)); }
+    
+    const c4 = pullWeightedUnique([
+      { rarity: "Common", weight: 35 }, 
+      { rarity: "Uncommon", weight: 43 }, 
+      { rarity: "Rare", weight: 18 }, 
+      { rarity: "Illustration Rare", weight: 12 }, 
+      { rarity: "Special Illustration Rare", weight: 2.3 }, 
+      { rarity: "Hyper Rare", weight: 0.7 }
+    ]);
     if (c4) { pulls.push(c4); pulledKeys.add(getCardKey(c4)); }
 
     const c5 = pullWeightedUnique([
-      { rarity: "Rare", weight: 70 },
-      { rarity: "Double Rare", weight: 20 },
-      { rarity: "Ultra Rare", weight: 10 }
+      { rarity: "Rare", weight: 11 },
+      { rarity: "Double Rare", weight: 3 },
+      { rarity: "Ultra Rare", weight: 1 }
     ]);
     if (c5) { pulls.push(c5); pulledKeys.add(getCardKey(c5)); }
 
   } else {
-    /* ---------------- 10-CARD PACK PULLS ---------------- */
     for (let i = 0; i < 4; i++) {
       const c = pullUnique("Common");
       if (c) { pulls.push(c); pulledKeys.add(getCardKey(c)); }
@@ -374,7 +375,6 @@ function openPack() {
     if (card10) { pulls.push(card10); pulledKeys.add(getCardKey(card10)); }
   }
 
-  // Update Stats & Storage
   stats.packsOpened++;
   stats.totalCards += pulls.length;
   pulls.forEach(c => stats.rarities[c.rarity] = (stats.rarities[c.rarity] || 0) + 1);
@@ -388,16 +388,14 @@ function openPack() {
 
   localStorage.setItem("recentCards", JSON.stringify(recentCards));
   saveCollection();
-  renderCollection(collectionFilter.value || null);
+  renderCollection(collectionFilter ? collectionFilter.value : null);
   saveStats();
   updateStatsDisplay();
 
-  // Reveal Display
   pulls.forEach((c, i) => {
     const div = document.createElement("div");
     div.className = `card rarity-${c.rarity.replace(/\s+/g, '-')}`;
 
-    // Apply double-width class if image is horizontal
     applyCardOrientation(c, div);
 
     const isLastThree = i >= pulls.length - 3;
@@ -441,6 +439,7 @@ function openPack() {
 
 /* ---------------- START SCREEN ---------------- */
 function initStartScreen() {
+  if (!availableSetsDiv) return;
   availableSetsDiv.innerHTML = "";
   ["Z-Genesis Melemele", "Z-Genesis Akala"].forEach(s => {
     const btn = document.createElement("button");
@@ -450,30 +449,33 @@ function initStartScreen() {
   });
 }
 
-// Run once on page load
-initStartScreen();
-
 /* ---------------- IMPORT ---------------- */
-importSetBtn.onclick = () => jsonInput.click();
-jsonInput.onchange = (e) => {
-  const f = jsonInput.files[0];
-  if (!f || !f.name.endsWith(".json")) return alert("Please select a JSON file");
-  const r = new FileReader();
-  r.onload = ev => { loadSet(ev.target.result, f.name.replace(".json", "")); };
-  r.readAsText(f);
-};
+if (importSetBtn && jsonInput) {
+  importSetBtn.onclick = () => jsonInput.click();
+  jsonInput.onchange = () => {
+    const f = jsonInput.files[0];
+    if (!f || !f.name.endsWith(".json")) return alert("Please select a JSON file");
+    const r = new FileReader();
+    r.onload = ev => { loadSet(ev.target.result, f.name.replace(".json", "")); };
+    r.readAsText(f);
+  };
+}
 
-// ---------------- URL IMPORT ----------------
-importURLBtn.onclick = () => {
-  const url = urlInput.value.trim();
-  if (!url) return alert("Please enter a URL");
-  loadSet(url, "Custom Set");
-};
+if (importURLBtn && urlInput) {
+  importURLBtn.onclick = () => {
+    const url = urlInput.value.trim();
+    if (!url) return alert("Please enter a URL");
+    loadSet(url, "Custom Set");
+  };
+}
 
 /* ---------------- COLLECTION FILTER ---------------- */
-collectionFilter.addEventListener("change", () => {
-  renderCollection(collectionFilter.value || null);
-});
+if (collectionFilter) {
+  collectionFilter.addEventListener("change", () => {
+    renderCollection(collectionFilter.value || null);
+  });
+}
+
 /* ---------------- SCREEN HELPER ---------------- */
 function showScreen(screenToShow) {
   startScreen.classList.add("hidden");
@@ -483,49 +485,59 @@ function showScreen(screenToShow) {
 }
 
 /* ---------------- NAVIGATION ---------------- */
-viewCollectionBtn.onclick = () => {
-  lightboxEnabled = true;
-  packDiv.innerHTML = "";
-  showScreen(collectionPage);
-  renderSetTabs();
-  updateStatsDisplay();
-  renderCollection(collectionFilter.value || null);
-};
+if (viewCollectionBtn) {
+  viewCollectionBtn.onclick = () => {
+    lightboxEnabled = true;
+    packDiv.innerHTML = "";
+    showScreen(collectionPage);
+    renderSetTabs();
+    updateStatsDisplay();
+    renderCollection(collectionFilter ? collectionFilter.value : null);
+  };
+}
 
-backToOpenPackBtn.onclick = () => {
-  lightboxEnabled = false;
-  packDiv.innerHTML = "";
-  showScreen(openPackPage);
-};
+if (backToOpenPackBtn) {
+  backToOpenPackBtn.onclick = () => {
+    lightboxEnabled = false;
+    packDiv.innerHTML = "";
+    showScreen(openPackPage);
+  };
+}
 
-backToStartBtn.onclick = () => {
-  packDiv.innerHTML = ""; // Clear pack when going back
-  showScreen(startScreen);
-};
+if (backToStartBtn) {
+  backToStartBtn.onclick = () => {
+    packDiv.innerHTML = "";
+    showScreen(startScreen);
+  };
+}
 
-openPackBtn.onclick = () => {
-  lightboxEnabled = false;
-  openPack();
-};
+if (openPackBtn) {
+  openPackBtn.onclick = () => {
+    lightboxEnabled = false;
+    openPack();
+  };
+}
 
 /* ---------------- RESET ---------------- */
-resetBtn.onclick = () => {
-  if (!confirm(`Erase all collection data for "${currentSetName}"?`)) return;
-  localStorage.removeItem(getCollectionKey());
-  localStorage.removeItem(getStatsKey());
-  stats = { packsOpened: 0, totalCards: 0, rarities: {} };
-  collection = {};
-  updateStatsDisplay();
-  renderCollection(collectionFilter.value || null);
-};
+if (resetBtn) {
+  resetBtn.onclick = () => {
+    if (!confirm(`Erase all collection data for "${currentSetName}"?`)) return;
+    localStorage.removeItem(getCollectionKey());
+    localStorage.removeItem(getStatsKey());
+    stats = { packsOpened: 0, totalCards: 0, rarities: {} };
+    collection = {};
+    updateStatsDisplay();
+    renderCollection(collectionFilter ? collectionFilter.value : null);
+  };
+}
 
 /* ---------------- LIGHTBOX INITIALIZATION ---------------- */
 if (typeof MetaLightbox !== 'undefined') {
   lightbox = new MetaLightbox({
     theme: 'dark',
-    showMetadata: false,  // Hide metadata to make it smaller
+    showMetadata: false,
     showNavigation: true,
-    showCounter: false,  // Hide counter
+    showCounter: false,
     closeOnBackdropClick: true,
     closeOnEscape: true,
     overlayOpacity: 0.95,
@@ -583,9 +595,6 @@ if (toggleRecentCardsBtn) {
   };
 }
 
-/* ---------------- INITIAL ---------------- */
-startScreen.classList.remove("hidden");
-openPackPage.classList.add("hidden");
-collectionPage.classList.add("hidden");
-updateStatsDisplay();
-renderCollection();
+/* ---------------- INITIAL BOOT ---------------- */
+initStartScreen();
+showScreen(startScreen);
