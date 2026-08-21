@@ -352,19 +352,19 @@ function openPack() {
     if (c3) { pulls.push(c3); pulledKeys.add(getCardKey(c3)); }
     
     const c4 = pullWeightedUnique([
-      { rarity: "Common", weight: 339.2 },
-      { rarity: "Uncommon", weight: 678.4 },
-      { rarity: "Rare", weight: 1017.6 },
-      { rarity: "Illustration Rare", weight: 150 },
-      { rarity: "Special Illustration Rare", weight: 65 },
-      { rarity: "Hyper Rare", weight: 39 }
+      { rarity: "Rare", weight: 21 },
+      { rarity: "Uncommon", weight: 63 },
+      { rarity: "Common", weight: 42 },
+      { rarity: "Illustration Rare", weight: 7 },
+      { rarity: "Special Illustration Rare", weight: 2 },
+      { rarity: "Hyper Rare", weight: 1 }
     ]);
     if (c4) { pulls.push(c4); pulledKeys.add(getCardKey(c4)); }
 
     const c5 = pullWeightedUnique([
-      { rarity: "Rare", weight: 83 },
-      { rarity: "Double Rare", weight: 15 },
-      { rarity: "Ultra Rare", weight: 7 }
+      { rarity: "Rare", weight: 58 },
+      { rarity: "Double Rare", weight: 12 },
+      { rarity: "Ultra Rare", weight: 5 }
     ]);
     if (c5) { pulls.push(c5); pulledKeys.add(getCardKey(c5)); }
 
@@ -379,29 +379,29 @@ function openPack() {
     }
 
     const card8 = pullWeightedUnique([
-      { rarity: "Common", weight: 339.2 },
-      { rarity: "Uncommon", weight: 678.4 },
-      { rarity: "Rare", weight: 1017.6 },
-      { rarity: "Illustration Rare", weight: 150 },
-      { rarity: "Special Illustration Rare", weight: 65 },
-      { rarity: "Hyper Rare", weight: 39 }
+      { rarity: "Rare", weight: 21 },
+      { rarity: "Uncommon", weight: 63 },
+      { rarity: "Common", weight: 42 },
+      { rarity: "Illustration Rare", weight: 7 },
+      { rarity: "Special Illustration Rare", weight: 2 },
+      { rarity: "Hyper Rare", weight: 1 }
     ]);
     if (card8) { pulls.push(card8); pulledKeys.add(getCardKey(card8)); }
 
     const card9 = pullWeightedUnique([
-      { rarity: "Common", weight: 339.2 },
-      { rarity: "Uncommon", weight: 678.4 },
-      { rarity: "Rare", weight: 1017.6 },
-      { rarity: "Illustration Rare", weight: 150 },
-      { rarity: "Special Illustration Rare", weight: 65 },
-      { rarity: "Hyper Rare", weight: 39 }
+      { rarity: "Rare", weight: 63 },
+      { rarity: "Uncommon", weight: 42 },
+      { rarity: "Common", weight: 21 },
+      { rarity: "Illustration Rare", weight: 7 },
+      { rarity: "Special Illustration Rare", weight: 2 },
+      { rarity: "Hyper Rare", weight: 1 }
     ]);
     if (card9) { pulls.push(card9); pulledKeys.add(getCardKey(card9)); }
 
     const card10 = pullWeightedUnique([
-      { rarity: "Rare", weight: 83 },
-      { rarity: "Double Rare", weight: 15 },
-      { rarity: "Ultra Rare", weight: 7 }
+      { rarity: "Rare", weight: 58 },
+      { rarity: "Double Rare", weight: 12 },
+      { rarity: "Ultra Rare", weight: 5 }
     ]);
     if (card10) { pulls.push(card10); pulledKeys.add(getCardKey(card10)); }
   }
